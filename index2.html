@@ -1,0 +1,584 @@
+<!doctype html><html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><style>body{margin:0}[hidden]{display:none!important}</style></head><body>
+<title>居酒屋ナイト</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Dela+Gothic+One&family=Golos+Text:wght@400;500;600&family=Zen+Kaku+Gothic+New:wght@400;700&display=swap">
+<style>
+/* Layout: indigo noren header over a lit izakaya wall; menu as vertical tanzaku strips, everything else in single readable column */
+:root{
+  --bg:#eef0f4; --paper:#ffffff; --ink:#1b2238; --muted:#5b6278; --rule:#d8dce6; --soft:#e5e8ef;
+  --lantern:#c8342b; --lantern-soft:#f6dedb; --amber:#a86a12;
+  --noren:#1f2a4a; --noren-ink:#f4f1ea;
+  --tag:#f7efe1; --tag-ink:#1b1b1b; --tag-edge:#e2d3b6;
+  --display:"Dela Gothic One","Zen Kaku Gothic New","Hiragino Sans",sans-serif;
+  --jp:"Zen Kaku Gothic New","Hiragino Sans","Yu Gothic",sans-serif;
+  --ru:"Golos Text",system-ui,-apple-system,"Segoe UI",sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#10142a; --paper:#191f3a; --ink:#e8eaf3; --muted:#9ca2bd; --rule:#2c3456; --soft:#232a4a;
+  --lantern:#ef5a4c; --lantern-soft:#3a1f2a; --amber:#f0b04a;
+  --noren:#0a0e20; --noren-ink:#f4f1ea; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#10142a; --paper:#191f3a; --ink:#e8eaf3; --muted:#9ca2bd; --rule:#2c3456; --soft:#232a4a;
+  --lantern:#ef5a4c; --lantern-soft:#3a1f2a; --amber:#f0b04a;
+  --noren:#0a0e20; --noren-ink:#f4f1ea; color-scheme:dark}
+
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font:16px/1.55 var(--ru)}
+.jp{font-family:var(--jp)}
+h1,h2,h3{margin:0;font-weight:400;text-wrap:balance}
+ruby rt{font-size:.5em;color:var(--muted);font-family:var(--jp);font-weight:400}
+html.nofuri rt{visibility:hidden}
+button{font:inherit;color:inherit;cursor:pointer}
+button:focus-visible,a:focus-visible{outline:3px solid var(--lantern);outline-offset:2px}
+.wrap{max-width:980px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+
+/* header */
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--noren)}
+.noren{background:var(--noren);color:var(--noren-ink)}
+.noren .wrap{padding-block:22px 0;display:grid;grid-template-columns:auto 1fr;gap:18px;align-items:center}
+.lantern{width:64px;height:86px;border-radius:46%/40%;background:var(--lantern);color:#fff;font-family:var(--display);font-size:18px;writing-mode:vertical-rl;display:grid;place-content:center;position:relative;box-shadow:inset 0 -7px 0 rgba(0,0,0,.2),inset 0 7px 0 rgba(0,0,0,.2),0 0 40px rgba(239,90,76,.45);animation:sway 5s ease-in-out infinite;transform-origin:50% -10px}
+.lantern::before,.lantern::after{content:"";position:absolute;left:16px;right:16px;height:7px;background:#222;border-radius:2px}
+.lantern::before{top:-5px}.lantern::after{bottom:-5px}
+@keyframes sway{50%{transform:rotate(2.5deg)}}
+@media (prefers-reduced-motion:reduce){.lantern{animation:none}}
+.noren h1{font-family:var(--display);font-size:clamp(30px,6vw,46px);letter-spacing:.04em;line-height:1.1}
+.noren .sub{opacity:.85;margin-top:4px}
+.flaps{display:flex;margin-top:20px;height:16px}
+.flaps i{flex:1;border-right:2px solid var(--bg)}
+.flaps i:last-child{border:0}
+
+nav.bar{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--paper);border-bottom:1px solid var(--rule)}
+nav.bar .wrap{display:flex;gap:6px;align-items:center;padding-block:8px;overflow-x:auto;scrollbar-width:none}
+nav.bar a{flex:none;text-decoration:none;color:var(--ink);font-family:var(--jp);font-weight:700;font-size:14px;padding:6px 10px;border-radius:999px}
+nav.bar a span{font-family:var(--ru);font-weight:400;color:var(--muted);font-size:12px;margin-left:4px}
+nav.bar a:hover{background:var(--soft)}
+.tools{margin-left:auto;display:flex;gap:6px;flex:none}
+.chip{border:1px solid var(--rule);background:var(--paper);border-radius:999px;padding:5px 12px;font-size:13px;font-family:var(--jp);font-weight:700;white-space:nowrap}
+.chip[aria-pressed="true"]{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.mini{font-variant-numeric:tabular-nums;background:var(--lantern);color:#fff;border-color:var(--lantern)}
+
+main .wrap{padding-block:8px 64px}
+section{padding-top:40px;scroll-margin-top:56px}
+.sh{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 12px;margin-bottom:16px}
+.sh h2{font-family:var(--display);font-size:clamp(24px,4vw,32px)}
+.sh p{margin:0;color:var(--muted)}
+.note{color:var(--muted);font-size:14px;margin:0 0 14px}
+
+/* menu */
+.menuwrap{display:grid;grid-template-columns:1fr 300px;gap:20px;align-items:start}
+.menuwrap>*{min-width:0}
+.wall{background:var(--paper);border:1px solid var(--rule);border-radius:6px;padding:16px}
+.wall h3{font-family:var(--jp);font-weight:700;font-size:15px;color:var(--muted);margin:4px 0 10px;letter-spacing:.1em}
+.wall h3:not(:first-child){margin-top:18px}
+.tags{display:flex;flex-wrap:wrap;gap:8px}
+.tag{width:68px;min-height:232px;background:var(--tag);color:var(--tag-ink);border:1px solid var(--tag-edge);border-top:5px solid var(--lantern);border-radius:2px 2px 4px 4px;display:flex;flex-direction:column;align-items:center;justify-content:space-between;padding:10px 0 8px;transition:transform .15s}
+.tag:hover{transform:translateY(-2px)}
+.tag .v{writing-mode:vertical-rl;font-family:var(--jp);font-weight:700;font-size:19px;line-height:1.1;letter-spacing:.06em}
+.tag .v rt{color:#7a6a50}
+.tag .v small{font-size:13px;font-weight:400}
+.tag>span:last-child{display:flex;flex-direction:column;align-items:center;gap:3px;width:100%}
+.tag .p{font-family:var(--ru);font-weight:600;font-size:14px;font-variant-numeric:tabular-nums}
+.tag .ru{display:block;font-size:10.5px;color:#6b5d47;text-align:center;line-height:1.2;padding:0 3px;margin-top:4px}
+.tag.drink{border-top-color:var(--noren)}
+.tag.has{outline:3px solid var(--lantern);outline-offset:1px}
+.tag .q{display:none;background:var(--lantern);color:#fff;border-radius:999px;font-size:12px;font-weight:600;padding:0 7px;margin-top:4px}
+.tag.has .q{display:block}
+
+.order{position:sticky;top:64px;background:var(--paper);border:1px solid var(--rule);border-radius:6px;padding:16px}
+.order h3{font-family:var(--display);font-size:20px}
+.order .hint{color:var(--muted);font-size:14px;margin:6px 0 0}
+.lines{list-style:none;margin:10px 0 0;padding:0;display:grid;gap:6px}
+.lines li{display:grid;grid-template-columns:1fr auto auto;gap:8px;align-items:center;font-size:15px}
+.lines .n{font-family:var(--jp);font-weight:700}
+.lines .s{font-variant-numeric:tabular-nums;color:var(--muted);font-size:14px}
+.qty{display:flex;align-items:center;gap:2px}
+.qty button{width:26px;height:26px;border-radius:50%;border:1px solid var(--rule);background:var(--paper);line-height:1}
+.qty b{min-width:18px;text-align:center;font-variant-numeric:tabular-nums}
+.total{display:flex;justify-content:space-between;align-items:baseline;border-top:2px solid var(--ink);margin-top:12px;padding-top:8px}
+.total b{font-size:26px;font-variant-numeric:tabular-nums;font-family:var(--ru);font-weight:600}
+.budget{margin-top:8px}
+.budget .track{height:10px;background:var(--soft);border-radius:5px;overflow:hidden}
+.budget .fill{height:100%;width:0;background:var(--noren);transition:width .2s}
+:root[data-theme="dark"] .budget .fill{background:var(--amber)}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .budget .fill{background:var(--amber)}}
+.budget.over .fill{background:var(--lantern)!important}
+.budget p{margin:4px 0 0;font-size:13px;color:var(--muted)}
+.budget.over p{color:var(--lantern);font-weight:600}
+.order .row{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}
+.btn{border:1px solid var(--rule);background:var(--paper);border-radius:6px;padding:6px 12px;font-size:14px}
+.btn.primary{background:var(--lantern);border-color:var(--lantern);color:#fff;font-weight:600}
+
+/* phrases */
+.filters{display:flex;gap:6px;margin-bottom:12px;flex-wrap:wrap}
+.phr{background:var(--paper);border:1px solid var(--rule);border-radius:6px}
+.phr .it{display:grid;grid-template-columns:64px 1fr;gap:4px 14px;padding:12px 16px;border-top:1px solid var(--rule);align-items:baseline}
+.phr .it:first-child{border-top:0}
+.who{font-family:var(--jp);font-size:12px;font-weight:700;text-align:center;border-radius:4px;padding:2px 0;grid-row:span 2}
+.who.s{background:var(--noren);color:var(--noren-ink)}
+.who.c{background:var(--tag);color:var(--tag-ink);border:1px solid var(--tag-edge)}
+.phr .j{font-family:var(--jp);font-weight:700;font-size:clamp(17px,2.4vw,21px);line-height:1.8}
+.phr .t{color:var(--muted);font-size:14px}
+.phr[data-f="s"] .it[data-w="c"],.phr[data-f="c"] .it[data-w="s"]{display:none}
+
+/* grammar */
+.gram{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:12px}
+.g{background:var(--paper);border:1px solid var(--rule);border-radius:6px;padding:14px 16px}
+.g .k{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--lantern);font-weight:600}
+.g h3{font-family:var(--jp);font-weight:700;font-size:22px;margin:2px 0 8px}
+.g p{margin:0}
+.g .j{font-family:var(--jp);font-size:17px;line-height:1.85}
+.g .t{color:var(--muted);font-size:14px;margin-bottom:6px}
+details.bonus{margin-top:12px;background:var(--paper);border:1px dashed var(--rule);border-radius:6px;padding:10px 16px}
+details.bonus summary{cursor:pointer;font-weight:600}
+
+/* roleplay */
+.tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px}
+.tab{border:1px solid var(--rule);background:var(--paper);border-radius:6px;padding:8px 14px;text-align:left}
+.tab b{font-family:var(--jp);display:block;font-size:17px}
+.tab span{font-size:13px;color:var(--muted)}
+.tab[aria-selected="true"]{background:var(--noren);color:var(--noren-ink);border-color:var(--noren)}
+.tab[aria-selected="true"] span{color:var(--noren-ink);opacity:.8}
+.pane{background:var(--paper);border:1px solid var(--rule);border-radius:6px;padding:18px 20px}
+.pane h3{font-family:var(--display);font-size:24px}
+.meta{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0 14px}
+.meta span{background:var(--soft);border-radius:999px;padding:3px 10px;font-size:13px}
+.pane .task{font-size:17px;margin:0 0 14px;max-width:62ch}
+.cols{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.cols>*{min-width:0}
+.lbl{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:600;margin:0 0 6px}
+.dlg{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+.dlg li{display:grid;grid-template-columns:44px 1fr;gap:8px;align-items:baseline}
+.dlg .sp{font-family:var(--jp);font-weight:700;font-size:13px;color:var(--lantern);text-align:right}
+.dlg .ln{font-family:var(--jp);font-size:17px;line-height:1.85}
+.route{display:flex;flex-wrap:wrap;gap:6px;list-style:none;padding:0;margin:0 0 6px;counter-reset:r}
+.route li{counter-increment:r;font-family:var(--jp);font-weight:700;font-size:15px;background:var(--tag);color:var(--tag-ink);border:1px solid var(--tag-edge);border-radius:4px;padding:4px 10px 4px 6px;cursor:pointer;user-select:none}
+.route li::before{content:counter(r);display:inline-block;width:20px;height:20px;line-height:20px;text-align:center;border-radius:50%;background:var(--noren);color:var(--noren-ink);font-family:var(--ru);font-size:12px;margin-right:6px}
+.route li.done{opacity:.45;text-decoration:line-through}
+.helpers{display:flex;flex-wrap:wrap;gap:6px}
+.helpers span{font-family:var(--jp);font-weight:700;border:1px solid var(--lantern);color:var(--lantern);border-radius:4px;padding:2px 8px;font-size:15px}
+
+.draw{display:grid;grid-template-columns:repeat(5,1fr);gap:10px}
+.card{perspective:900px;min-height:230px;border:0;background:none;padding:0;text-align:left}
+.card .in{position:relative;width:100%;height:100%;min-height:230px;transition:transform .5s;transform-style:preserve-3d}
+.card.open .in{transform:rotateY(180deg)}
+.card .f,.card .b{position:absolute;inset:0;backface-visibility:hidden;border-radius:6px;padding:12px}
+.card .f{background:var(--noren);color:var(--noren-ink);display:grid;place-content:center;text-align:center;border:3px double var(--noren-ink)}
+.card .f b{font-family:var(--display);font-size:54px;line-height:1}
+.card .f span{font-size:12px;opacity:.75}
+.card .b{background:var(--paper);border:1px solid var(--rule);transform:rotateY(180deg);overflow:auto}
+.card .b h4{margin:0 0 4px;font-size:15px}
+.card .b p{margin:0 0 6px;font-size:13.5px;line-height:1.4}
+.card .b .j{font-family:var(--jp);font-weight:700;font-size:14px;line-height:1.8;color:var(--lantern)}
+@media (prefers-reduced-motion:reduce){.card .in{transition:none}}
+
+/* talk */
+.qs{list-style:none;margin:0;padding:0;display:grid;gap:8px;counter-reset:q}
+.qs li{counter-increment:q;background:var(--paper);border:1px solid var(--rule);border-radius:6px;padding:12px 16px 12px 52px;position:relative;font-family:var(--jp);font-size:clamp(17px,2.3vw,20px);line-height:1.85;transition:background .2s,border-color .2s}
+.qs li::before{content:counter(q);position:absolute;left:14px;top:14px;width:26px;height:26px;border-radius:50%;background:var(--soft);display:grid;place-content:center;font-family:var(--ru);font-size:13px;font-weight:600}
+.qs li.pick{border-color:var(--lantern);background:var(--lantern-soft)}
+.qs li.pick::before{background:var(--lantern);color:#fff}
+
+/* facts */
+.facts{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px}
+.fact{background:var(--paper);border:1px solid var(--rule);border-radius:6px;padding:14px 16px}
+.fact h3{font-family:var(--jp);font-weight:700;font-size:18px;margin-bottom:4px}
+.fact p{margin:0;font-size:15px}
+
+/* timer */
+.timer{background:var(--noren);color:var(--noren-ink);border-radius:8px;padding:24px 20px;display:grid;gap:14px;justify-items:center;text-align:center}
+.timer h3{font-family:var(--display);font-size:clamp(22px,4vw,30px)}
+.timer .rule{opacity:.8;margin:0;max-width:52ch}
+.clock{font-family:var(--ru);font-weight:600;font-size:clamp(64px,16vw,140px);line-height:1;font-variant-numeric:tabular-nums;letter-spacing:.02em}
+.clock.end{color:var(--lantern)}
+.presets,.ctrl{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
+.timer .btn{background:transparent;color:var(--noren-ink);border-color:rgba(244,241,234,.35)}
+.timer .btn.primary{background:var(--lantern);border-color:var(--lantern)}
+.timer .btn[aria-pressed="true"]{background:var(--noren-ink);color:var(--noren)}
+
+/* host */
+.host{display:none}
+.host.on{display:block}
+.host .pane{border:2px dashed var(--lantern)}
+.hcards{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;margin:8px 0 16px}
+.hc{border:1px solid var(--rule);border-radius:6px;padding:10px 12px;display:grid;gap:6px;align-content:space-between}
+.hc .j{font-family:var(--jp);font-weight:700;font-size:16px}
+.hc p{margin:0;font-size:14px}
+.hc .btn{justify-self:start;font-size:13px;padding:3px 10px}
+
+footer{color:var(--muted);font-size:13px;text-align:center;padding:30px 0 10px}
+
+@media (max-width:760px){
+  .menuwrap,.cols{grid-template-columns:1fr}
+  .order{position:static}
+  .draw{grid-template-columns:repeat(2,1fr)}
+  .tag{width:60px;min-height:212px}
+  .tag .v{font-size:17px}
+}
+</style>
+
+<header class="noren">
+  <div class="wrap">
+    <div class="lantern" aria-hidden="true">居酒屋</div>
+    <div>
+      <h1>居酒屋ナイト</h1>
+      <div class="sub">Разговорный клуб Ma Kagami · суббота, 17 октября · N4</div>
+    </div>
+  </div>
+  <div class="flaps wrap" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div>
+</header>
+
+<nav class="bar" aria-label="Разделы">
+  <div class="wrap">
+    <a href="#menu">メニュー<span>меню</span></a>
+    <a href="#phrases">フレーズ<span>фразы</span></a>
+    <a href="#grammar">文法<span>грамматика</span></a>
+    <a href="#roleplay">ロールプレイ<span>ролевые</span></a>
+    <a href="#talk">トーク<span>вопросы</span></a>
+    <a href="#facts">豆知識<span>факты</span></a>
+    <a href="#timer">タイマー<span>таймер</span></a>
+    <div class="tools">
+      <button class="chip mini" id="miniClock" hidden></button>
+      <button class="chip" id="furi" aria-pressed="true" title="Показать или скрыть чтения над кандзи">ふりがな</button>
+    </div>
+  </div>
+</nav>
+
+<main>
+<div class="wrap">
+
+<section id="host" class="host" aria-label="Для ведущего">
+  <div class="pane">
+    <h3>Для ведущего</h3>
+    <p class="note" style="margin-top:6px">Этот блок видно только по ссылке с <b>#host</b> в конце. Участникам отправляйте ссылку без него. Кнопка «Копировать» берёт текст карточки, чтобы отправить его в личку.</p>
+    <p class="lbl">Сценарий А · карточки-характеры</p>
+    <div class="hcards">
+      <div class="hc"><div><div class="j">ベジタリアン</div><p>Ты не ешь мясо и рыбу. Не показывай карточку, объясняй через 〜が苦手なので.</p></div><button class="btn copy">Копировать</button></div>
+      <div class="hc"><div><div class="j"><ruby>辛<rt>から</rt></ruby>いものが<ruby>大好<rt>だいす</rt></ruby>き</div><p>Ты хочешь всё острое. Уговаривай друзей заказать что-нибудь からい.</p></div><button class="btn copy">Копировать</button></div>
+      <div class="hc"><div><div class="j">お<ruby>酒<rt>さけ</rt></ruby>が<ruby>飲<rt>の</rt></ruby>めない</div><p>Ты не пьёшь алкоголь. Найди себе напиток и не дай заказать тебе пиво.</p></div><button class="btn copy">Копировать</button></div>
+      <div class="hc"><div><div class="j"><ruby>日本料理<rt>にほんりょうり</rt></ruby>は<ruby>初<rt>はじ</rt></ruby>めて</div><p>Ты всё пробуешь в первый раз. Задавай много вопросов: これは何ですか？ 食べたことがありますか？</p></div><button class="btn copy">Копировать</button></div>
+    </div>
+    <p class="lbl">Сценарий Б · карточки-сюрпризы</p>
+    <div class="hcards">
+      <div class="hc"><div><div class="j"><ruby>店員<rt>てんいん</rt></ruby>へ</div><p>Скажи: 「すみません、唐揚げは今日はもうありません。」 Клиент должен выбрать другое.</p></div><button class="btn copy">Копировать</button></div>
+      <div class="hc"><div><div class="j">お<ruby>客<rt>きゃく</rt></ruby>さんへ</div><p>У тебя аллергия на яйца. Спроси, что входит в だし巻き卵, и найди замену.</p></div><button class="btn copy">Копировать</button></div>
+      <div class="hc"><div><div class="j">お<ruby>客<rt>きゃく</rt></ruby>さんへ</div><p>Ты хочешь попробовать 日本酒, но не знаешь какое. Спроси: 熱燗と冷酒、どちらがおすすめですか？</p></div><button class="btn copy">Копировать</button></div>
+      <div class="hc"><div><div class="j"><ruby>店員<rt>てんいん</rt></ruby>へ</div><p>Предложи гостям 飲み放題 и объясни по-японски, что это такое.</p></div><button class="btn copy">Копировать</button></div>
+    </div>
+  </div>
+</section>
+
+<section id="menu">
+  <div class="sh"><h2>お<ruby>品書<rt>しなが</rt></ruby>き</h2><p>Меню. Нажмите на табличку, чтобы добавить в заказ.</p></div>
+  <div class="menuwrap">
+    <div class="wall">
+      <h3><ruby>料理<rt>りょうり</rt></ruby></h3>
+      <div class="tags">
+        <button class="tag" data-id="otoshi" data-p="400" data-n="お通し"><span class="v">お<ruby>通<rt>とお</rt></ruby>し</span><span><span class="ru">закуска на входе</span><span class="p">¥400</span><span class="q"></span></span></button>
+        <button class="tag" data-id="edamame" data-p="350" data-n="枝豆"><span class="v"><ruby>枝豆<rt>えだまめ</rt></ruby></span><span><span class="ru">соевые бобы</span><span class="p">¥350</span><span class="q"></span></span></button>
+        <button class="tag" data-id="hiyayakko" data-p="380" data-n="冷奴"><span class="v"><ruby>冷奴<rt>ひややっこ</rt></ruby></span><span><span class="ru">холодный тофу</span><span class="p">¥380</span><span class="q"></span></span></button>
+        <button class="tag" data-id="yakitori" data-p="980" data-n="焼き鳥盛り合わせ"><span class="v"><ruby>焼<rt>や</rt></ruby>き<ruby>鳥<rt>とり</rt></ruby><small>（<ruby>五本<rt>ごほん</rt></ruby>）</small></span><span><span class="ru">ассорти якитори</span><span class="p">¥980</span><span class="q"></span></span></button>
+        <button class="tag" data-id="karaage" data-p="680" data-n="唐揚げ"><span class="v"><ruby>唐揚<rt>からあ</rt></ruby>げ</span><span><span class="ru">курица во фритюре</span><span class="p">¥680</span><span class="q"></span></span></button>
+        <button class="tag" data-id="sashimi" data-p="1280" data-n="刺身盛り合わせ"><span class="v"><ruby>刺身<rt>さしみ</rt></ruby><ruby>盛<rt>も</rt></ruby>り<ruby>合<rt>あ</rt></ruby>わせ</span><span><span class="ru">ассорти сасими</span><span class="p">¥1,280</span><span class="q"></span></span></button>
+        <button class="tag" data-id="dashimaki" data-p="580" data-n="だし巻き卵"><span class="v">だし<ruby>巻<rt>ま</rt></ruby>き<ruby>卵<rt>たまご</rt></ruby></span><span><span class="ru">омлет-рулет</span><span class="p">¥580</span><span class="q"></span></span></button>
+        <button class="tag" data-id="yakionigiri" data-p="450" data-n="焼きおにぎり"><span class="v"><ruby>焼<rt>や</rt></ruby>きおにぎり</span><span><span class="ru">жареный онигири</span><span class="p">¥450</span><span class="q"></span></span></button>
+        <button class="tag" data-id="chazuke" data-p="500" data-n="お茶漬け"><span class="v">お<ruby>茶漬<rt>ちゃづ</rt></ruby>け</span><span><span class="ru">рис с чаем</span><span class="p">¥500</span><span class="q"></span></span></button>
+      </div>
+      <h3><ruby>飲<rt>の</rt></ruby>み<ruby>物<rt>もの</rt></ruby></h3>
+      <div class="tags">
+        <button class="tag drink" data-id="nama" data-p="550" data-n="生ビール"><span class="v"><ruby>生<rt>なま</rt></ruby>ビール</span><span><span class="ru">разливное пиво</span><span class="p">¥550</span><span class="q"></span></span></button>
+        <button class="tag drink" data-id="lemon" data-p="450" data-n="レモンサワー"><span class="v">レモンサワー</span><span><span class="ru">лимонный сауэр</span><span class="p">¥450</span><span class="q"></span></span></button>
+        <button class="tag drink" data-id="highball" data-p="480" data-n="ハイボール"><span class="v">ハイボール</span><span><span class="ru">виски с содовой</span><span class="p">¥480</span><span class="q"></span></span></button>
+        <button class="tag drink" data-id="sake" data-p="700" data-n="日本酒"><span class="v"><ruby>日本酒<rt>にほんしゅ</rt></ruby><small>（<ruby>一合<rt>いちごう</rt></ruby>）</small></span><span><span class="ru">сакэ, 180 мл</span><span class="p">¥700</span><span class="q"></span></span></button>
+        <button class="tag drink" data-id="umeshu" data-p="500" data-n="梅酒"><span class="v"><ruby>梅酒<rt>うめしゅ</rt></ruby></span><span><span class="ru">сливовое вино</span><span class="p">¥500</span><span class="q"></span></span></button>
+        <button class="tag drink" data-id="oolong" data-p="300" data-n="ウーロン茶"><span class="v">ウーロン<ruby>茶<rt>ちゃ</rt></ruby></span><span><span class="ru">улун</span><span class="p">¥300</span><span class="q"></span></span></button>
+        <button class="tag drink" data-id="nomihodai" data-p="1800" data-n="飲み放題"><span class="v"><ruby>飲<rt>の</rt></ruby>み<ruby>放題<rt>ほうだい</rt></ruby><small>（<ruby>二時間<rt>にじかん</rt></ruby>）</small></span><span><span class="ru">безлимит, 2 часа</span><span class="p">¥1,800</span><span class="q"></span></span></button>
+      </div>
+    </div>
+    <aside class="order" aria-live="polite">
+      <h3>ご<ruby>注文<rt>ちゅうもん</rt></ruby></h3>
+      <p class="hint" id="empty">Пока пусто. Нажмите на табличку в меню, и блюдо появится здесь с ценой.</p>
+      <ul class="lines" id="lines"></ul>
+      <div class="total"><span><ruby>合計<rt>ごうけい</rt></ruby></span><b id="sum">¥0</b></div>
+      <div class="budget" id="budget"><div class="track"><div class="fill" id="fill"></div></div><p id="bmsg">Бюджет сценария А: ¥4,000 на всех</p></div>
+      <div class="row"><button class="btn" id="clear">Очистить заказ</button></div>
+    </aside>
+  </div>
+</section>
+
+<section id="phrases">
+  <div class="sh"><h2><ruby>注文<rt>ちゅうもん</rt></ruby>とお<ruby>会計<rt>かいけい</rt></ruby></h2><p>Фразы заказа и счёта</p></div>
+  <div class="filters" role="group" aria-label="Кто говорит">
+    <button class="chip" data-f="all" aria-pressed="true">Все</button>
+    <button class="chip" data-f="c" aria-pressed="false">お客さん · гость</button>
+    <button class="chip" data-f="s" aria-pressed="false">店員 · официант</button>
+  </div>
+  <div class="phr" id="phr" data-f="all">
+    <div class="it" data-w="s"><span class="who s"><ruby>店員<rt>てんいん</rt></ruby></span><span class="j">いらっしゃいませ！<ruby>何名様<rt>なんめいさま</rt></ruby>ですか？</span><span class="t">Добро пожаловать! Сколько вас?</span></div>
+    <div class="it" data-w="c"><span class="who c">お<ruby>客<rt>きゃく</rt></ruby></span><span class="j"><ruby>二人<rt>ふたり</rt></ruby>です。カウンター<ruby>席<rt>せき</rt></ruby>でもいいですか？</span><span class="t">Нас двое. Можно за стойку?</span></div>
+    <div class="it" data-w="s"><span class="who s"><ruby>店員<rt>てんいん</rt></ruby></span><span class="j">ご<ruby>注文<rt>ちゅうもん</rt></ruby>はお<ruby>決<rt>き</rt></ruby>まりですか？</span><span class="t">Вы определились с заказом?</span></div>
+    <div class="it" data-w="c"><span class="who c">お<ruby>客<rt>きゃく</rt></ruby></span><span class="j">すみません！</span><span class="t">Извините! Так подзывают официанта, громко можно.</span></div>
+    <div class="it" data-w="c"><span class="who c">お<ruby>客<rt>きゃく</rt></ruby></span><span class="j">とりあえず<ruby>生<rt>なま</rt></ruby>で。</span><span class="t">Для начала пиво.</span></div>
+    <div class="it" data-w="c"><span class="who c">お<ruby>客<rt>きゃく</rt></ruby></span><span class="j">おすすめは<ruby>何<rt>なん</rt></ruby>ですか？</span><span class="t">Что посоветуете?</span></div>
+    <div class="it" data-w="c"><span class="who c">お<ruby>客<rt>きゃく</rt></ruby></span><span class="j">これは<ruby>何<rt>なに</rt></ruby>が<ruby>入<rt>はい</rt></ruby>っていますか？</span><span class="t">Что входит в это блюдо?</span></div>
+    <div class="it" data-w="c"><span class="who c">お<ruby>客<rt>きゃく</rt></ruby></span><span class="j">〇〇を<ruby>二<rt>ふた</rt></ruby>つと、〇〇を<ruby>一<rt>ひと</rt></ruby>つお<ruby>願<rt>ねが</rt></ruby>いします。</span><span class="t">Два 〇〇 и один 〇〇, пожалуйста.</span></div>
+    <div class="it" data-w="c"><span class="who c">お<ruby>客<rt>きゃく</rt></ruby></span><span class="j">〇〇<ruby>抜<rt>ぬ</rt></ruby>きでお<ruby>願<rt>ねが</rt></ruby>いできますか？</span><span class="t">Можно без 〇〇?</span></div>
+    <div class="it" data-w="s"><span class="who s"><ruby>店員<rt>てんいん</rt></ruby></span><span class="j">かしこまりました。<ruby>少々<rt>しょうしょう</rt></ruby>お<ruby>待<rt>ま</rt></ruby>ちください。</span><span class="t">Понял. Подождите немного.</span></div>
+    <div class="it" data-w="s"><span class="who s"><ruby>店員<rt>てんいん</rt></ruby></span><span class="j">ラストオーダーです。</span><span class="t">Последний заказ.</span></div>
+    <div class="it" data-w="c"><span class="who c">お<ruby>客<rt>きゃく</rt></ruby></span><span class="j">お<ruby>会計<rt>かいけい</rt></ruby>お<ruby>願<rt>ねが</rt></ruby>いします。</span><span class="t">Счёт, пожалуйста.</span></div>
+    <div class="it" data-w="c"><span class="who c">お<ruby>客<rt>きゃく</rt></ruby></span><span class="j"><ruby>別々<rt>べつべつ</rt></ruby>に<ruby>払<rt>はら</rt></ruby>ってもいいですか？</span><span class="t">Можно заплатить раздельно?</span></div>
+    <div class="it" data-w="c"><span class="who c">お<ruby>客<rt>きゃく</rt></ruby></span><span class="j">カードは<ruby>使<rt>つか</rt></ruby>えますか？</span><span class="t">Картой можно?</span></div>
+    <div class="it" data-w="c"><span class="who c">お<ruby>客<rt>きゃく</rt></ruby></span><span class="j">ごちそうさまでした。</span><span class="t">Спасибо за угощение. Говорят на выходе.</span></div>
+  </div>
+</section>
+
+<section id="grammar">
+  <div class="sh"><h2><ruby>今日<rt>きょう</rt></ruby>の<ruby>文法<rt>ぶんぽう</rt></ruby></h2><p>Пять конструкций для бара</p></div>
+  <div class="gram">
+    <div class="g"><div class="k">Выбор</div><h3>〜にします</h3><p class="j"><ruby>私<rt>わたし</rt></ruby>はレモンサワーにします。</p><p class="t">Я возьму лимонный сауэр.</p><p class="j"><ruby>飲<rt>の</rt></ruby>み<ruby>物<rt>もの</rt></ruby>は<ruby>何<rt>なに</rt></ruby>にしますか？</p><p class="t">Что будешь пить?</p><p class="j">じゃあ、<ruby>焼<rt>や</rt></ruby>き<ruby>鳥<rt>とり</rt></ruby>は<ruby>塩<rt>しお</rt></ruby>にしましょう。</p><p class="t">Тогда якитори возьмём с солью.</p></div>
+    <div class="g"><div class="k">Предложить, вызваться</div><h3>〜ませんか / 〜ましょうか</h3><p class="j"><ruby>唐揚<rt>からあ</rt></ruby>げも<ruby>頼<rt>たの</rt></ruby>みませんか？</p><p class="t">Может, ещё карааге закажем?</p><p class="j"><ruby>私<rt>わたし</rt></ruby>が<ruby>注文<rt>ちゅうもん</rt></ruby>しましょうか？</p><p class="t">Давай я закажу?</p><p class="j"><ruby>乾杯<rt>かんぱい</rt></ruby>しましょう！</p><p class="t">Давайте выпьем!</p></div>
+    <div class="g"><div class="k">Опыт</div><h3>〜たことがあります</h3><p class="j"><ruby>日本酒<rt>にほんしゅ</rt></ruby>を<ruby>飲<rt>の</rt></ruby>んだことがありますか？</p><p class="t">Вы когда-нибудь пили сакэ?</p><p class="j"><ruby>刺身<rt>さしみ</rt></ruby>は<ruby>食<rt>た</rt></ruby>べたことがありますが、<ruby>冷奴<rt>ひややっこ</rt></ruby>はまだありません。</p><p class="t">Сасими пробовал, а хияякко ещё нет.</p></div>
+    <div class="g"><div class="k">Разрешение и желание</div><h3>〜てもいいですか / 〜てみたい</h3><p class="j"><ruby>写真<rt>しゃしん</rt></ruby>を<ruby>撮<rt>と</rt></ruby>ってもいいですか？</p><p class="t">Можно сфотографировать?</p><p class="j"><ruby>別々<rt>べつべつ</rt></ruby>に<ruby>払<rt>はら</rt></ruby>ってもいいですか？</p><p class="t">Можно раздельно?</p><p class="j"><ruby>熱燗<rt>あつかん</rt></ruby>を<ruby>飲<rt>の</rt></ruby>んでみたいです。</p><p class="t">Хочу попробовать горячее сакэ.</p></div>
+    <div class="g"><div class="k">Слишком</div><h3>〜すぎました / 〜すぎます</h3><p class="j"><ruby>食<rt>た</rt></ruby>べすぎました。</p><p class="t">Я переел.</p><p class="j">この<ruby>唐揚<rt>からあ</rt></ruby>げは<ruby>辛<rt>から</rt></ruby>すぎます。</p><p class="t">Это карааге слишком острое.</p><p class="j"><ruby>昨日<rt>きのう</rt></ruby>は<ruby>飲<rt>の</rt></ruby>みすぎました…。</p><p class="t">Вчера перебрал…</p></div>
+  </div>
+  <details class="bonus">
+    <summary>Бонус для сильных</summary>
+    <div class="gram" style="margin-top:10px">
+      <div class="g"><h3>AよりBのほうが<ruby>好<rt>す</rt></ruby>き</h3><p class="j">ビールより<ruby>梅酒<rt>うめしゅ</rt></ruby>のほうが<ruby>好<rt>す</rt></ruby>きです。</p><p class="t">Умэсю нравится больше, чем пиво.</p></div>
+      <div class="g"><h3>〜んですが、〜</h3><p class="j">すみません、<ruby>注文<rt>ちゅうもん</rt></ruby>したいんですが…</p><p class="t">Извините, я хотел бы заказать…</p></div>
+      <div class="g"><h3>〜ので</h3><p class="j"><ruby>辛<rt>から</rt></ruby>いものが<ruby>苦手<rt>にがて</rt></ruby>なので、<ruby>甘<rt>あま</rt></ruby>いのにします。</p><p class="t">Острое не люблю, поэтому возьму сладкое.</p></div>
+    </div>
+  </details>
+</section>
+
+<section id="roleplay">
+  <div class="sh"><h2>ロールプレイ</h2><p>Ролевые игры. С этого момента только японский.</p></div>
+  <div class="tabs" role="tablist">
+    <button class="tab" role="tab" aria-selected="true" data-t="a"><b>A · <ruby>何<rt>なに</rt></ruby>にする？</b><span>Друзья выбирают</span></button>
+    <button class="tab" role="tab" aria-selected="false" data-t="b"><b>Б · お<ruby>客<rt>きゃく</rt></ruby>さんと<ruby>店員<rt>てんいん</rt></ruby></b><span>Гость и официант</span></button>
+    <button class="tab" role="tab" aria-selected="false" data-t="c"><b>В · お<ruby>会計<rt>かいけい</rt></ruby>とトラブル</b><span>Счёт и проблемы</span></button>
+  </div>
+
+  <div class="pane" data-p="a">
+    <h3><ruby>何<rt>なに</rt></ruby>にする？</h3>
+    <div class="meta"><span>Комнаты по 2–3 человека</span><span>7 минут</span><span>Бюджет ¥4,000 на всех</span></div>
+    <p class="task">Вы друзья в идзакае. У каждого есть секретная карточка-характер от ведущего. Не показывайте её, а объясняйте свои желания словами. Договоритесь о заказе на всех и уложитесь в бюджет: считайте в меню выше.</p>
+    <div class="cols">
+      <div>
+        <p class="lbl">Опорный диалог</p>
+        <ol class="dlg">
+          <li><span class="sp">A</span><span class="ln"><ruby>飲<rt>の</rt></ruby>み<ruby>物<rt>もの</rt></ruby>、<ruby>何<rt>なに</rt></ruby>にする？</span></li>
+          <li><span class="sp">B</span><span class="ln"><ruby>私<rt>わたし</rt></ruby>はビールにする。Cさんは？</span></li>
+          <li><span class="sp">C</span><span class="ln">お<ruby>酒<rt>さけ</rt></ruby>はちょっと… ウーロン<ruby>茶<rt>ちゃ</rt></ruby>にします。</span></li>
+          <li><span class="sp">A</span><span class="ln"><ruby>食<rt>た</rt></ruby>べ<ruby>物<rt>もの</rt></ruby>は？ <ruby>唐揚<rt>からあ</rt></ruby>げを<ruby>頼<rt>たの</rt></ruby>みませんか？</span></li>
+          <li><span class="sp">D</span><span class="ln"><ruby>私<rt>わたし</rt></ruby>、<ruby>肉<rt>にく</rt></ruby>が<ruby>苦手<rt>にがて</rt></ruby>なので、<ruby>冷奴<rt>ひややっこ</rt></ruby>はどうですか？ <ruby>食<rt>た</rt></ruby>べたことがありますか？</span></li>
+          <li><span class="sp">A</span><span class="ln">ないです！ <ruby>食<rt>た</rt></ruby>べてみたいです。じゃあ、<ruby>両方<rt>りょうほう</rt></ruby>にしましょう。</span></li>
+        </ol>
+      </div>
+      <div>
+        <p class="lbl">Используйте</p>
+        <div class="helpers"><span>〜が<ruby>苦手<rt>にがて</rt></ruby>なので</span><span>〜たことがありません</span><span>〜にしませんか</span><span>〜にしましょう</span><span>〜てみたいです</span></div>
+        <p class="lbl" style="margin-top:16px">В конце</p>
+        <p style="margin:0">Каждая комната зачитывает заказ и сумму. Другая комната угадывает, у кого какой характер.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="pane" data-p="b" hidden>
+    <h3>お<ruby>客<rt>きゃく</rt></ruby>さんと<ruby>店員<rt>てんいん</rt></ruby></h3>
+    <div class="meta"><span>Пары или тройка</span><span>2 захода по 4 минуты</span><span>После первого меняемся ролями</span></div>
+    <p class="task">Один играет <ruby>店員<rt>てんいん</rt></ruby>, остальные гости. Пройдите весь маршрут. Посреди сцены ведущий может зайти с карточкой-сюрпризом: выкручивайтесь по-японски.</p>
+    <p class="lbl">Маршрут · нажимайте на шаги по ходу сцены</p>
+    <ol class="route" id="route">
+      <li>いらっしゃいませ</li><li><ruby>何名様<rt>なんめいさま</rt></ruby>ですか</li><li>お<ruby>通<rt>とお</rt></ruby>し</li><li>とりあえず<ruby>生<rt>なま</rt></ruby></li><li>おすすめを<ruby>聞<rt>き</rt></ruby>く</li><li><ruby>注文<rt>ちゅうもん</rt></ruby></li><li><ruby>乾杯<rt>かんぱい</rt></ruby></li><li>おかわり</li><li>ラストオーダー</li>
+    </ol>
+    <button class="btn" id="routeReset" style="margin-bottom:16px">Сбросить маршрут</button>
+    <p class="lbl">Опорный диалог</p>
+    <ol class="dlg">
+      <li><span class="sp"><ruby>店員<rt>てんいん</rt></ruby></span><span class="ln">いらっしゃいませ！<ruby>何名様<rt>なんめいさま</rt></ruby>ですか？</span></li>
+      <li><span class="sp"><ruby>客<rt>きゃく</rt></ruby></span><span class="ln"><ruby>二人<rt>ふたり</rt></ruby>です。カウンター<ruby>席<rt>せき</rt></ruby>でもいいですか？</span></li>
+      <li><span class="sp"><ruby>店員<rt>てんいん</rt></ruby></span><span class="ln">はい、どうぞ。お<ruby>飲<rt>の</rt></ruby>み<ruby>物<rt>もの</rt></ruby>はお<ruby>決<rt>き</rt></ruby>まりですか？</span></li>
+      <li><span class="sp"><ruby>客<rt>きゃく</rt></ruby></span><span class="ln">とりあえず<ruby>生<rt>なま</rt></ruby>を<ruby>一<rt>ひと</rt></ruby>つと、ウーロン<ruby>茶<rt>ちゃ</rt></ruby>を<ruby>一<rt>ひと</rt></ruby>つお<ruby>願<rt>ねが</rt></ruby>いします。</span></li>
+      <li><span class="sp"><ruby>店員<rt>てんいん</rt></ruby></span><span class="ln">かしこまりました。</span></li>
+      <li><span class="sp"><ruby>客<rt>きゃく</rt></ruby></span><span class="ln">すみません、おすすめは<ruby>何<rt>なん</rt></ruby>ですか？</span></li>
+      <li><span class="sp"><ruby>店員<rt>てんいん</rt></ruby></span><span class="ln"><ruby>今日<rt>きょう</rt></ruby>は<ruby>刺身<rt>さしみ</rt></ruby>の<ruby>盛<rt>も</rt></ruby>り<ruby>合<rt>あ</rt></ruby>わせがおすすめです。</span></li>
+      <li><span class="sp"><ruby>客<rt>きゃく</rt></ruby></span><span class="ln">じゃあ、それにします。あと、<ruby>焼<rt>や</rt></ruby>き<ruby>鳥<rt>とり</rt></ruby>はたれでお<ruby>願<rt>ねが</rt></ruby>いします。</span></li>
+    </ol>
+  </div>
+
+  <div class="pane" data-p="c" hidden>
+    <h3>お<ruby>会計<rt>かいけい</rt></ruby>とトラブル</h3>
+    <div class="meta"><span>В общем зале</span><span>Сцена 1,5–2 минуты</span><span>Остальные пишут в чат いいね！</span></div>
+    <p class="task">Пара называет номер от 1 до 5, ведущий открывает карточку. Разыгрываете ситуацию прямо сейчас.</p>
+    <div class="draw" id="draw">
+      <button class="card"><span class="in"><span class="f"><b>1</b><span>タップ</span></span><span class="b"><h4>Не тот заказ</h4><p>Принесли <ruby>熱燗<rt>あつかん</rt></ruby>, а заказывали <ruby>冷酒<rt>れいしゅ</rt></ruby>. Вежливо поправьте.</p><p class="j">すみません、<ruby>冷酒<rt>れいしゅ</rt></ruby>を<ruby>頼<rt>たの</rt></ruby>んだんですが…</p></span></span></button>
+      <button class="card"><span class="in"><span class="f"><b>2</b><span>タップ</span></span><span class="b"><h4>Что это за お<ruby>通<rt>とお</rt></ruby>し?</h4><p>Принесли закуску, которую не заказывали, а в счёте ¥400. Спросите и поймите объяснение.</p><p class="j">これは<ruby>何<rt>なん</rt></ruby>ですか？<ruby>頼<rt>たの</rt></ruby>んでいませんが…</p></span></span></button>
+      <button class="card"><span class="in"><span class="f"><b>3</b><span>タップ</span></span><span class="b"><h4>Раздельный счёт</h4><p>Вас трое, все хотят платить отдельно, а один брал <ruby>飲<rt>の</rt></ruby>み<ruby>放題<rt>ほうだい</rt></ruby>.</p><p class="j"><ruby>別々<rt>べつべつ</rt></ruby>に<ruby>払<rt>はら</rt></ruby>ってもいいですか？</p></span></span></button>
+      <button class="card"><span class="in"><span class="f"><b>4</b><span>タップ</span></span><span class="b"><h4>Слишком много</h4><p>Заказали слишком много еды. Откажитесь от последнего блюда.</p><p class="j"><ruby>食<rt>た</rt></ruby>べすぎました。お<ruby>茶漬<rt>ちゃづ</rt></ruby>けはキャンセルしてもいいですか？</p></span></span></button>
+      <button class="card"><span class="in"><span class="f"><b>5</b><span>タップ</span></span><span class="b"><h4>Только наличные</h4><p>Карту не принимают, а денег не хватает. Договоритесь с другом.</p><p class="j">〇〇さん、<ruby>貸<rt>か</rt></ruby>してもらえませんか？</p></span></span></button>
+    </div>
+    <button class="btn" id="drawReset" style="margin-top:12px">Перевернуть все обратно</button>
+  </div>
+</section>
+
+<section id="talk">
+  <div class="sh"><h2><ruby>居酒屋<rt>いざかや</rt></ruby>トーク</h2><p>Отвечаете на вопрос и выбираете вопрос для следующего</p></div>
+  <button class="btn primary" id="rand" style="margin-bottom:12px">Случайный вопрос</button>
+  <ol class="qs" id="qs">
+    <li><ruby>居酒屋<rt>いざかや</rt></ruby>に<ruby>行<rt>い</rt></ruby>ったことがありますか？ どこで、だれと<ruby>行<rt>い</rt></ruby>きましたか？</li>
+    <li><ruby>日本<rt>にほん</rt></ruby>の<ruby>料理<rt>りょうり</rt></ruby>で、<ruby>一番<rt>いちばん</rt></ruby><ruby>食<rt>た</rt></ruby>べてみたい<ruby>物<rt>もの</rt></ruby>は<ruby>何<rt>なん</rt></ruby>ですか？ どうしてですか？</li>
+    <li><ruby>一人<rt>ひとり</rt></ruby>で<ruby>飲<rt>の</rt></ruby>みに<ruby>行<rt>い</rt></ruby>くのは<ruby>好<rt>す</rt></ruby>きですか？ <ruby>友<rt>とも</rt></ruby>だちと<ruby>行<rt>い</rt></ruby>くほうが<ruby>好<rt>す</rt></ruby>きですか？</li>
+    <li>「とりあえず<ruby>生<rt>なま</rt></ruby>」みたいな<ruby>習慣<rt>しゅうかん</rt></ruby>は、あなたの<ruby>国<rt>くに</rt></ruby>にもありますか？</li>
+    <li><ruby>乾杯<rt>かんぱい</rt></ruby>の<ruby>時<rt>とき</rt></ruby>、あなたの<ruby>国<rt>くに</rt></ruby>では<ruby>何<rt>なん</rt></ruby>と<ruby>言<rt>い</rt></ruby>いますか？</li>
+    <li><ruby>食<rt>た</rt></ruby>べすぎたこと、<ruby>飲<rt>の</rt></ruby>みすぎたことがありますか？ その<ruby>時<rt>とき</rt></ruby>、どうなりましたか？</li>
+    <li><ruby>自分<rt>じぶん</rt></ruby>の<ruby>居酒屋<rt>いざかや</rt></ruby>を<ruby>開<rt>ひら</rt></ruby>くなら、どんな<ruby>店<rt>みせ</rt></ruby>にしたいですか？ メニューに<ruby>何<rt>なに</rt></ruby>を<ruby>入<rt>い</rt></ruby>れますか？</li>
+    <li><ruby>飲<rt>の</rt></ruby>み<ruby>会<rt>かい</rt></ruby>で、<ruby>上司<rt>じょうし</rt></ruby>や<ruby>先生<rt>せんせい</rt></ruby>にお<ruby>酒<rt>さけ</rt></ruby>をつぐのは<ruby>大切<rt>たいせつ</rt></ruby>だと<ruby>思<rt>おも</rt></ruby>いますか？</li>
+  </ol>
+</section>
+
+<section id="facts">
+  <div class="sh"><h2><ruby>豆知識<rt>まめちしき</rt></ruby></h2><p>Факты об идзакаях</p></div>
+  <div class="facts">
+    <div class="fact"><h3><ruby>居<rt>い</rt></ruby>る + <ruby>酒屋<rt>さかや</rt></ruby></h3><p>«Оставаться» + «магазин сакэ». В эпоху Эдо покупатели начали пить прямо в лавке, и хозяева поставили скамейки и стали давать закуски.</p></div>
+    <div class="fact"><h3><ruby>赤<rt>あか</rt></ruby>ちょうちん</h3><p>Красный бумажный фонарь у входа означает недорогую идзакаю. 「赤ちょうちんに行こう」 значит «пойдём выпьем по-простому».</p></div>
+    <div class="fact"><h3>お<ruby>通<rt>とお</rt></ruby>し</h3><p>Закуску приносят без заказа и включают в счёт, обычно ¥300–500. Это плата за место, а не обман.</p></div>
+    <div class="fact"><h3>とりあえず<ruby>生<rt>なま</rt></ruby></h3><p>Первая фраза почти любого вечера, пока остальные выбирают. Сейчас её всё чаще меняют на ハイボール.</p></div>
+    <div class="fact"><h3><ruby>乾杯<rt>かんぱい</rt></ruby>を<ruby>待<rt>ま</rt></ruby>つ</h3><p>Пить до общего тоста невежливо. Себе не наливают: следят за бокалом соседа, а он нальёт тебе.</p></div>
+    <div class="fact"><h3>はい、よろこんで！</h3><p>Официанта подзывают громким すみません, а персонал отвечает хором «с радостью!». На многих столах есть кнопка вызова.</p></div>
+    <div class="fact"><h3><ruby>飲<rt>の</rt></ruby>み<ruby>放題<rt>ほうだい</rt></ruby></h3><p>Безлимит на 90–120 минут за фиксированную цену, обычно с ラストオーダー за 30 минут до конца.</p></div>
+    <div class="fact"><h3><ruby>〆<rt>しめ</rt></ruby>と<ruby>二次会<rt>にじかい</rt></ruby></h3><p>Вечер закрывают お茶漬け или рамэном, а потом идут на вторую точку, часто в караоке.</p></div>
+    <div class="fact"><h3>チップなし</h3><p>Чаевые в Японии не оставляют. Если забыли сдачу, вас могут догнать на улице и вернуть её.</p></div>
+  </div>
+</section>
+
+<section id="timer">
+  <div class="timer">
+    <h3><ruby>日本語<rt>にほんご</rt></ruby>だけタイム</h3>
+    <p class="rule">Только японский до конца ролевых. Перешли на русский? Скажите すみません и продолжайте.</p>
+    <div class="clock" id="clock" role="timer" aria-live="off">27:00</div>
+    <div class="presets" role="group" aria-label="Длительность">
+      <button class="btn" data-m="4" aria-pressed="false">4 <ruby>分<rt>ふん</rt></ruby></button>
+      <button class="btn" data-m="7" aria-pressed="false">7 <ruby>分<rt>ふん</rt></ruby></button>
+      <button class="btn" data-m="11" aria-pressed="false">11 <ruby>分<rt>ふん</rt></ruby></button>
+      <button class="btn" data-m="27" aria-pressed="true">27 <ruby>分<rt>ふん</rt></ruby></button>
+    </div>
+    <div class="ctrl">
+      <button class="btn primary" id="go">スタート</button>
+      <button class="btn" id="reset">Сброс</button>
+    </div>
+  </div>
+</section>
+
+<footer>Разговорный клуб Ma Kagami · 居酒屋ナイト · 17.10.2026 · следующая встреча 24 октября · ごちそうさまでした！</footer>
+</div>
+</main>
+
+<script>
+(() => {
+  const $ = (s, r = document) => r.querySelector(s), $$ = (s, r = document) => [...r.querySelectorAll(s)];
+  const yen = n => '¥' + n.toLocaleString('en-US');
+  const store = {
+    get(k) { try { return JSON.parse(localStorage.getItem(k)); } catch { return null; } },
+    set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch {} }
+  };
+
+  // host block
+  const host = $('#host');
+  const syncHost = () => host.classList.toggle('on', location.hash === '#host');
+  syncHost(); addEventListener('hashchange', syncHost);
+  $$('.copy').forEach(b => b.addEventListener('click', () => {
+    const c = b.closest('.hc'), t = c.querySelector('.j').cloneNode(true);
+    t.querySelectorAll('rt').forEach(r => r.remove());
+    const txt = t.textContent + '\n' + c.querySelector('p').textContent;
+    const done = () => { b.textContent = 'Скопировано'; setTimeout(() => b.textContent = 'Копировать', 1500); };
+    navigator.clipboard?.writeText(txt).then(done, () => { getSelection().selectAllChildren(c.firstElementChild); b.textContent = 'Выделено, скопируйте'; });
+  }));
+
+  // furigana
+  const furi = $('#furi');
+  const setFuri = on => { document.documentElement.classList.toggle('nofuri', !on); furi.setAttribute('aria-pressed', on); store.set('furi', on); };
+  setFuri(store.get('furi') !== false);
+  furi.addEventListener('click', () => setFuri(furi.getAttribute('aria-pressed') !== 'true'));
+
+  // order
+  const BUDGET = 4000, order = store.get('order') || {};
+  const tags = $$('.tag'), byId = Object.fromEntries(tags.map(t => [t.dataset.id, t]));
+  function render() {
+    let sum = 0; const lines = $('#lines'); lines.innerHTML = '';
+    for (const t of tags) {
+      const q = order[t.dataset.id] || 0;
+      t.classList.toggle('has', q > 0); t.querySelector('.q').textContent = '×' + q;
+      if (!q) continue;
+      const p = +t.dataset.p; sum += p * q;
+      const li = document.createElement('li');
+      li.innerHTML = `<span class="n"></span><span class="qty"><button aria-label="Убрать одну">−</button><b>${q}</b><button aria-label="Добавить одну">+</button></span><span class="s">${yen(p * q)}</span>`;
+      li.querySelector('.n').textContent = t.dataset.n;
+      const [minus, plus] = li.querySelectorAll('button');
+      minus.onclick = () => change(t.dataset.id, -1); plus.onclick = () => change(t.dataset.id, 1);
+      lines.append(li);
+    }
+    $('#empty').hidden = sum > 0;
+    $('#sum').textContent = yen(sum);
+    const over = sum > BUDGET;
+    $('#fill').style.width = Math.min(100, sum / BUDGET * 100) + '%';
+    $('#budget').classList.toggle('over', over);
+    $('#bmsg').textContent = sum === 0 ? 'Бюджет сценария А: ¥4,000 на всех'
+      : over ? `Перебор на ${yen(sum - BUDGET)}. 予算オーバー！` : `Осталось ${yen(BUDGET - sum)} из ¥4,000`;
+    store.set('order', order);
+  }
+  function change(id, d) { order[id] = Math.max(0, (order[id] || 0) + d); if (!order[id]) delete order[id]; render(); }
+  tags.forEach(t => t.addEventListener('click', () => change(t.dataset.id, 1)));
+  $('#clear').onclick = () => { for (const k in order) delete order[k]; render(); };
+  for (const k in order) if (!byId[k]) delete order[k];
+  render();
+
+  // phrase filter
+  $$('.filters .chip').forEach(b => b.addEventListener('click', () => {
+    $$('.filters .chip').forEach(x => x.setAttribute('aria-pressed', x === b)); $('#phr').dataset.f = b.dataset.f;
+  }));
+
+  // roleplay tabs
+  const showTab = k => { $$('.tab').forEach(t => t.setAttribute('aria-selected', t.dataset.t === k)); $$('.pane[data-p]').forEach(p => p.hidden = p.dataset.p !== k); store.set('tab', k); };
+  $$('.tab').forEach(t => t.addEventListener('click', () => showTab(t.dataset.t)));
+  showTab(store.get('tab') || 'a');
+  $$('#route li').forEach(li => li.addEventListener('click', () => li.classList.toggle('done')));
+  $('#routeReset').onclick = () => $$('#route li').forEach(li => li.classList.remove('done'));
+  $$('#draw .card').forEach(c => c.addEventListener('click', () => c.classList.toggle('open')));
+  $('#drawReset').onclick = () => $$('#draw .card').forEach(c => c.classList.remove('open'));
+
+  // random question
+  const qs = $$('#qs li'); let last = -1;
+  $('#rand').onclick = () => {
+    let i; do { i = Math.floor(Math.random() * qs.length); } while (i === last && qs.length > 1);
+    last = i; qs.forEach((q, j) => q.classList.toggle('pick', j === i));
+    qs[i].scrollIntoView({ block: 'center', behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
+  };
+
+  // timer
+  const clock = $('#clock'), go = $('#go'), mini = $('#miniClock');
+  let total = 27 * 60, left = total, end = 0, tick = null;
+  const fmt = s => String(Math.floor(s / 60)).padStart(2, '0') + ':' + String(s % 60).padStart(2, '0');
+  function paint() {
+    clock.textContent = fmt(left); clock.classList.toggle('end', left === 0);
+    mini.hidden = !tick && (left === total || left === 0);
+    mini.textContent = (left === 0 ? 'おわり' : '日本語だけ ') + (left ? fmt(left) : '');
+  }
+  function stop() { clearInterval(tick); tick = null; go.textContent = left ? 'つづける' : 'スタート'; paint(); }
+  function start() {
+    if (!left) left = total;
+    end = Date.now() + left * 1000; go.textContent = 'ストップ';
+    tick = setInterval(() => { left = Math.max(0, Math.round((end - Date.now()) / 1000)); if (!left) stop(); paint(); }, 250);
+    paint();
+  }
+  go.onclick = () => tick ? stop() : start();
+  $('#reset').onclick = () => { clearInterval(tick); tick = null; left = total; go.textContent = 'スタート'; paint(); };
+  mini.onclick = () => $('#timer').scrollIntoView();
+  $$('.presets .btn').forEach(b => b.addEventListener('click', () => {
+    $$('.presets .btn').forEach(x => x.setAttribute('aria-pressed', x === b));
+    clearInterval(tick); tick = null; total = left = +b.dataset.m * 60; go.textContent = 'スタート'; paint();
+  }));
+  paint();
+})();
+</script>
+</body></html>
