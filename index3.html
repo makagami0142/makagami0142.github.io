@@ -1,0 +1,965 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>東京さんぽ</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Dela+Gothic+One&family=Golos+Text:wght@400;500;600&family=Zen+Kaku+Gothic+New:wght@400;700&display=swap">
+<style>
+/* Layout: the page is a JR station: header is a station name board (prev = last meeting, next = next meeting), the Yamanote loop is the recurring map and game board, sections read as one column */
+:root{
+  --bg:#edf1ee; --paper:#ffffff; --ink:#17221d; --muted:#56635c; --rule:#d3dcd6; --soft:#e2e9e4;
+  --line:#7cb342; --line-ink:#2f6d1e; --line-soft:#e6f2da;
+  --signal:#d23f36; --signal-soft:#fbe1df;
+  --sign:#ffffff; --sign-ink:#17221d;
+  --display:"Dela Gothic One","Zen Kaku Gothic New","Hiragino Sans",sans-serif;
+  --jp:"Zen Kaku Gothic New","Hiragino Sans","Yu Gothic",sans-serif;
+  --ru:"Golos Text",system-ui,-apple-system,"Segoe UI",sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0e1512; --paper:#16201b; --ink:#e4ece7; --muted:#9aa9a1; --rule:#2a3a32; --soft:#1f2c25;
+  --line:#8bc34a; --line-ink:#a5d66b; --line-soft:#1f3218;
+  --signal:#f0645a; --signal-soft:#3a1e1d;
+  --sign:#1b2621; --sign-ink:#e4ece7; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0e1512; --paper:#16201b; --ink:#e4ece7; --muted:#9aa9a1; --rule:#2a3a32; --soft:#1f2c25;
+  --line:#8bc34a; --line-ink:#a5d66b; --line-soft:#1f3218;
+  --signal:#f0645a; --signal-soft:#3a1e1d;
+  --sign:#1b2621; --sign-ink:#e4ece7; color-scheme:dark}
+
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font:16px/1.55 var(--ru)}
+h1,h2,h3,h4{margin:0;font-weight:400;text-wrap:balance}
+ruby rt{font-size:.5em;color:var(--muted);font-family:var(--jp);font-weight:400}
+html.nofuri rt{visibility:hidden}
+button,select,input{font:inherit;color:inherit}
+button{cursor:pointer}
+button:focus-visible,a:focus-visible,select:focus-visible,input:focus-visible{outline:3px solid var(--signal);outline-offset:2px}
+.wrap{max-width:1000px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.jp{font-family:var(--jp)}
+
+/* station board header */
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--bg)}
+header{padding-block:24px 8px}
+.board{background:var(--sign);color:var(--sign-ink);border:1px solid var(--rule);border-radius:6px;overflow:hidden;box-shadow:0 1px 0 var(--rule)}
+.board .top{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:16px;padding:18px 22px 12px}
+.num{border:4px solid var(--line);border-radius:8px;width:62px;height:62px;display:grid;place-content:center;text-align:center;line-height:1;background:var(--paper)}
+.num small{font-family:var(--ru);font-weight:600;font-size:13px;color:var(--line-ink)}
+.num b{font-family:var(--ru);font-weight:600;font-size:26px}
+.name{text-align:center}
+.name .kana{font-family:var(--jp);font-weight:700;letter-spacing:.4em;color:var(--muted);font-size:15px}
+.name h1{font-family:var(--display);font-size:clamp(38px,8vw,68px);letter-spacing:.08em;line-height:1.05}
+.name .lat{font-family:var(--ru);font-weight:500;letter-spacing:.3em;font-size:13px;text-transform:uppercase;color:var(--muted);margin-top:2px}
+.board .meta{font-size:13px;color:var(--muted);text-align:right;max-width:150px}
+.band{background:var(--line);height:16px;position:relative}
+.band::after{content:"";position:absolute;left:50%;top:-6px;width:28px;height:28px;margin-left:-14px;border-radius:50%;background:var(--sign);border:6px solid var(--line)}
+.dir{display:flex;justify-content:space-between;gap:12px;padding:10px 22px 14px;font-size:14px}
+.dir a{text-decoration:none;color:var(--ink);display:flex;flex-direction:column;gap:0}
+.dir a:last-child{text-align:right}
+.dir b{font-family:var(--jp);font-weight:700;font-size:18px}
+.dir span{color:var(--muted);font-size:13px}
+
+nav.bar{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);border-bottom:1px solid var(--rule)}
+nav.bar .wrap{display:flex;gap:4px;align-items:center;padding-block:8px;overflow-x:auto;scrollbar-width:none}
+nav.bar a{flex:none;text-decoration:none;color:var(--ink);font-family:var(--jp);font-weight:700;font-size:14px;padding:6px 10px;border-radius:999px}
+nav.bar a span{font-family:var(--ru);font-weight:400;color:var(--muted);font-size:12px;margin-left:4px}
+nav.bar a:hover{background:var(--soft)}
+.tools{margin-left:auto;display:flex;gap:6px;flex:none}
+.chip{border:1px solid var(--rule);background:var(--paper);border-radius:999px;padding:5px 12px;font-size:13px;font-family:var(--jp);font-weight:700;white-space:nowrap}
+.chip[aria-pressed="true"]{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.mini{font-variant-numeric:tabular-nums;background:var(--signal);color:#fff;border-color:var(--signal)}
+
+main .wrap{padding-block:4px 64px}
+section{padding-top:44px;scroll-margin-top:56px}
+.sh{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 12px;margin-bottom:14px}
+.sh h2{font-family:var(--display);font-size:clamp(24px,4vw,32px)}
+.sh p{margin:0;color:var(--muted)}
+.note{color:var(--muted);font-size:14px;margin:0 0 14px;max-width:70ch}
+.lbl{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:600;margin:0 0 6px}
+.btn{border:1px solid var(--rule);background:var(--paper);border-radius:6px;padding:6px 12px;font-size:14px}
+.btn.primary{background:var(--line-ink);border-color:var(--line-ink);color:var(--paper);font-weight:600}
+.panel{background:var(--paper);border:1px solid var(--rule);border-radius:6px}
+
+/* map */
+.mapwrap{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);gap:18px;align-items:start}
+.map svg{display:block;width:100%;height:auto}
+.map{padding:8px}
+.m-loop{fill:none;stroke:var(--line);stroke-width:12}
+.m-water{fill:var(--soft)}
+.m-link{stroke:var(--muted);stroke-width:2;stroke-dasharray:4 5;fill:none}
+.m-dot{fill:var(--paper);stroke:var(--ink);stroke-width:3;cursor:pointer;transition:r .15s}
+.m-off{fill:var(--paper);stroke:var(--line-ink);stroke-width:3;cursor:pointer}
+.m-st{fill:var(--ink)}
+.m-d text,.m-l text{font-family:var(--jp);font-weight:700;font-size:20px;fill:var(--ink);paint-order:stroke;stroke:var(--paper);stroke-width:5px;stroke-linejoin:round}
+.m-l text{font-size:15px;fill:var(--muted)}
+.m-d{cursor:pointer}
+.m-d.sel .m-dot,.m-d.sel .m-off{fill:var(--signal);stroke:var(--signal)}
+.m-d.sel text{fill:var(--signal)}
+.m-d:focus-visible{outline:none}
+.m-d:focus-visible .m-dot,.m-d:focus-visible .m-off{stroke:var(--signal);stroke-width:5}
+svg text.rd{font-weight:400;stroke-width:4px;font-family:var(--jp);font-size:11px;fill:var(--muted);paint-order:stroke;stroke:var(--paper);stroke-width:4px}
+html.nofuri svg text.rd{visibility:hidden}
+.m-center{font-family:var(--jp);font-weight:700;font-size:15px;fill:var(--line-ink)}
+.dcard{padding:18px 20px;display:grid;gap:10px}
+.dcard h3{font-family:var(--display);font-size:40px;line-height:1.2}
+.dcard .r{color:var(--muted);font-size:14px;margin-top:-4px}
+.dcard .tg{justify-self:start;font-family:var(--jp);font-weight:700;font-size:14px;background:var(--line-soft);color:var(--line-ink);border-radius:4px;padding:2px 10px}
+.dcard .j{font-family:var(--jp);font-weight:700;font-size:20px;line-height:1.9}
+.dcard p{margin:0}
+.dlist{display:flex;flex-wrap:wrap;gap:6px;margin-top:4px}
+.dlist button{border:1px solid var(--rule);background:var(--paper);border-radius:999px;padding:2px 10px;font-family:var(--jp);font-weight:700;font-size:14px}
+.dlist button[aria-pressed="true"]{background:var(--signal);border-color:var(--signal);color:#fff}
+.dlist button[aria-pressed="true"] rt{color:#fff}
+
+/* words */
+.vgroup{margin-bottom:18px}
+.vgroup h3{font-family:var(--jp);font-weight:700;font-size:17px;margin-bottom:8px;display:flex;gap:10px;align-items:baseline}
+.vgroup h3 span{font-family:var(--ru);font-weight:400;font-size:14px;color:var(--muted)}
+.vgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:1px;background:var(--rule);border:1px solid var(--rule);border-radius:6px;overflow:hidden}
+.v{background:var(--paper);padding:10px 14px}
+.v .w{font-family:var(--jp);font-weight:700;font-size:19px;line-height:1.9}
+.v .t{font-size:14px;color:var(--muted)}
+.filters{display:flex;gap:6px;margin:22px 0 10px;flex-wrap:wrap;align-items:center}
+.phr .it{display:grid;grid-template-columns:72px 1fr;gap:2px 14px;padding:11px 16px;border-top:1px solid var(--rule);align-items:baseline}
+.phr .it:first-child{border-top:0}
+.who{font-family:var(--jp);font-size:12px;font-weight:700;text-align:center;border-radius:4px;padding:2px 0;grid-row:span 2}
+.who.t{background:var(--line-soft);color:var(--line-ink)}
+.who.l{background:var(--ink);color:var(--paper)}
+.phr .j{font-family:var(--jp);font-weight:700;font-size:clamp(17px,2.4vw,20px);line-height:1.85}
+.phr .tr{color:var(--muted);font-size:14px}
+.phr[data-f="t"] .it[data-w="l"],.phr[data-f="l"] .it[data-w="t"]{display:none}
+
+/* grammar */
+.gram{display:grid;grid-template-columns:repeat(auto-fit,minmax(290px,1fr));gap:12px}
+.g{padding:14px 16px}
+.g .k{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--line-ink);font-weight:600}
+.g h3{font-family:var(--jp);font-weight:700;font-size:22px;margin:2px 0 2px}
+.g .d{color:var(--muted);font-size:14px;margin:0 0 8px}
+.g p{margin:0}
+.g .j{font-family:var(--jp);font-size:17px;line-height:1.85}
+.g .t{color:var(--muted);font-size:14px;margin-bottom:6px}
+details.bonus{margin-top:12px;background:var(--paper);border:1px dashed var(--rule);border-radius:6px;padding:10px 16px}
+details.bonus summary{cursor:pointer;font-weight:600}
+details.bonus .j{font-family:var(--jp);font-size:17px;line-height:1.85}
+
+/* sugoroku */
+.sg{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);gap:18px;align-items:start}
+.sg .board2{padding:8px}
+.sg svg{display:block;width:100%;height:auto}
+.s-loop{fill:none;stroke:var(--line);stroke-width:14}
+.s-st circle{fill:var(--paper);stroke:var(--ink);stroke-width:3}
+.s-st.start circle{stroke:var(--line-ink);stroke-width:6}
+.s-st.special circle{stroke:var(--signal)}
+.s-st text{font-family:var(--jp);font-weight:700;font-size:17px;fill:var(--ink);paint-order:stroke;stroke:var(--paper);stroke-width:5px;stroke-linejoin:round;text-anchor:middle}
+.s-st{cursor:pointer}
+.s-st.hit circle{fill:var(--signal-soft);stroke:var(--signal)}
+.tok{transition:transform .22s ease}
+.tok circle{stroke:var(--paper);stroke-width:2.5}
+.tok text{font-family:var(--ru);font-weight:600;font-size:11px;fill:#fff;text-anchor:middle;dominant-baseline:central}
+.dieface{fill:var(--paper);stroke:var(--ink);stroke-width:3}
+.pip{fill:var(--ink)}
+.s-c1{font-family:var(--jp);font-weight:700;font-size:16px;fill:var(--line-ink);text-anchor:middle}
+.s-c2{font-family:var(--ru);font-size:14px;fill:var(--muted);text-anchor:middle}
+@media (prefers-reduced-motion:reduce){.tok{transition:none}}
+.side{display:grid;gap:12px}
+.players{padding:12px 14px;display:grid;gap:8px}
+.prow{display:grid;grid-template-columns:22px 1fr auto;gap:8px;align-items:center}
+.prow i{width:18px;height:18px;border-radius:50%;display:block}
+.prow input{border:1px solid var(--rule);background:var(--paper);border-radius:4px;padding:3px 8px;width:100%;min-width:0;font-size:15px}
+.prow.cur input{border-color:var(--ink);font-weight:600}
+.prow .st{font-size:13px;color:var(--muted);font-variant-numeric:tabular-nums;white-space:nowrap}
+.prow.cur .st{color:var(--signal);font-weight:600}
+.pcount{display:flex;gap:6px;align-items:center;flex-wrap:wrap;font-size:14px;color:var(--muted)}
+.pcount .chip{padding:3px 10px}
+.task{padding:16px 18px;border:2px solid var(--line)}
+.task .who2{font-size:14px;color:var(--muted)}
+.task h3{font-family:var(--display);font-size:30px;line-height:1.25;margin:2px 0 6px}
+.task .j{font-family:var(--jp);font-weight:700;font-size:19px;line-height:1.9;margin:0}
+.task .ru{font-size:14px;color:var(--muted);margin:6px 0 0}
+.task .badge{display:inline-block;margin-top:8px;background:var(--signal);color:#fff;border-radius:4px;padding:2px 10px;font-weight:600;font-size:14px}
+.ctrls{display:flex;gap:8px;flex-wrap:wrap}
+.ctrls .btn.primary{font-size:17px;padding:8px 18px}
+
+/* shiori */
+.sh-top{display:flex;flex-wrap:wrap;gap:10px 18px;align-items:center;margin-bottom:12px}
+.sh-top label{font-size:14px;color:var(--muted);display:flex;gap:8px;align-items:center}
+.sh-top select{border:1px solid var(--rule);background:var(--paper);border-radius:6px;padding:4px 8px}
+.days{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+.day{padding:12px}
+.day h3{font-family:var(--jp);font-weight:700;font-size:18px;margin-bottom:8px;display:flex;justify-content:space-between;align-items:baseline}
+.day h3 .dn{font-family:var(--jp);font-size:18px;color:var(--ink)}
+.day h3 span{font-family:var(--ru);font-weight:400;font-size:12px;color:var(--muted)}
+.slot{display:grid;gap:2px;margin-bottom:8px}
+.slot label{font-family:var(--jp);font-weight:700;font-size:13px;color:var(--muted)}
+.slot select{width:100%;border:1px solid var(--rule);background:var(--paper);border-radius:6px;padding:6px;font-family:var(--jp);font-size:15px}
+.slot .c{font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums;text-align:right}
+.day.trip{background:var(--line-soft);border-color:var(--line)}
+.sumrow{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.4fr);gap:14px;margin-top:12px;align-items:start}
+.budget{padding:14px 16px}
+.budget .tot{display:flex;justify-content:space-between;align-items:baseline}
+.budget .tot b{font-size:30px;font-weight:600;font-variant-numeric:tabular-nums}
+.track{height:10px;background:var(--soft);border-radius:5px;overflow:hidden;margin-top:8px}
+.fill{height:100%;width:0;background:var(--line);transition:width .2s}
+.budget.over .fill{background:var(--signal)}
+.budget p{margin:6px 0 0;font-size:14px;color:var(--muted)}
+.budget.over p{color:var(--signal);font-weight:600}
+.shiori{padding:16px 18px;border-left:6px solid var(--line)}
+.shiori h3{font-family:var(--display);font-size:22px;margin-bottom:8px}
+.shiori ul{margin:0;padding:0;list-style:none;display:grid;gap:8px}
+.shiori li{font-family:var(--jp);font-size:17px;line-height:1.9}
+.shiori .ex{font-size:13px;color:var(--muted);margin:8px 0 0}
+
+/* trouble */
+.draw{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.card{perspective:900px;min-height:220px;border:0;background:none;padding:0;text-align:left}
+.card .in{position:relative;display:block;width:100%;height:100%;min-height:220px;transition:transform .5s;transform-style:preserve-3d}
+.card.open .in{transform:rotateY(180deg)}
+.card .f,.card .b{position:absolute;inset:0;backface-visibility:hidden;border-radius:6px;padding:12px}
+.card .f{background:var(--line);color:#17221d;display:grid;place-content:center;text-align:center}
+.card .f b{font-family:var(--display);font-size:56px;line-height:1}
+.card .f span{font-size:13px;font-family:var(--jp);font-weight:700}
+.card .b{background:var(--paper);border:1px solid var(--rule);transform:rotateY(180deg);overflow:auto}
+.card .b h4{margin:0 0 4px;font-size:16px;font-weight:600}
+.card .b p{margin:0 0 6px;font-size:14px;line-height:1.45}
+.card .b .j{font-family:var(--jp);font-weight:700;font-size:15px;line-height:1.85;color:var(--line-ink)}
+@media (prefers-reduced-motion:reduce){.card .in{transition:none}}
+
+/* talk */
+.qs{list-style:none;margin:0;padding:0;display:grid;gap:8px;counter-reset:q}
+.qs li{counter-increment:q;background:var(--paper);border:1px solid var(--rule);border-radius:6px;padding:12px 16px 12px 52px;position:relative;font-family:var(--jp);font-size:clamp(17px,2.3vw,20px);line-height:1.85}
+.qs li::before{content:counter(q);position:absolute;left:14px;top:14px;width:26px;height:26px;border-radius:50%;background:var(--soft);display:grid;place-content:center;font-family:var(--ru);font-size:13px;font-weight:600}
+.qs li.pick{border-color:var(--signal);background:var(--signal-soft)}
+.qs li.pick::before{background:var(--signal);color:#fff}
+
+/* quiz */
+.quiz{padding:18px 20px}
+.qstep{font-size:13px;color:var(--muted);font-variant-numeric:tabular-nums}
+.quiz h3{font-family:var(--jp);font-weight:700;font-size:22px;line-height:1.8;margin:2px 0 12px}
+.opts{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:8px}
+.opts button{border:1px solid var(--rule);background:var(--paper);border-radius:6px;padding:10px 14px;text-align:left;font-family:var(--jp);font-weight:700;font-size:16px;line-height:1.8}
+.opts button:hover{border-color:var(--line-ink);background:var(--line-soft)}
+.res{display:grid;grid-template-columns:auto 1fr;gap:18px;align-items:center}
+.stamp{width:132px;height:132px;border-radius:50%;border:5px double var(--signal);color:var(--signal);display:grid;place-content:center;text-align:center;transform:rotate(-8deg)}
+.stamp b{font-family:var(--display);font-size:34px;line-height:1.1}
+.stamp span{font-family:var(--jp);font-weight:700;font-size:13px}
+.res .j{font-family:var(--jp);font-weight:700;font-size:18px;line-height:1.9;margin:6px 0}
+.res p{margin:0}
+.say{margin-top:10px;background:var(--line-soft);border-radius:6px;padding:8px 12px;font-family:var(--jp);font-weight:700;font-size:17px;line-height:1.9}
+
+/* facts */
+.facts{display:grid;grid-template-columns:repeat(auto-fit,minmax(270px,1fr));gap:12px}
+.fact{padding:14px 16px}
+.fact h3{font-family:var(--jp);font-weight:700;font-size:18px;margin-bottom:4px}
+.fact p{margin:0;font-size:15px}
+
+/* timer */
+.timer{background:var(--ink);color:var(--paper);border-radius:8px;padding:24px 20px;display:grid;gap:14px;justify-items:center;text-align:center}
+.timer h3{font-family:var(--display);font-size:clamp(22px,4vw,30px)}
+.timer h3 rt{color:var(--paper);opacity:.7}
+.timer .rule{opacity:.8;margin:0;max-width:52ch}
+.clock{font-family:var(--ru);font-weight:600;font-size:clamp(64px,16vw,140px);line-height:1;font-variant-numeric:tabular-nums}
+.clock.end{color:var(--signal)}
+.presets,.ctrl{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
+.timer .btn{background:transparent;color:var(--paper);border-color:color-mix(in srgb,var(--paper) 40%,transparent)}
+.timer .btn rt{color:var(--paper)}
+.timer .btn.primary{background:var(--line);border-color:var(--line);color:#17221d}
+.timer .btn[aria-pressed="true"]{background:var(--paper);color:var(--ink)}
+.timer .btn[aria-pressed="true"] rt{color:var(--ink)}
+
+/* host */
+.host{display:none}
+.host.on{display:block}
+.host .hp{border:2px dashed var(--signal);padding:18px 20px}
+.host h3{font-family:var(--display);font-size:24px}
+.hcards{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;margin:8px 0 18px}
+.hc{border:1px solid var(--rule);border-radius:6px;padding:10px 12px;display:grid;gap:6px;align-content:space-between}
+.hc .j{font-family:var(--jp);font-weight:700;font-size:16px;line-height:1.8}
+.hc p{margin:0;font-size:14px}
+.hc .btn{justify-self:start;font-size:13px;padding:3px 10px}
+.rid{list-style:none;margin:8px 0 18px;padding:0;display:grid;gap:6px}
+.rid li{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:center;border:1px solid var(--rule);border-radius:6px;padding:8px 12px}
+.rid .j{font-family:var(--jp);font-size:16px;line-height:1.8}
+.rid button{border:1px solid var(--rule);background:var(--paper);border-radius:6px;padding:3px 10px;font-family:var(--jp);font-weight:700;min-width:96px}
+.tips{margin:6px 0 0;padding-left:1.2em;font-size:15px;display:grid;gap:4px}
+
+
+/* photo wall */
+.pw-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px}
+.ph{background:var(--paper);border:1px solid var(--rule);border-radius:6px;overflow:hidden;display:flex;flex-direction:column}
+.ph button.img{border:0;padding:0;background:var(--soft);display:block;width:100%;aspect-ratio:4/3;cursor:zoom-in}
+.ph img{width:100%;height:100%;object-fit:cover;display:block}
+.ph .miss{display:grid;place-content:center;height:100%;color:var(--muted);font-size:13px;padding:10px;text-align:center}
+.ph .cap{padding:10px 12px;display:grid;gap:2px}
+.ph .nm{font-weight:600}
+.ph .pl{font-family:var(--jp);font-weight:700;font-size:13px;color:var(--line-ink)}
+.ph .tx{font-family:var(--jp);font-size:15px;line-height:1.7}
+.ph .del{justify-self:start;border:0;background:none;color:var(--muted);font-size:12px;padding:2px 0;text-decoration:underline}
+.pw-empty{border:2px dashed var(--rule);border-radius:6px;padding:28px 18px;text-align:center;color:var(--muted);display:grid;gap:6px;justify-items:center}
+.pw-empty b{font-family:var(--jp);font-size:20px;color:var(--ink)}
+.pw-form{padding:14px 16px;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px 14px;margin-bottom:14px}
+.pw-form .full{grid-column:1/-1}
+.pw-form label{display:grid;gap:3px;font-size:13px;color:var(--muted);font-weight:600}
+.pw-form input[type=text]{border:1px solid var(--rule);background:var(--paper);border-radius:6px;padding:7px 10px;font-size:15px;min-width:0}
+.pw-form input.jpin{font-family:var(--jp)}
+.pw-form .row2{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.pw-msg{font-size:14px;color:var(--muted)}
+.pw-msg.err{color:var(--signal);font-weight:600}
+.pw-tpl{background:var(--line-soft);border-radius:6px;padding:10px 14px;margin-bottom:14px;font-family:var(--jp);font-weight:700;font-size:18px;line-height:2}
+.pw-tpl small{display:block;font-family:var(--ru);font-weight:400;font-size:13px;color:var(--muted);line-height:1.4}
+.lb{position:fixed;inset:0;z-index:20;background:rgba(8,12,10,.94);color:#f2f5f3;display:grid;grid-template-rows:1fr auto;padding:calc(12px + env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-right,0px)) calc(12px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px))}
+.lb img{max-width:100%;max-height:100%;object-fit:contain;margin:auto;display:block;min-height:0}
+.lb .stage{min-height:0;display:flex}
+.lb .bot{display:grid;grid-template-columns:auto 1fr auto;gap:14px;align-items:center;padding-top:10px}
+.lb .who{font-size:22px;font-weight:600}
+.lb .who span{font-family:var(--jp);font-size:16px;color:#a5d66b;margin-left:10px}
+.lb .tx{font-family:var(--jp);font-size:clamp(18px,2.6vw,26px);line-height:1.6}
+.lb button{background:transparent;color:#f2f5f3;border:1px solid rgba(242,245,243,.4);border-radius:6px;padding:8px 14px;font-size:16px}
+.lb .x{position:absolute;top:calc(10px + env(safe-area-inset-top,0px));right:max(12px,env(safe-area-inset-right,0px))}
+@media (max-width:560px){.pw-form{grid-template-columns:1fr}}
+
+footer{color:var(--muted);font-size:13px;text-align:center;padding:30px 0 10px}
+
+@media (max-width:820px){
+  .mapwrap,.sg,.sumrow{grid-template-columns:1fr}
+  .days{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media (max-width:560px){
+  .board .top{grid-template-columns:1fr;justify-items:center;gap:8px}
+  .board .meta{text-align:center;max-width:none}
+  .draw{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .days{grid-template-columns:1fr}
+  .res{grid-template-columns:1fr;justify-items:start}
+}
+</style>
+
+<header>
+  <div class="wrap">
+    <div class="board">
+      <div class="top">
+        <div class="num" aria-label="Станция JY 24"><small>JY</small><b>24</b></div>
+        <div class="name">
+          <div class="kana">とうきょうさんぽ</div>
+          <h1>東京さんぽ</h1>
+          <div class="lat">Tokyo Sanpo</div>
+        </div>
+        <div class="meta">Разговорный клуб Ma Kagami · суббота, 24 октября · N4</div>
+      </div>
+      <div class="band" aria-hidden="true"></div>
+      <div class="dir">
+        <a href="https://claude.ai/artifact/CvUZPVDinoQfQKRSMJpnJz" target="_blank" rel="noopener"><span>← прошлая станция · 17.10</span><b><ruby>居酒屋<rt>いざかや</rt></ruby></b></a>
+        <a href="#facts"><span>следующая станция · 31.10 →</span><b><ruby>妖怪<rt>ようかい</rt></ruby>ナイト</b></a>
+      </div>
+    </div>
+  </div>
+</header>
+
+<nav class="bar" aria-label="Разделы">
+  <div class="wrap">
+    <a href="#photos"><ruby>写真<rt>しゃしん</rt></ruby><span>знакомство</span></a>
+    <a href="#map"><ruby>町<rt>まち</rt></ruby><span>районы</span></a>
+    <a href="#words">ことば<span>слова</span></a>
+    <a href="#grammar"><ruby>文法<rt>ぶんぽう</rt></ruby><span>грамматика</span></a>
+    <a href="#sugoroku">すごろく<span>игра</span></a>
+    <a href="#shiori"><ruby>旅<rt>たび</rt></ruby>のしおり<span>план</span></a>
+    <a href="#trouble">トラブル<span>сцены</span></a>
+    <a href="#talk">トーク<span>вопросы</span></a>
+    <a href="#quiz"><ruby>診断<rt>しんだん</rt></ruby><span>тест</span></a>
+    <a href="#facts"><ruby>豆知識<rt>まめちしき</rt></ruby><span>факты</span></a>
+    <a href="#timer">タイマー<span>таймер</span></a>
+    <div class="tools">
+      <button class="chip mini" id="miniClock" hidden></button>
+      <button class="chip" id="snd" aria-pressed="true" title="Мелодия станции в игре">おと</button>
+      <button class="chip" id="furi" aria-pressed="true" title="Показать или скрыть чтения над кандзи">ふりがな</button>
+    </div>
+  </div>
+</nav>
+
+<main>
+<div class="wrap">
+
+<section id="host" class="host" aria-label="Для ведущего">
+  <div class="panel hp">
+    <h3>Для ведущего</h3>
+    <p class="note" style="margin-top:6px">Этот блок видно только по ссылке с <b>#host</b> в конце. Участникам отправляйте ссылку без него.</p>
+    <p class="lbl">5–15 мин · загадки «どこでしょう？» Все пишут ответ в чат одновременно</p>
+    <ul class="rid"><li><span class="j">ここは<ruby>電気<rt>でんき</rt></ruby>の<ruby>町<rt>まち</rt></ruby>です。アニメやゲームの<ruby>店<rt>みせ</rt></ruby>がたくさんあります。メイドカフェもあります。</span><button data-a="<ruby>秋葉原<rt>あきはばら</rt></ruby>" data-open="0">Ответ</button></li><li><span class="j">ここには<ruby>大<rt>おお</rt></ruby>きいお<ruby>寺<rt>てら</rt></ruby>があります。<ruby>赤<rt>あか</rt></ruby>い<ruby>大<rt>おお</rt></ruby>きなちょうちんで<ruby>有名<rt>ゆうめい</rt></ruby>です。<ruby>着物<rt>きもの</rt></ruby>を<ruby>着<rt>き</rt></ruby>て<ruby>歩<rt>ある</rt></ruby>く<ruby>人<rt>ひと</rt></ruby>も<ruby>多<rt>おお</rt></ruby>いです。</span><button data-a="<ruby>浅草<rt>あさくさ</rt></ruby>" data-open="0">Ответ</button></li><li><span class="j"><ruby>世界<rt>せかい</rt></ruby>で<ruby>一番<rt>いちばん</rt></ruby><ruby>人<rt>ひと</rt></ruby>が<ruby>多<rt>おお</rt></ruby>い<ruby>駅<rt>えき</rt></ruby>があります。<ruby>夜<rt>よる</rt></ruby>はネオンがきれいで、<ruby>高<rt>たか</rt></ruby>いビルも<ruby>多<rt>おお</rt></ruby>いです。</span><button data-a="<ruby>新宿<rt>しんじゅく</rt></ruby>" data-open="0">Ответ</button></li><li><span class="j"><ruby>有名<rt>ゆうめい</rt></ruby>な<ruby>交差点<rt>こうさてん</rt></ruby>があります。<ruby>犬<rt>いぬ</rt></ruby>の<ruby>像<rt>ぞう</rt></ruby>の<ruby>前<rt>まえ</rt></ruby>で、よく<ruby>友<rt>とも</rt></ruby>だちと<ruby>待<rt>ま</rt></ruby>ち<ruby>合<rt>あ</rt></ruby>わせします。</span><button data-a="<ruby>渋谷<rt>しぶや</rt></ruby>" data-open="0">Ответ</button></li><li><span class="j"><ruby>若<rt>わか</rt></ruby>い<ruby>人<rt>ひと</rt></ruby>の<ruby>町<rt>まち</rt></ruby>です。クレープを<ruby>食<rt>た</rt></ruby>べながら、かわいい<ruby>服<rt>ふく</rt></ruby>を<ruby>買<rt>か</rt></ruby>います。<ruby>近<rt>ちか</rt></ruby>くに<ruby>大<rt>おお</rt></ruby>きい<ruby>神社<rt>じんじゃ</rt></ruby>もあります。</span><button data-a="<ruby>原宿<rt>はらじゅく</rt></ruby>" data-open="0">Ответ</button></li><li><span class="j"><ruby>動物園<rt>どうぶつえん</rt></ruby>と<ruby>美術館<rt>びじゅつかん</rt></ruby>と<ruby>大<rt>おお</rt></ruby>きい<ruby>公園<rt>こうえん</rt></ruby>があります。<ruby>春<rt>はる</rt></ruby>はお<ruby>花見<rt>はなみ</rt></ruby>の<ruby>人<rt>ひと</rt></ruby>でいっぱいです。</span><button data-a="<ruby>上野<rt>うえの</rt></ruby>" data-open="0">Ответ</button></li><li><span class="j"><ruby>高<rt>たか</rt></ruby>いデパートやブランドの<ruby>店<rt>みせ</rt></ruby>が<ruby>多<rt>おお</rt></ruby>いです。<ruby>週末<rt>しゅうまつ</rt></ruby>は<ruby>車<rt>くるま</rt></ruby>が<ruby>通<rt>とお</rt></ruby>れない<ruby>道<rt>みち</rt></ruby>があります。</span><button data-a="<ruby>銀座<rt>ぎんざ</rt></ruby>" data-open="0">Ответ</button></li><li><span class="j"><ruby>海<rt>うみ</rt></ruby>の<ruby>近<rt>ちか</rt></ruby>くの<ruby>町<rt>まち</rt></ruby>です。<ruby>大<rt>おお</rt></ruby>きいガンダムがあります。</span><button data-a="お<ruby>台場<rt>だいば</rt></ruby>" data-open="0">Ответ</button></li><li><span class="j"><ruby>古着屋<rt>ふるぎや</rt></ruby>と<ruby>小<rt>ちい</rt></ruby>さいライブハウスとカレーの<ruby>店<rt>みせ</rt></ruby>が<ruby>多<rt>おお</rt></ruby>いです。<ruby>静<rt>しず</rt></ruby>かで、おしゃれです。</span><button data-a="<ruby>下北沢<rt>しもきたざわ</rt></ruby>" data-open="0">Ответ</button></li><li><span class="j"><ruby>大<rt>おお</rt></ruby>きいビルの<ruby>上<rt>うえ</rt></ruby>に<ruby>水族館<rt>すいぞくかん</rt></ruby>があります。ポケモンセンターもあります。</span><button data-a="<ruby>池袋<rt>いけぶくろ</rt></ruby>" data-open="0">Ответ</button></li></ul>
+    <p class="lbl">35–47 мин · карточки-характеры для «旅のしおり» (в личку, в одной комнате не повторять)</p>
+    <div class="hcards"><div class="hc"><div><div class="j">アニメとゲームが<ruby>大好<rt>だいす</rt></ruby>き</div><p>Ты обязательно хочешь в 秋葉原 или 池袋. Уговаривай: 〜に行きませんか？ Карточку не показывай.</p></div><button class="btn copy">Копировать</button></div><div class="hc"><div><div class="j">お<ruby>寺<rt>てら</rt></ruby>と<ruby>神社<rt>じんじゃ</rt></ruby>が<ruby>好<rt>す</rt></ruby>き、<ruby>静<rt>しず</rt></ruby>かなところが<ruby>好<rt>す</rt></ruby>き</div><p>Ты хочешь в 浅草, 明治神宮, 鎌倉 или 日光. Объясняй через 〜ので.</p></div><button class="btn copy">Копировать</button></div><div class="hc"><div><div class="j"><ruby>人<rt>ひと</rt></ruby>が<ruby>多<rt>おお</rt></ruby>いところが<ruby>苦手<rt>にがて</rt></ruby></div><p>Вечером в 渋谷 и 新宿 не хочешь. Скажи: 人が多いところが苦手なので… и предложи другое.</p></div><button class="btn copy">Копировать</button></div><div class="hc"><div><div class="j">お<ruby>金<rt>かね</rt></ruby>があまりない</div><p>Твой бюджет ¥15,000, а не ¥25,000. Предлагай дешёвое: お金があまりないので、〜はどうですか？</p></div><button class="btn copy">Копировать</button></div><div class="hc"><div><div class="j"><ruby>写真<rt>しゃしん</rt></ruby>を<ruby>撮<rt>と</rt></ruby>るのが<ruby>大好<rt>だいす</rt></ruby>き</div><p>Тебе нужны места с видом: смотровая, ночной город, 富士山. 〜で写真を撮りたいです。</p></div><button class="btn copy">Копировать</button></div><div class="hc"><div><div class="j"><ruby>温泉<rt>おんせん</rt></ruby>に<ruby>入<rt>はい</rt></ruby>りたい</div><p>На 4-й день обязательно 箱根 или 日光. 日本に行ったら、温泉に入りたいです！</p></div><button class="btn copy">Копировать</button></div></div>
+    <p class="lbl">Напоминания</p>
+    <ul class="tips">
+      <li>Вход: объявляйте каждого как станцию: 「<ruby>次<rt>つぎ</rt></ruby>は〜さん、〜さん。お<ruby>出口<rt>でぐち</rt></ruby>は<ruby>右側<rt>みぎがわ</rt></ruby>です。」 Второй штамп в карту. Потом раздел «写真»: нажмите на фото участника, оно откроется на весь экран, стрелки листают.</li>
+      <li>Сугороку: в Zoom включите «Share sound», чтобы была слышна мелодия. Если звук мешает, кнопка «おと» в шапке.</li>
+      <li>Перед комнатами: один человек в комнате открывает раздел «旅のしおり» и делится экраном. Комнаты: 新宿, 浅草, 渋谷.</li>
+      <li>Финал: второй штамп из трёх, подарок за три, разговорник под маршрут на индивидуальном занятии. Анонс 31.10: костюм или маска.</li>
+    </ul>
+  </div>
+</section>
+
+<section id="photos">
+  <div class="sh"><h2>わたしの<ruby>東京<rt>とうきょう</rt></ruby><ruby>写真<rt>しゃしん</rt></ruby></h2><p>Знакомство: ваше любимое фото из Токио или окрестностей</p></div>
+  <div class="pw-tpl">はじめまして、〜です。これは〜で<ruby>撮<rt>と</rt></ruby>った<ruby>写真<rt>しゃしん</rt></ruby>です。〜がとてもきれいでした。
+    <small>Шаблон на 30–40 секунд: «Приятно познакомиться, я 〜. Это фото я снял(а) в 〜. Там было очень красиво 〜». Нет своего фото из Японии? Возьмите любое, которое нравится, и скажите: 〜に<ruby>行<rt>い</rt></ruby>ってみたいです。</small></div>
+  <form class="panel pw-form" id="pwForm" hidden>
+    <label class="full">Фото (JPG, PNG или WebP)<input type="file" id="pwFile" accept="image/jpeg,image/png,image/webp,image/gif"></label>
+    <label>Имя<input type="text" id="pwName" maxlength="40" placeholder="Анна / アンナ"></label>
+    <label>Где снято<input type="text" class="jpin" id="pwPlace" maxlength="40" placeholder="浅草 / 鎌倉 / Сибуя"></label>
+    <label class="full">Подпись по-японски (одно предложение)<input type="text" class="jpin" id="pwCap" maxlength="120" placeholder="これは浅草で撮った写真です。"></label>
+    <div class="full row2"><button class="btn primary" type="submit" id="pwSend">Добавить на стену</button><span class="pw-msg" id="pwMsg" role="status"></span></div>
+  </form>
+  <p class="note" id="pwNote">Загружаю стену…</p>
+  <div id="pwWall"></div>
+</section>
+
+<section id="map">
+  <div class="sh"><h2><ruby>東京<rt>とうきょう</rt></ruby>の<ruby>町<rt>まち</rt></ruby></h2><p>Нажмите на район на карте</p></div>
+  <div class="mapwrap">
+    <div class="panel map">
+      <svg viewBox="0 0 640 520" role="img" aria-label="Схема линии Яманотэ и районов Токио">
+        <path class="m-water" d="M640 360 C590 380 560 420 520 520 L640 520 Z"/>
+        <ellipse class="m-loop" cx="320" cy="250" rx="150" ry="190"/>
+        <text class="m-rd rd" x="320" y="224" text-anchor="middle">やまのてせん</text><text class="m-center" x="320" y="244" text-anchor="middle">山手線</text>
+        <text class="m-center" x="320" y="266" text-anchor="middle" style="font-family:var(--ru);font-weight:400;font-size:13px;fill:var(--muted)">30 станций · круг ≈ 1 час</text>
+        <g id="mapG"></g>
+      </svg>
+    </div>
+    <div class="panel dcard" id="dcard" aria-live="polite"></div>
+  </div>
+</section>
+
+<section id="words">
+  <div class="sh"><h2>ことば</h2><p>Слова к встрече</p></div>
+  <div class="vgroup"><h3><ruby>旅行<rt>りょこう</rt></ruby>と<ruby>計画<rt>けいかく</rt></ruby><span>Путешествие и план</span></h3><div class="vgrid"><div class="v"><div class="w"><ruby>旅行<rt>りょこう</rt></ruby></div><div class="t">путешествие, поездка</div></div><div class="v"><div class="w"><ruby>計画<rt>けいかく</rt></ruby>を<ruby>立<rt>た</rt></ruby>てる</div><div class="t">составлять план</div></div><div class="v"><div class="w"><ruby>予定<rt>よてい</rt></ruby></div><div class="t">план, что запланировано</div></div><div class="v"><div class="w"><ruby>観光<rt>かんこう</rt></ruby></div><div class="t">осмотр достопримечательностей</div></div><div class="v"><div class="w"><ruby>泊<rt>と</rt></ruby>まる</div><div class="t">останавливаться (в отеле)</div></div><div class="v"><div class="w"><ruby>旅館<rt>りょかん</rt></ruby></div><div class="t">японская гостиница</div></div><div class="v"><div class="w"><ruby>予約<rt>よやく</rt></ruby>する</div><div class="t">бронировать</div></div><div class="v"><div class="w"><ruby>日帰<rt>ひがえ</rt></ruby>り</div><div class="t">поездка на один день</div></div><div class="v"><div class="w">お<ruby>土産<rt>みやげ</rt></ruby></div><div class="t">сувенир, гостинец</div></div><div class="v"><div class="w"><ruby>地図<rt>ちず</rt></ruby></div><div class="t">карта</div></div><div class="v"><div class="w"><ruby>案内<rt>あんない</rt></ruby>する</div><div class="t">показывать город, водить</div></div><div class="v"><div class="w"><ruby>一泊二日<rt>いっぱくふつか</rt></ruby></div><div class="t">два дня, одна ночь</div></div></div></div><div class="vgroup"><h3><ruby>交通<rt>こうつう</rt></ruby>と<ruby>駅<rt>えき</rt></ruby><span>Транспорт и станция</span></h3><div class="vgrid"><div class="v"><div class="w"><ruby>電車<rt>でんしゃ</rt></ruby> / <ruby>地下鉄<rt>ちかてつ</rt></ruby></div><div class="t">электричка / метро</div></div><div class="v"><div class="w"><ruby>新幹線<rt>しんかんせん</rt></ruby></div><div class="t">синкансэн</div></div><div class="v"><div class="w"><ruby>山手線<rt>やまのてせん</rt></ruby></div><div class="t">линия Яманотэ (кольцо)</div></div><div class="v"><div class="w"><ruby>乗<rt>の</rt></ruby>る / <ruby>降<rt>お</rt></ruby>りる</div><div class="t">садиться / выходить</div></div><div class="v"><div class="w"><ruby>乗<rt>の</rt></ruby>り<ruby>換<rt>か</rt></ruby>える</div><div class="t">делать пересадку</div></div><div class="v"><div class="w">〜<ruby>番線<rt>ばんせん</rt></ruby></div><div class="t">путь №…</div></div><div class="v"><div class="w">〜<ruby>行<rt>ゆ</rt></ruby>き</div><div class="t">(поезд) до…</div></div><div class="v"><div class="w"><ruby>切符<rt>きっぷ</rt></ruby></div><div class="t">билет</div></div><div class="v"><div class="w"><ruby>改札<rt>かいさつ</rt></ruby></div><div class="t">турникеты</div></div><div class="v"><div class="w">〜<ruby>口<rt>ぐち</rt></ruby></div><div class="t">выход (西口 — западный)</div></div><div class="v"><div class="w"><ruby>終電<rt>しゅうでん</rt></ruby></div><div class="t">последний поезд</div></div><div class="v"><div class="w"><ruby>駅員<rt>えきいん</rt></ruby></div><div class="t">сотрудник станции</div></div></div></div><div class="vgroup"><h3><ruby>町<rt>まち</rt></ruby>と<ruby>道<rt>みち</rt></ruby><span>Город и дорога</span></h3><div class="vgrid"><div class="v"><div class="w"><ruby>交差点<rt>こうさてん</rt></ruby></div><div class="t">перекрёсток</div></div><div class="v"><div class="w"><ruby>信号<rt>しんごう</rt></ruby></div><div class="t">светофор</div></div><div class="v"><div class="w"><ruby>角<rt>かど</rt></ruby></div><div class="t">угол</div></div><div class="v"><div class="w"><ruby>交番<rt>こうばん</rt></ruby></div><div class="t">полицейская будка</div></div><div class="v"><div class="w">まっすぐ<ruby>行<rt>い</rt></ruby>く</div><div class="t">идти прямо</div></div><div class="v"><div class="w"><ruby>曲<rt>ま</rt></ruby>がる</div><div class="t">поворачивать</div></div><div class="v"><div class="w"><ruby>渡<rt>わた</rt></ruby>る</div><div class="t">переходить</div></div><div class="v"><div class="w">〜つ<ruby>目<rt>め</rt></ruby></div><div class="t">…-й по счёту</div></div></div></div><div class="vgroup"><h3><ruby>町<rt>まち</rt></ruby>を<ruby>説明<rt>せつめい</rt></ruby>する<span>Чтобы описать район</span></h3><div class="vgrid"><div class="v"><div class="w">にぎやか（な）</div><div class="t">оживлённый, шумный</div></div><div class="v"><div class="w"><ruby>静<rt>しず</rt></ruby>か（な）</div><div class="t">тихий</div></div><div class="v"><div class="w"><ruby>便利<rt>べんり</rt></ruby>（な）</div><div class="t">удобный</div></div><div class="v"><div class="w"><ruby>有名<rt>ゆうめい</rt></ruby>（な）</div><div class="t">знаменитый</div></div><div class="v"><div class="w">おしゃれ（な）</div><div class="t">стильный, модный</div></div><div class="v"><div class="w">こむ / すいている</div><div class="t">людно / свободно</div></div><div class="v"><div class="w"><ruby>若者<rt>わかもの</rt></ruby></div><div class="t">молодёжь</div></div><div class="v"><div class="w"><ruby>景色<rt>けしき</rt></ruby></div><div class="t">вид, пейзаж</div></div></div></div>
+  <div class="filters">
+    <span class="lbl" style="margin:0 6px 0 0">Фразы</span>
+    <button class="chip" data-f="all" aria-pressed="true">Все</button>
+    <button class="chip" data-f="t" aria-pressed="false"><ruby>旅行者<rt>りょこうしゃ</rt></ruby></button>
+    <button class="chip" data-f="l" aria-pressed="false"><ruby>駅員<rt>えきいん</rt></ruby>・<ruby>地元<rt>じもと</rt></ruby></button>
+  </div>
+  <div class="panel phr" id="phr" data-f="all"><div class="it" data-w="t"><span class="who t"><ruby>旅行者<rt>りょこうしゃ</rt></ruby></span><span class="j">すみません、〜<ruby>駅<rt>えき</rt></ruby>はどこですか？</span><span class="tr">Извините, где станция 〜?</span></div><div class="it" data-w="t"><span class="who t"><ruby>旅行者<rt>りょこうしゃ</rt></ruby></span><span class="j">〜まで、どうやって<ruby>行<rt>い</rt></ruby>けばいいですか？</span><span class="tr">Как добраться до 〜?</span></div><div class="it" data-w="l"><span class="who l"><ruby>駅員<rt>えきいん</rt></ruby>・<ruby>地元<rt>じもと</rt></ruby></span><span class="j">〜<ruby>線<rt>せん</rt></ruby>に<ruby>乗<rt>の</rt></ruby>って、〜で<ruby>乗<rt>の</rt></ruby>り<ruby>換<rt>か</rt></ruby>えてください。</span><span class="tr">Садитесь на линию 〜, пересадка на 〜.</span></div><div class="it" data-w="t"><span class="who t"><ruby>旅行者<rt>りょこうしゃ</rt></ruby></span><span class="j"><ruby>何番線<rt>なんばんせん</rt></ruby>ですか？</span><span class="tr">С какого пути?</span></div><div class="it" data-w="t"><span class="who t"><ruby>旅行者<rt>りょこうしゃ</rt></ruby></span><span class="j">この<ruby>電車<rt>でんしゃ</rt></ruby>は〜に<ruby>止<rt>と</rt></ruby>まりますか？</span><span class="tr">Этот поезд останавливается на 〜?</span></div><div class="it" data-w="t"><span class="who t"><ruby>旅行者<rt>りょこうしゃ</rt></ruby></span><span class="j">〜まで、どのぐらいかかりますか？</span><span class="tr">Сколько ехать до 〜?</span></div><div class="it" data-w="l"><span class="who l"><ruby>駅員<rt>えきいん</rt></ruby>・<ruby>地元<rt>じもと</rt></ruby></span><span class="j"><ruby>電車<rt>でんしゃ</rt></ruby>で<ruby>二十分<rt>にじゅっぷん</rt></ruby>ぐらいです。</span><span class="tr">На электричке минут двадцать.</span></div><div class="it" data-w="l"><span class="who l"><ruby>駅員<rt>えきいん</rt></ruby>・<ruby>地元<rt>じもと</rt></ruby></span><span class="j">まっすぐ<ruby>行<rt>い</rt></ruby>って、<ruby>二<rt>ふた</rt></ruby>つ<ruby>目<rt>め</rt></ruby>の<ruby>信号<rt>しんごう</rt></ruby>を<ruby>右<rt>みぎ</rt></ruby>に<ruby>曲<rt>ま</rt></ruby>がってください。</span><span class="tr">Прямо, на втором светофоре направо.</span></div><div class="it" data-w="l"><span class="who l"><ruby>駅員<rt>えきいん</rt></ruby>・<ruby>地元<rt>じもと</rt></ruby></span><span class="j"><ruby>西口<rt>にしぐち</rt></ruby>を<ruby>出<rt>で</rt></ruby>て、<ruby>左<rt>ひだり</rt></ruby>にあります。</span><span class="tr">Выйдете с западного выхода, будет слева.</span></div><div class="it" data-w="t"><span class="who t"><ruby>旅行者<rt>りょこうしゃ</rt></ruby></span><span class="j"><ruby>地図<rt>ちず</rt></ruby>を<ruby>書<rt>か</rt></ruby>いてもらえませんか？</span><span class="tr">Не могли бы нарисовать схему?</span></div><div class="it" data-w="t"><span class="who t"><ruby>旅行者<rt>りょこうしゃ</rt></ruby></span><span class="j"><ruby>写真<rt>しゃしん</rt></ruby>を<ruby>撮<rt>と</rt></ruby>ってもらえませんか？</span><span class="tr">Не могли бы нас сфотографировать?</span></div><div class="it" data-w="t"><span class="who t"><ruby>旅行者<rt>りょこうしゃ</rt></ruby></span><span class="j">おすすめの<ruby>観光地<rt>かんこうち</rt></ruby>はどこですか？</span><span class="tr">Какое место посоветуете посмотреть?</span></div><div class="it" data-w="t"><span class="who t"><ruby>旅行者<rt>りょこうしゃ</rt></ruby></span><span class="j"><ruby>予約<rt>よやく</rt></ruby>した〜ですが…。</span><span class="tr">Я бронировал(а), моя фамилия 〜…</span></div><div class="it" data-w="t"><span class="who t"><ruby>旅行者<rt>りょこうしゃ</rt></ruby></span><span class="j"><ruby>電車<rt>でんしゃ</rt></ruby>にかばんを<ruby>忘<rt>わす</rt></ruby>れてしまいました。</span><span class="tr">Я забыл(а) сумку в поезде.</span></div></div>
+</section>
+
+<section id="grammar">
+  <div class="sh"><h2><ruby>旅<rt>たび</rt></ruby>の<ruby>文法<rt>ぶんぽう</rt></ruby></h2><p>Пять конструкций N4. Отвечаете и задаёте вопрос следующему</p></div>
+  <div class="gram"><div class="panel g"><div class="k">План</div><h3>〜つもりです</h3><p class="d">намерение, «собираюсь»</p><p class="j"><ruby>来年<rt>らいねん</rt></ruby>の<ruby>春<rt>はる</rt></ruby>、<ruby>日本<rt>にほん</rt></ruby>に<ruby>行<rt>い</rt></ruby>くつもりです。</p><p class="t">Весной следующего года собираюсь в Японию.</p><p class="j"><ruby>今回<rt>こんかい</rt></ruby>は<ruby>京都<rt>きょうと</rt></ruby>には<ruby>行<rt>い</rt></ruby>かないつもりです。</p><p class="t">В этот раз в Киото не собираюсь.</p></div><div class="panel g"><div class="k">Список дел</div><h3>〜たり〜たりします</h3><p class="d">«то… то…», и это, и то</p><p class="j"><ruby>原宿<rt>はらじゅく</rt></ruby>で<ruby>買<rt>か</rt></ruby>い<ruby>物<rt>もの</rt></ruby>をしたり、クレープを<ruby>食<rt>た</rt></ruby>べたりしたいです。</p><p class="t">В Харадзюку хочу и по магазинам, и крепы поесть.</p><p class="j"><ruby>週末<rt>しゅうまつ</rt></ruby>は<ruby>映画<rt>えいが</rt></ruby>を<ruby>見<rt>み</rt></ruby>たり、<ruby>散歩<rt>さんぽ</rt></ruby>したりしました。</p><p class="t">На выходных смотрел кино, гулял.</p></div><div class="panel g"><div class="k">Условие</div><h3>〜たら</h3><p class="d">«когда / если»</p><p class="j"><ruby>日本<rt>にほん</rt></ruby>に<ruby>行<rt>い</rt></ruby>ったら、<ruby>温泉<rt>おんせん</rt></ruby>に<ruby>入<rt>はい</rt></ruby>りたいです。</p><p class="t">Когда поеду в Японию, хочу в онсэн.</p><p class="j"><ruby>雨<rt>あめ</rt></ruby>が<ruby>降<rt>ふ</rt></ruby>ったら、<ruby>美術館<rt>びじゅつかん</rt></ruby>に<ruby>行<rt>い</rt></ruby>きましょう。</p><p class="t">Если пойдёт дождь, пойдём в музей.</p></div><div class="panel g"><div class="k">Совет</div><h3>〜ほうがいいです</h3><p class="d">«лучше…», «лучше не…»</p><p class="j"><ruby>朝<rt>あさ</rt></ruby>は<ruby>電車<rt>でんしゃ</rt></ruby>がこむので、<ruby>早<rt>はや</rt></ruby>く<ruby>出<rt>で</rt></ruby>たほうがいいですよ。</p><p class="t">Утром давка, лучше выйти пораньше.</p><p class="j"><ruby>大<rt>おお</rt></ruby>きい<ruby>荷物<rt>にもつ</rt></ruby>は<ruby>持<rt>も</rt></ruby>っていかないほうがいいです。</p><p class="t">Большой багаж лучше не брать.</p></div><div class="panel g"><div class="k">Маршрут</div><h3>〜てから / 〜て、〜て</h3><p class="d">порядок действий</p><p class="j">ホテルに<ruby>荷物<rt>にもつ</rt></ruby>を<ruby>置<rt>お</rt></ruby>いてから、<ruby>浅草<rt>あさくさ</rt></ruby>に<ruby>行<rt>い</rt></ruby>きます。</p><p class="t">Оставлю вещи в отеле, потом в Асакусу.</p><p class="j"><ruby>新宿<rt>しんじゅく</rt></ruby>で<ruby>降<rt>お</rt></ruby>りて、<ruby>西口<rt>にしぐち</rt></ruby>を<ruby>出<rt>で</rt></ruby>て、まっすぐ<ruby>行<rt>い</rt></ruby>ってください。</p><p class="t">Выходите в Синдзюку, через западный выход и прямо.</p></div></div>
+  <details class="bonus"><summary>Бонус для сильных</summary><p style="margin:8px 0 0"><b class="jp">〜し、〜し</b> · <span class="j"><ruby>浅草<rt>あさくさ</rt></ruby>は<ruby>古<rt>ふる</rt></ruby>いし、<ruby>静<rt>しず</rt></ruby>かだし、<ruby>大好<rt>だいす</rt></ruby>きです。</span><br><span style="color:var(--muted);font-size:14px">Асакуса и старинная, и тихая, обожаю.</span></p><p style="margin:8px 0 0"><b class="jp">〜なら</b> · <span class="j"><ruby>東京<rt>とうきょう</rt></ruby>に<ruby>行<rt>い</rt></ruby>くなら、<ruby>新宿<rt>しんじゅく</rt></ruby>に<ruby>泊<rt>と</rt></ruby>まったほうがいいですよ。</span><br><span style="color:var(--muted);font-size:14px">Если едешь в Токио, лучше жить в Синдзюку.</span></p><p style="margin:8px 0 0"><b class="jp">〜そうです</b> · <span class="j">あのラーメン、おいしそう！</span><br><span style="color:var(--muted);font-size:14px">Тот рамэн выглядит вкусно!</span></p></details>
+</section>
+
+<section id="sugoroku">
+  <div class="sh"><h2>すごろく「<ruby>山手線<rt>やまのてせん</rt></ruby>ゲーム」</h2><p>Бросаете кубик, едете по кругу, на станции говорите 20–30 секунд</p></div>
+  <div class="sg">
+    <div class="panel board2">
+      <svg viewBox="0 0 600 600" role="img" aria-label="Поле сугороку: 12 станций Яманотэ">
+        <ellipse class="s-loop" cx="300" cy="300" rx="215" ry="215"/>
+        <g id="stG"></g>
+        <g transform="translate(300 268)">
+          <rect class="dieface" x="-38" y="-38" width="76" height="76" rx="12"/>
+          <g id="pips"></g>
+        </g>
+        <text class="s-c1" x="300" y="345" id="turnT">つぎは</text>
+        <text class="s-c2" x="300" y="368" id="turnS"></text><text class="s-c2" x="300" y="392" style="font-size:12px">内回り · против часовой</text>
+        <g id="tokG"></g>
+      </svg>
+    </div>
+    <div class="side">
+      <div class="ctrls">
+        <button class="btn primary" id="roll">サイコロ</button>
+        <button class="btn" id="skip">Следующий игрок</button>
+        <button class="btn" id="sgReset">Начать заново</button>
+      </div>
+      <div class="panel task" id="task" aria-live="polite"></div>
+      <div class="panel players">
+        <div class="pcount">Игроков:
+          <button class="chip" data-n="2">2</button><button class="chip" data-n="3">3</button><button class="chip" data-n="4">4</button><button class="chip" data-n="5">5</button><button class="chip" data-n="6">6</button>
+        </div>
+        <div id="plist"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="shiori">
+  <div class="sh"><h2><ruby>旅<rt>たび</rt></ruby>のしおり</h2><p>3 дня в Токио и день за городом. Цены примерные, на человека, без отеля и еды</p></div>
+  <p class="note">В комнате один человек делится экраном с этим разделом. Сначала договоритесь по-японски, потом выбирайте. Внизу страница соберёт текст для презентации.</p>
+  <div class="sh-top">
+    <label for="bud">Бюджет <select id="bud"><option value="25000">¥25,000</option><option value="15000">¥15,000 (お金があまりない)</option></select></label>
+    <button class="btn" id="shEx">Пример плана</button>
+    <button class="btn" id="shClear">Очистить</button>
+  </div>
+  <div class="days" id="days"></div>
+  <div class="sumrow">
+    <div class="panel budget" id="budget">
+      <div class="tot"><span>Итого на человека</span><b id="sum">¥0</b></div>
+      <div class="track"><div class="fill" id="fill"></div></div>
+      <p id="bmsg"></p>
+    </div>
+    <div class="panel shiori">
+      <h3>わたしたちの<ruby>旅行<rt>りょこう</rt></ruby>プラン</h3>
+      <ul id="plan"></ul>
+      <p class="ex" id="exNote">Это пример. Меняйте места в списках выше.</p>
+    </div>
+  </div>
+</section>
+
+<section id="trouble">
+  <div class="sh"><h2><ruby>駅<rt>えき</rt></ruby>でトラブル</h2><p>Пара называет номер, ведущий открывает карточку. Сцена 1,5–2 минуты</p></div>
+  <div class="draw" id="draw"><button class="card"><span class="in"><span class="f"><b>1</b><span>タップ</span></span><span class="b"><h4>Не в ту сторону</h4><p>Вы сели на Яманотэ в обратную сторону. Спросите пассажира, второй объясняет.</p><p class="j">すみません、この<ruby>電車<rt>でんしゃ</rt></ruby>は<ruby>渋谷<rt>しぶや</rt></ruby>に<ruby>止<rt>と</rt></ruby>まりますか？</p></span></span></button><button class="card"><span class="in"><span class="f"><b>2</b><span>タップ</span></span><span class="b"><h4>Турникет не пускает</h4><p>На карте Suica не хватает денег. Спросите сотрудника станции.</p><p class="j">カードのお<ruby>金<rt>かね</rt></ruby>が<ruby>足<rt>た</rt></ruby>りないみたいです。チャージはどこでできますか？</p></span></span></button><button class="card"><span class="in"><span class="f"><b>3</b><span>タップ</span></span><span class="b"><h4>Последний поезд ушёл</h4><p>Двое друзей решают, что делать до утра: такси, караоке или манга-кафе.</p><p class="j">タクシーで<ruby>帰<rt>かえ</rt></ruby>ったほうがいい？ カラオケで<ruby>朝<rt>あさ</rt></ruby>まで？</p></span></span></button><button class="card"><span class="in"><span class="f"><b>4</b><span>タップ</span></span><span class="b"><h4>Заблудился</h4><p>Спросите в полицейской будке дорогу к отелю. Полицейский объясняет.</p><p class="j">このホテルまで、どうやって<ruby>行<rt>い</rt></ruby>けばいいですか？</p></span></span></button><button class="card"><span class="in"><span class="f"><b>5</b><span>タップ</span></span><span class="b"><h4>Сумка в поезде</h4><p>Вы забыли сумку. Сотрудник спрашивает: какого цвета, что внутри, во сколько был поезд.</p><p class="j"><ruby>電車<rt>でんしゃ</rt></ruby>にかばんを<ruby>忘<rt>わす</rt></ruby>れてしまいました。</p></span></span></button><button class="card"><span class="in"><span class="f"><b>6</b><span>タップ</span></span><span class="b"><h4>Брони нет</h4><p>В отеле нет брони на ваше имя. Оказывается, вы забронировали на другую дату.</p><p class="j"><ruby>予約<rt>よやく</rt></ruby>したんですが、<ruby>名前<rt>なまえ</rt></ruby>がありませんか？</p></span></span></button></div>
+  <button class="btn" id="drawReset" style="margin-top:12px">Перевернуть все обратно</button>
+</section>
+
+<section id="talk">
+  <div class="sh"><h2><ruby>東京<rt>とうきょう</rt></ruby>トーク</h2><p>Отвечаете на вопрос и выбираете вопрос для следующего</p></div>
+  <button class="btn primary" id="rand" style="margin-bottom:12px">Случайный вопрос</button>
+  <ol class="qs" id="qs"><li><ruby>東京<rt>とうきょう</rt></ruby>の<ruby>町<rt>まち</rt></ruby>で、<ruby>一番<rt>いちばん</rt></ruby><ruby>行<rt>い</rt></ruby>ってみたいところはどこですか？ どうしてですか？</li><li><ruby>東京<rt>とうきょう</rt></ruby>に<ruby>泊<rt>と</rt></ruby>まるなら、<ruby>新宿<rt>しんじゅく</rt></ruby>と<ruby>浅草<rt>あさくさ</rt></ruby>、どちらがいいですか？</li><li><ruby>旅行<rt>りょこう</rt></ruby>の<ruby>前<rt>まえ</rt></ruby>に、<ruby>計画<rt>けいかく</rt></ruby>をしっかり<ruby>立<rt>た</rt></ruby>てるほうですか？ その<ruby>日<rt>ひ</rt></ruby>に<ruby>決<rt>き</rt></ruby>めるほうですか？</li><li><ruby>渋谷<rt>しぶや</rt></ruby>のスクランブル<ruby>交差点<rt>こうさてん</rt></ruby>を<ruby>渡<rt>わた</rt></ruby>ってみたいですか？ <ruby>人<rt>ひと</rt></ruby>が<ruby>多<rt>おお</rt></ruby>いところは<ruby>平気<rt>へいき</rt></ruby>ですか？</li><li>あなたの<ruby>町<rt>まち</rt></ruby>は、<ruby>東京<rt>とうきょう</rt></ruby>のどの<ruby>町<rt>まち</rt></ruby>に<ruby>似<rt>に</rt></ruby>ていると<ruby>思<rt>おも</rt></ruby>いますか？</li><li><ruby>日本<rt>にほん</rt></ruby>に<ruby>行<rt>い</rt></ruby>ったら、お<ruby>土産<rt>みやげ</rt></ruby>に<ruby>何<rt>なに</rt></ruby>を<ruby>買<rt>か</rt></ruby>うつもりですか？ だれにあげますか？</li><li><ruby>一人旅<rt>ひとりたび</rt></ruby>と<ruby>友<rt>とも</rt></ruby>だちとの<ruby>旅行<rt>りょこう</rt></ruby>、どちらが<ruby>好<rt>す</rt></ruby>きですか？</li><li><ruby>東京<rt>とうきょう</rt></ruby>に<ruby>住<rt>す</rt></ruby>むなら、どの<ruby>町<rt>まち</rt></ruby>に<ruby>住<rt>す</rt></ruby>みたいですか？</li></ol>
+</section>
+
+<section id="quiz">
+  <div class="sh"><h2>あなたは<ruby>東京<rt>とうきょう</rt></ruby>のどの<ruby>町<rt>まち</rt></ruby>？</h2><p>Тест из пяти вопросов. Результат расскажете на разминке</p></div>
+  <div class="panel quiz" id="qbox" aria-live="polite"></div>
+</section>
+
+<section id="facts">
+  <div class="sh"><h2><ruby>豆知識<rt>まめちしき</rt></ruby></h2><p>Факты о Токио</p></div>
+  <div class="facts"><div class="panel fact"><h3><ruby>東<rt>ひがし</rt></ruby>の<ruby>京<rt>みやこ</rt></ruby></h3><p>東京 значит «восточная столица». До 1868 года город назывался 江戸 (Эдо), а столицей был Киото.</p></div><div class="panel fact"><h3><ruby>山手線<rt>やまのてせん</rt></ruby></h3><p>Кольцо из 30 станций, полный круг около часа. Направления: 内回り (внутренний круг) и 外回り (внешний).</p></div><div class="panel fact"><h3><ruby>発車<rt>はっしゃ</rt></ruby>メロディ</h3><p>У многих станций своя мелодия отправления. На 高田馬場 играет тема Астробоя, на 恵比寿 мелодия из рекламы пива Ebisu.</p></div><div class="panel fact"><h3><ruby>新宿駅<rt>しんじゅくえき</rt></ruby></h3><p>Самая загруженная станция мира по Книге рекордов Гиннесса: больше 3 миллионов пассажиров в день и около 200 выходов.</p></div><div class="panel fact"><h3>ハチ<ruby>公<rt>こう</rt></ruby></h3><p>Пёс почти 10 лет приходил на станцию Сибуя встречать умершего хозяина. «Встретимся у Хатико» до сих пор главное место встречи.</p></div><div class="panel fact"><h3><ruby>駅<rt>えき</rt></ruby>スタンプ</h3><p>Почти на каждой станции лежит бесплатная печать с рисунком района, японцы собирают их в тетради. Наша штамп-карта про то же.</p></div><div class="panel fact"><h3>エスカレーター</h3><p>В Токио на эскалаторе стоят слева и проходят справа, в Осаке наоборот.</p></div><div class="panel fact"><h3><ruby>雷門<rt>かみなりもん</rt></ruby></h3><p>Красный фонарь на воротах храма в Асакусе весит около 700 кг.</p></div><div class="panel fact"><h3><ruby>終電<rt>しゅうでん</rt></ruby>と<ruby>始発<rt>しはつ</rt></ruby></h3><p>Последний поезд уходит около полуночи. Кто опоздал, идёт в караоке или манга-кафе и ждёт первый поезд около пяти утра.</p></div></div>
+  <p class="note" style="margin-top:14px">Следующая станция 31 октября: <ruby>妖怪<rt>ようかい</rt></ruby>ナイト, Хэллоуин по-японски. Приходите в костюме или с маской, это последний штамп в карте.</p>
+</section>
+
+<section id="timer">
+  <div class="timer">
+    <h3><ruby>日本語<rt>にほんご</rt></ruby>だけタイム</h3>
+    <p class="rule">Только японский до конца сцен с неприятностями. Перешли на русский? Скажите すみません и продолжайте.</p>
+    <div class="clock" id="clock" role="timer" aria-live="off">29:00</div>
+    <div class="presets" role="group" aria-label="Длительность">
+      <button class="btn" data-m="4" aria-pressed="false">4 <ruby>分<rt>ぷん</rt></ruby></button>
+      <button class="btn" data-m="8" aria-pressed="false">8 <ruby>分<rt>ぷん</rt></ruby></button>
+      <button class="btn" data-m="12" aria-pressed="false">12 <ruby>分<rt>ふん</rt></ruby></button>
+      <button class="btn" data-m="29" aria-pressed="true">29 <ruby>分<rt>ふん</rt></ruby></button>
+    </div>
+    <div class="ctrl">
+      <button class="btn primary" id="go">スタート</button>
+      <button class="btn" id="reset">Сброс</button>
+    </div>
+  </div>
+</section>
+
+<footer>Разговорный клуб Ma Kagami · 東京さんぽ · 24.10.2026 · следующая станция 31 октября · お<ruby>疲<rt>つか</rt></ruby>れさまでした！</footer>
+</div>
+</main>
+
+<script>
+(() => {
+  const $ = (s, r = document) => r.querySelector(s), $$ = (s, r = document) => [...r.querySelectorAll(s)];
+  const yen = n => '¥' + n.toLocaleString('en-US');
+  const store = {
+    get(k) { try { return JSON.parse(localStorage.getItem('tk-' + k)); } catch { return null; } },
+    set(k, v) { try { localStorage.setItem('tk-' + k, JSON.stringify(v)); } catch {} }
+  };
+  const NS = 'http://www.w3.org/2000/svg';
+  const svgEl = (tag, attrs = {}, html) => { const e = document.createElementNS(NS, tag); for (const k in attrs) e.setAttribute(k, attrs[k]); if (html != null) e.innerHTML = html; return e; };
+  const kanji = h => h.replace(/<rt>.*?<\/rt>/g, '').replace(/<[^>]+>/g, '');
+  const yomi = h => h.replace(/<ruby>.*?<rt>(.*?)<\/rt><\/ruby>/g, '$1').replace(/<[^>]+>/g, '');
+  const svgLabel = (h, x, y, anchor, cls) => {
+    const g = svgEl('g');
+    if (kanji(h) !== yomi(h)) g.append(svgEl('text', { class: 'rd', x, y: y - 21, 'text-anchor': anchor }, yomi(h)));
+    const t = svgEl('text', { x, y, 'text-anchor': anchor }); t.textContent = kanji(h); if (cls) t.setAttribute('class', cls); g.append(t);
+    return g;
+  };
+  const DISTRICTS = [{"id": "shinjuku", "n": "<ruby>新宿<rt>しんじゅく</rt></ruby>", "r": "Синдзюку", "x": 171, "y": 267, "loop": true, "tag": "にぎやか・夜", "j": "<ruby>世界<rt>せかい</rt></ruby>で<ruby>一番<rt>いちばん</rt></ruby><ruby>人<rt>ひと</rt></ruby>が<ruby>多<rt>おお</rt></ruby>い<ruby>駅<rt>えき</rt></ruby>があります。<ruby>夜<rt>よる</rt></ruby>はネオンがきれいです。", "ru": "Самая загруженная станция в мире, небоскрёбы, неон и крошечные бары ночью."}, {"id": "shibuya", "n": "<ruby>渋谷<rt>しぶや</rt></ruby>", "r": "Сибуя", "x": 234, "y": 406, "loop": true, "tag": "<ruby>若者<rt>わかもの</rt></ruby>・<ruby>交差点<rt>こうさてん</rt></ruby>", "j": "<ruby>有名<rt>ゆうめい</rt></ruby>な<ruby>交差点<rt>こうさてん</rt></ruby>とハチ<ruby>公<rt>こう</rt></ruby>の<ruby>像<rt>ぞう</rt></ruby>があります。<ruby>若<rt>わか</rt></ruby>い<ruby>人<rt>ひと</rt></ruby>が<ruby>多<rt>おお</rt></ruby>いです。", "ru": "Знаменитый перекрёсток, статуя Хатико, молодёжь и смотровые площадки."}, {"id": "harajuku", "n": "<ruby>原宿<rt>はらじゅく</rt></ruby>", "r": "Харадзюку", "x": 197, "y": 359, "loop": true, "tag": "おしゃれ・かわいい", "j": "かわいい<ruby>服<rt>ふく</rt></ruby>やクレープの<ruby>店<rt>みせ</rt></ruby>が<ruby>多<rt>おお</rt></ruby>いです。<ruby>近<rt>ちか</rt></ruby>くに<ruby>明治神宮<rt>めいじじんぐう</rt></ruby>があります。", "ru": "Уличная мода и крепы на Такэсита-дори, а в двух шагах тихий лес храма Мэйдзи."}, {"id": "akiba", "n": "<ruby>秋葉原<rt>あきはばら</rt></ruby>", "r": "Акихабара", "x": 461, "y": 185, "loop": true, "tag": "アニメ・ゲーム", "j": "<ruby>電気<rt>でんき</rt></ruby>の<ruby>町<rt>まち</rt></ruby>です。アニメやゲームの<ruby>店<rt>みせ</rt></ruby>がたくさんあります。", "ru": "Электроника, аниме, игровые автоматы и мейд-кафе."}, {"id": "ueno", "n": "<ruby>上野<rt>うえの</rt></ruby>", "r": "Уэно", "x": 426, "y": 116, "loop": true, "tag": "<ruby>公園<rt>こうえん</rt></ruby>・<ruby>美術館<rt>びじゅつかん</rt></ruby>", "j": "<ruby>動物園<rt>どうぶつえん</rt></ruby>と<ruby>美術館<rt>びじゅつかん</rt></ruby>と<ruby>大<rt>おお</rt></ruby>きい<ruby>公園<rt>こうえん</rt></ruby>があります。", "ru": "Зоопарк с пандами, музеи, большой парк, весной ханами."}, {"id": "ikebukuro", "n": "<ruby>池袋<rt>いけぶくろ</rt></ruby>", "r": "Икэбукуро", "x": 214, "y": 116, "loop": true, "tag": "<ruby>水族館<rt>すいぞくかん</rt></ruby>・ポケモン", "j": "<ruby>大<rt>おお</rt></ruby>きいビルの<ruby>上<rt>うえ</rt></ruby>に<ruby>水族館<rt>すいぞくかん</rt></ruby>があります。ポケモンセンターもあります。", "ru": "Аквариум на крыше небоскрёба Sunshine City, Покемон-центр, магазины аниме."}, {"id": "asakusa", "n": "<ruby>浅草<rt>あさくさ</rt></ruby>", "r": "Асакуса", "x": 548, "y": 118, "loop": false, "near": [426, 116], "tag": "<ruby>古<rt>ふる</rt></ruby>い・お<ruby>寺<rt>てら</rt></ruby>", "j": "<ruby>古<rt>ふる</rt></ruby>いお<ruby>寺<rt>てら</rt></ruby>と<ruby>大<rt>おお</rt></ruby>きい<ruby>赤<rt>あか</rt></ruby>いちょうちんで<ruby>有名<rt>ゆうめい</rt></ruby>です。", "ru": "Старый Токио: храм Сэнсо-дзи, ворота Каминаримон, рикши и уличная еда."}, {"id": "ginza", "n": "<ruby>銀座<rt>ぎんざ</rt></ruby>", "r": "Гиндза", "x": 548, "y": 330, "loop": false, "near": [468, 283], "tag": "<ruby>大人<rt>おとな</rt></ruby>・デパート", "j": "デパートや<ruby>高<rt>たか</rt></ruby>い<ruby>店<rt>みせ</rt></ruby>が<ruby>多<rt>おお</rt></ruby>い、<ruby>大人<rt>おとな</rt></ruby>の<ruby>町<rt>まち</rt></ruby>です。", "ru": "Универмаги, бутики, депа-тика с едой. По выходным главная улица пешеходная."}, {"id": "odaiba", "n": "お<ruby>台場<rt>だいば</rt></ruby>", "r": "Одайба", "x": 500, "y": 462, "loop": false, "near": [371, 429], "tag": "<ruby>海<rt>うみ</rt></ruby>・ガンダム", "j": "<ruby>海<rt>うみ</rt></ruby>の<ruby>近<rt>ちか</rt></ruby>くの<ruby>町<rt>まち</rt></ruby>です。<ruby>大<rt>おお</rt></ruby>きいガンダムがあります。", "ru": "Искусственный остров в бухте: огромный Гандам, набережная, вид на Радужный мост."}, {"id": "shimokita", "n": "<ruby>下北沢<rt>しもきたざわ</rt></ruby>", "r": "Симокитадзава", "x": 96, "y": 430, "loop": false, "near": [234, 406], "tag": "<ruby>静<rt>しず</rt></ruby>か・<ruby>古着<rt>ふるぎ</rt></ruby>", "j": "<ruby>古着屋<rt>ふるぎや</rt></ruby>やカレーの<ruby>店<rt>みせ</rt></ruby>が<ruby>多<rt>おお</rt></ruby>くて、<ruby>静<rt>しず</rt></ruby>かでおしゃれです。", "ru": "Секонд-хенды, маленькие лайв-хаусы, кофейни и карри. Тихий и стильный."}];
+  const LOOP_LABELS = [{"n": "<ruby>東京<rt>とうきょう</rt></ruby>", "x": 468, "y": 283}, {"n": "<ruby>品川<rt>しながわ</rt></ruby>", "x": 371, "y": 429}];
+
+  // host block
+  const host = $('#host');
+  const syncHost = () => host.classList.toggle('on', location.hash === '#host');
+  syncHost(); addEventListener('hashchange', syncHost);
+  $$('.copy').forEach(b => b.addEventListener('click', () => {
+    const c = b.closest('.hc'), t = c.querySelector('.j').cloneNode(true);
+    t.querySelectorAll('rt').forEach(r => r.remove());
+    const txt = t.textContent + '\n' + c.querySelector('p').textContent;
+    const done = () => { b.textContent = 'Скопировано'; setTimeout(() => b.textContent = 'Копировать', 1500); };
+    try { navigator.clipboard.writeText(txt).then(done, () => { getSelection().selectAllChildren(c.firstElementChild); b.textContent = 'Выделено, скопируйте'; }); }
+    catch { getSelection().selectAllChildren(c.firstElementChild); b.textContent = 'Выделено, скопируйте'; }
+  }));
+  $$('.rid button').forEach(b => b.addEventListener('click', () => {
+    const open = b.dataset.open === '1'; b.dataset.open = open ? '0' : '1';
+    b.innerHTML = open ? 'Ответ' : b.dataset.a;
+  }));
+
+  // furigana + sound toggles
+  const furi = $('#furi');
+  const setFuri = on => { document.documentElement.classList.toggle('nofuri', !on); furi.setAttribute('aria-pressed', on); store.set('furi', on); };
+  setFuri(store.get('furi') !== false);
+  furi.addEventListener('click', () => setFuri(furi.getAttribute('aria-pressed') !== 'true'));
+  const snd = $('#snd'); let soundOn = store.get('snd') !== false;
+  const setSnd = on => { soundOn = on; snd.setAttribute('aria-pressed', on); store.set('snd', on); };
+  setSnd(soundOn); snd.addEventListener('click', () => setSnd(!soundOn));
+  let actx = null;
+  function chime(kind = 'arrive') {
+    if (!soundOn) return;
+    try {
+      actx = actx || new (window.AudioContext || window.webkitAudioContext)();
+      const notes = kind === 'lap' ? [784, 988, 1175, 1568, 1175, 1568] : kind === 'step' ? [1320] : [880, 1109, 1319, 1109, 1480];
+      const len = kind === 'step' ? .05 : .16;
+      notes.forEach((f, i) => {
+        const o = actx.createOscillator(), g = actx.createGain(), t = actx.currentTime + i * len;
+        o.type = 'triangle'; o.frequency.value = f;
+        g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(kind === 'step' ? .05 : .16, t + .01); g.gain.exponentialRampToValueAtTime(.001, t + len * 1.8);
+        o.connect(g).connect(actx.destination); o.start(t); o.stop(t + len * 2);
+      });
+    } catch {}
+  }
+
+  // photo wall (db + assets + user)
+  const pw = { db: null, assets: null, user: null, uid: null, canAll: false, items: [], idx: 0 };
+  const esc = t => String(t ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  function renderWall() {
+    const wall = $('#pwWall');
+    if (!pw.items.length) {
+      wall.innerHTML = `<div class="pw-empty"><b>まだ<ruby>写真<rt>しゃしん</rt></ruby>がありません</b><span>Здесь появятся фото участников с подписями. Нажмите на фото, чтобы открыть его на весь экран для демонстрации.</span></div>`;
+      return;
+    }
+    wall.innerHTML = '<div class="pw-grid">' + pw.items.map((it, i) => {
+      const mine = pw.uid && it.uid === pw.uid;
+      return `<div class="ph"><button class="img" data-i="${i}" aria-label="Открыть фото на весь экран"><img src="/_blob/${esc(it.asset)}" alt="${esc(it.place || 'Фото')}" loading="lazy"></button>
+        <div class="cap"><span class="nm">${esc(it.name || 'Участник')}</span>${it.place ? `<span class="pl">${esc(it.place)}</span>` : ''}${it.caption ? `<span class="tx">${esc(it.caption)}</span>` : ''}
+        ${mine || pw.canAll ? `<button class="del" data-id="${esc(it.id)}">Удалить</button>` : ''}</div></div>`;
+    }).join('') + '</div>';
+    $$('.ph img', wall).forEach(img => img.addEventListener('error', () => { img.parentElement.innerHTML = '<span class="miss">Фото не загрузилось у вас. Ведущий видит его на экране.</span>'; }, { once: true }));
+    $$('.ph button.img', wall).forEach(b => b.addEventListener('click', () => openLb(+b.dataset.i)));
+    $$('.ph .del', wall).forEach(b => b.addEventListener('click', () => delPhoto(b.dataset.id, b)));
+  }
+  async function delPhoto(id, b) {
+    if (b.dataset.sure !== '1') { b.dataset.sure = '1'; b.textContent = 'Точно удалить? Нажмите ещё раз'; setTimeout(() => { b.dataset.sure = ''; b.textContent = 'Удалить'; }, 4000); return; }
+    const it = pw.items.find(x => x.id === id); b.disabled = true; b.textContent = 'Удаляю…';
+    try {
+      await pw.db.collection('photos').doc(id).delete();
+      if (it && pw.assets) { try { await pw.assets.delete(it.asset); } catch {} }
+    } catch { b.disabled = false; b.textContent = 'Не удалось удалить'; }
+  }
+  // fullscreen viewer for screen share
+  let lb = null;
+  function openLb(i) {
+    pw.idx = i;
+    if (!lb) {
+      lb = document.createElement('div'); lb.className = 'lb'; lb.setAttribute('role', 'dialog'); lb.setAttribute('aria-modal', 'true');
+      lb.innerHTML = `<div class="stage"><img alt=""></div><div class="bot"><button class="prev" aria-label="Предыдущее">←</button><div><div class="who"></div><div class="tx"></div></div><button class="next" aria-label="Следующее">→</button></div><button class="x">Закрыть</button>`;
+      lb.querySelector('.prev').onclick = () => stepLb(-1); lb.querySelector('.next').onclick = () => stepLb(1); lb.querySelector('.x').onclick = closeLb;
+      lb.addEventListener('click', e => { if (e.target === lb || e.target.classList.contains('stage')) closeLb(); });
+      document.body.append(lb);
+    }
+    lb.hidden = false; paintLb(); lb.querySelector('.x').focus();
+  }
+  function paintLb() {
+    const it = pw.items[pw.idx]; if (!it) return closeLb();
+    lb.querySelector('img').src = '/_blob/' + it.asset;
+    lb.querySelector('.who').innerHTML = `${esc(it.name || 'Участник')}${it.place ? `<span>${esc(it.place)}</span>` : ''}`;
+    lb.querySelector('.tx').textContent = it.caption || '';
+  }
+  function stepLb(d) { pw.idx = (pw.idx + d + pw.items.length) % pw.items.length; paintLb(); }
+  function closeLb() { if (lb) lb.hidden = true; }
+  addEventListener('keydown', e => { if (!lb || lb.hidden) return; if (e.key === 'Escape') closeLb(); if (e.key === 'ArrowLeft') stepLb(-1); if (e.key === 'ArrowRight') stepLb(1); });
+
+  async function toJpeg(file) {
+    try {
+      const bmp = await createImageBitmap(file);
+      const k = Math.min(1, 1600 / Math.max(bmp.width, bmp.height));
+      const c = document.createElement('canvas'); c.width = Math.round(bmp.width * k); c.height = Math.round(bmp.height * k);
+      c.getContext('2d').drawImage(bmp, 0, 0, c.width, c.height);
+      const blob = await new Promise(r => c.toBlob(r, 'image/jpeg', .85));
+      return blob || file;
+    } catch { return file; }
+  }
+  const UPMSG = { too_large: 'Файл больше 20 МБ. Выберите фото поменьше.', unsupported_type: 'Этот формат не подходит. Сохраните фото как JPG или PNG.', quota_or_state: 'Место для фото на странице закончилось. Напишите ведущему.', rate_limited: 'Слишком часто. Подождите минуту и попробуйте снова.', upstream_auth: 'Обновите страницу или войдите в claude.ai заново.' };
+  $('#pwForm').addEventListener('submit', async e => {
+    e.preventDefault();
+    const f = $('#pwFile').files[0], msg = $('#pwMsg'), btn = $('#pwSend');
+    msg.className = 'pw-msg';
+    if (!f) { msg.textContent = 'Сначала выберите фото.'; msg.className = 'pw-msg err'; return; }
+    btn.disabled = true; msg.textContent = 'Загружаю…';
+    try {
+      const blob = await toJpeg(f);
+      const up = await pw.assets.upload(blob, blob.type ? undefined : { type: 'image/jpeg' });
+      await pw.db.collection('photos').add({ asset: up.id, name: $('#pwName').value.trim().slice(0, 40), place: $('#pwPlace').value.trim().slice(0, 40), caption: $('#pwCap').value.trim().slice(0, 120), uid: pw.uid || null, ts: Date.now() });
+      try { localStorage.setItem('tk-pwname', JSON.stringify($('#pwName').value.trim())); } catch {}
+      $('#pwFile').value = ''; $('#pwCap').value = ''; $('#pwPlace').value = '';
+      msg.textContent = 'Готово! Фото на стене.';
+    } catch (err) {
+      msg.textContent = UPMSG[err?.code] || 'Не получилось сохранить фото. Попробуйте ещё раз или отправьте его ведущему в чат.'; msg.className = 'pw-msg err';
+    }
+    btn.disabled = false;
+  });
+  (async () => {
+    renderWall();
+    const note = $('#pwNote');
+    if (!window.claude?.use) { note.textContent = 'Стена фото работает, когда страница открыта на claude.ai. Пришлите фото ведущему в чат.'; return; }
+    const [db, assets, user] = await Promise.all([claude.use('db'), claude.use('assets'), claude.use('user')]);
+    pw.db = db; pw.assets = assets; pw.user = user;
+    if (!db) { note.textContent = 'Чтобы видеть стену, войдите в claude.ai. Или пришлите фото ведущему в чат: он покажет его на экране.'; return; }
+    if (user) { try { pw.uid = await user.id(); } catch {} try { pw.canAll = await user.canEdit(); } catch {} }
+    if (assets) {
+      $('#pwForm').hidden = false;
+      const saved = store.get('pwname'); if (saved) $('#pwName').value = saved;
+      note.textContent = 'Добавьте одно фото с подписью. Удалить можно только своё.';
+    } else note.textContent = 'Добавлять фото может ведущий. Пришлите ему фото с подписью в чат, и оно появится здесь.';
+    db.collection('photos').orderBy('ts').limit(200).onSnapshot(snap => {
+      pw.items = snap.docs.map(d => ({ id: d.id, ...d.data() })).filter(x => typeof x.asset === 'string' && /^[0-9a-f]{32}$/.test(x.asset));
+      renderWall(); if (lb && !lb.hidden) paintLb();
+    }, () => { note.textContent = 'Стена фото сейчас недоступна. Обновите страницу.'; });
+  })();
+
+  // map
+  const mapG = $('#mapG');
+  LOOP_LABELS.forEach(l => {
+    const g = svgEl('g', { class: 'm-l' });
+    g.append(svgEl('circle', { class: 'm-st', cx: l.x, cy: l.y, r: 5 }));
+    g.append(svgLabel(l.n, l.x + 12, l.y + 22, 'start'));
+    mapG.append(g);
+  });
+  DISTRICTS.forEach(d => { if (!d.loop) mapG.append(svgEl('line', { class: 'm-link', x1: d.near[0], y1: d.near[1], x2: d.x, y2: d.y })); });
+  const labelPos = d => {
+    const left = d.x < 320;
+    return { x: d.x + (left ? -16 : 16), y: d.y + 7, a: left ? 'end' : 'start' };
+  };
+  DISTRICTS.forEach(d => {
+    const g = svgEl('g', { class: 'm-d', tabindex: 0, role: 'button', 'data-id': d.id, 'aria-label': d.r });
+    g.append(svgEl('circle', { class: d.loop ? 'm-dot' : 'm-off', cx: d.x, cy: d.y, r: d.loop ? 10 : 9 }));
+    const p = labelPos(d);
+    g.append(svgLabel(d.n, p.x, p.y, p.a));
+    g.addEventListener('click', () => pickD(d.id));
+    g.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); pickD(d.id); } });
+    mapG.append(g);
+  });
+  function pickD(id) {
+    const d = DISTRICTS.find(x => x.id === id) || DISTRICTS[0];
+    $$('.m-d').forEach(g => g.classList.toggle('sel', g.dataset.id === d.id));
+    $('#dcard').innerHTML = `<div><h3>${d.n}</h3><div class="r">${d.r}${d.loop ? ' · на кольце Яманотэ' : ' · рядом с кольцом'}</div></div>
+      <span class="tg">${d.tag}</span><p class="j">${d.j}</p><p>${d.ru}</p>
+      <div class="dlist">${DISTRICTS.map(x => `<button data-id="${x.id}" aria-pressed="${x.id === d.id}">${x.n}</button>`).join('')}</div>`;
+    $$('#dcard .dlist button').forEach(b => b.addEventListener('click', () => pickD(b.dataset.id)));
+    store.set('dist', d.id);
+  }
+  pickD(store.get('dist') || 'shinjuku');
+
+  // phrase filter
+  $$('.filters .chip').forEach(b => b.addEventListener('click', () => {
+    $$('.filters .chip').forEach(x => x.setAttribute('aria-pressed', x === b)); $('#phr').dataset.f = b.dataset.f;
+  }));
+
+  // sugoroku
+  const ST = [{"n": "<ruby>東京<rt>とうきょう</rt></ruby>", "t": "スタートとゴール！<ruby>一周<rt>いっしゅう</rt></ruby>したら、<ruby>駅<rt>えき</rt></ruby>スタンプがもらえます。", "ru": "Старт и финиш. Проехал круг: 駅スタンプ!"}, {"n": "<ruby>秋葉原<rt>あきはばら</rt></ruby>", "t": "<ruby>好<rt>す</rt></ruby>きなアニメやゲームは<ruby>何<rt>なん</rt></ruby>ですか？<ruby>見<rt>み</rt></ruby>たことがある、したことがある<ruby>物<rt>もの</rt></ruby>を<ruby>一<rt>ひと</rt></ruby>つ<ruby>紹介<rt>しょうかい</rt></ruby>してください。", "ru": "Любимое аниме или игра. Тренируем 〜たことがある."}, {"n": "<ruby>上野<rt>うえの</rt></ruby>", "t": "<ruby>上野<rt>うえの</rt></ruby>で<ruby>一日<rt>いちにち</rt></ruby>あったら、<ruby>何<rt>なに</rt></ruby>をしますか？", "ru": "Зоопарк, музеи, парк. Тренируем 〜たら и 〜たり〜たり."}, {"n": "<ruby>日暮里<rt>にっぽり</rt></ruby>", "t": "<ruby>猫<rt>ねこ</rt></ruby>の<ruby>町<rt>まち</rt></ruby>・<ruby>谷中<rt>やなか</rt></ruby>に<ruby>着<rt>つ</rt></ruby>きました。<ruby>右<rt>みぎ</rt></ruby>の<ruby>人<rt>ひと</rt></ruby>に「<ruby>猫<rt>ねこ</rt></ruby>と<ruby>犬<rt>いぬ</rt></ruby>、どちらが<ruby>好<rt>す</rt></ruby>きですか？」と<ruby>聞<rt>き</rt></ruby>いてください。", "ru": "Спросите соседа справа, кошки или собаки, и почему (〜ので)."}, {"n": "<ruby>池袋<rt>いけぶくろ</rt></ruby>", "t": "<ruby>終電<rt>しゅうでん</rt></ruby>に<ruby>乗<rt>の</rt></ruby>り<ruby>遅<rt>おく</rt></ruby>れました！どうしますか？ みんなが<ruby>一<rt>ひと</rt></ruby>つずつアドバイスします。", "ru": "Опоздал на последний поезд. Каждый даёт совет через 〜ほうがいい."}, {"n": "<ruby>高田馬場<rt>たかだのばば</rt></ruby>", "t": "<ruby>学生<rt>がくせい</rt></ruby>の<ruby>町<rt>まち</rt></ruby>。<ruby>日本語<rt>にほんご</rt></ruby>の<ruby>勉強<rt>べんきょう</rt></ruby>を<ruby>始<rt>はじ</rt></ruby>めてから、どのぐらいですか？どうして<ruby>始<rt>はじ</rt></ruby>めましたか？", "ru": "Сколько учите японский и почему начали. Тренируем 〜てから."}, {"n": "<ruby>新宿<rt>しんじゅく</rt></ruby>", "t": "<ruby>新宿駅<rt>しんじゅくえき</rt></ruby>は<ruby>迷路<rt>めいろ</rt></ruby>！<ruby>左<rt>ひだり</rt></ruby>の<ruby>人<rt>ひと</rt></ruby>に「すみません、<ruby>西口<rt>にしぐち</rt></ruby>はどこですか？」と<ruby>聞<rt>き</rt></ruby>いて、<ruby>道<rt>みち</rt></ruby>を<ruby>教<rt>おし</rt></ruby>えてもらってください。", "ru": "Спросите дорогу у соседа слева, он объясняет: まっすぐ, 右に曲がって…"}, {"n": "<ruby>原宿<rt>はらじゅく</rt></ruby>", "t": "<ruby>竹下通<rt>たけしたどお</rt></ruby>りで、<ruby>何<rt>なに</rt></ruby>を<ruby>買<rt>か</rt></ruby>いたいですか？いくらぐらい<ruby>使<rt>つか</rt></ruby>うつもりですか？", "ru": "Что купите на Такэсита-дори и сколько потратите (〜つもり)."}, {"n": "<ruby>渋谷<rt>しぶや</rt></ruby>", "t": "ハチ<ruby>公前<rt>こうまえ</rt></ruby>で<ruby>待<rt>ま</rt></ruby>ち<ruby>合<rt>あ</rt></ruby>わせ！<ruby>右<rt>みぎ</rt></ruby>の<ruby>人<rt>ひと</rt></ruby>を<ruby>誘<rt>さそ</rt></ruby>って、<ruby>時間<rt>じかん</rt></ruby>と<ruby>場所<rt>ばしょ</rt></ruby>を<ruby>決<rt>き</rt></ruby>めてください。", "ru": "Пригласите соседа справа, договоритесь о времени и месте (〜ませんか)."}, {"n": "<ruby>恵比寿<rt>えびす</rt></ruby>", "t": "あなたの<ruby>町<rt>まち</rt></ruby>のおすすめの<ruby>店<rt>みせ</rt></ruby>を<ruby>紹介<rt>しょうかい</rt></ruby>してください。", "ru": "Посоветуйте место в своём городе (〜ほうがいい, 〜し)."}, {"n": "<ruby>品川<rt>しながわ</rt></ruby>", "t": "<ruby>新幹線<rt>しんかんせん</rt></ruby>の<ruby>駅<rt>えき</rt></ruby>！<ruby>新幹線<rt>しんかんせん</rt></ruby>で<ruby>行<rt>い</rt></ruby>くなら、どこに<ruby>行<rt>い</rt></ruby>きたいですか？", "ru": "Куда поехали бы на синкансэне. Ответили: ещё один бросок!", "sp": true}, {"n": "<ruby>新橋<rt>しんばし</rt></ruby>", "t": "サラリーマンの<ruby>町<rt>まち</rt></ruby>。<ruby>仕事<rt>しごと</rt></ruby>や<ruby>勉強<rt>べんきょう</rt></ruby>のあとで、いつも<ruby>何<rt>なに</rt></ruby>をしますか？", "ru": "Что делаете после работы или учёбы (〜たり〜たり)."}];
+  const COLORS = ['#d23f36', '#1f6fd1', '#e0a100', '#7a3fc7', '#0f9d8a', '#e2711d'];
+  const CX = 300, CY = 300, RAD = 215;
+  const posOf = i => { const a = (-10 + i * 30) * Math.PI / 180; return [CX + RAD * Math.cos(a), CY - RAD * Math.sin(a)]; };
+  const stG = $('#stG');
+  ST.forEach((s, i) => {
+    const [x, y] = posOf(i), g = svgEl('g', { class: 's-st' + (i === 0 ? ' start' : '') + (s.sp ? ' special' : ''), 'data-i': i, tabindex: 0, role: 'button' });
+    g.append(svgEl('circle', { cx: x, cy: y, r: i === 0 ? 22 : 18 }));
+    const dx = x - CX, dy = y - CY, k = 1 + 52 / RAD;
+    g.append(svgLabel(s.n, CX + dx * k, CY + dy * k + 6, 'middle'));
+    g.addEventListener('click', () => showTask(i, null));
+    g.addEventListener('keydown', e => { if (e.key === 'Enter') showTask(i, null); });
+    stG.append(g);
+  });
+  const PIPS = { 1: [[0, 0]], 2: [[-1, -1], [1, 1]], 3: [[-1, -1], [0, 0], [1, 1]], 4: [[-1, -1], [1, -1], [-1, 1], [1, 1]], 5: [[-1, -1], [1, -1], [0, 0], [-1, 1], [1, 1]], 6: [[-1, -1], [1, -1], [-1, 0], [1, 0], [-1, 1], [1, 1]] };
+  const drawDie = n => { const g = $('#pips'); g.innerHTML = ''; PIPS[n].forEach(([a, b]) => g.append(svgEl('circle', { class: 'pip', cx: a * 20, cy: b * 20, r: 7 }))); };
+  const defNames = ['1', '2', '3', '4', '5', '6'];
+  let G = store.get('sg') || { n: 5, names: defNames.map((x, i) => 'Игрок ' + x), pos: [0, 0, 0, 0, 0, 0], laps: [0, 0, 0, 0, 0, 0], turn: 0, last: null, die: 3, first: null };
+  let busy = false;
+  const saveG = () => store.set('sg', G);
+  const tokG = $('#tokG');
+  function renderTokens() {
+    tokG.innerHTML = '';
+    const groups = {};
+    for (let p = 0; p < G.n; p++) (groups[G.pos[p]] = groups[G.pos[p]] || []).push(p);
+    for (const i in groups) {
+      const [x, y] = posOf(+i), list = groups[i], dx = x - CX, dy = y - CY, k = 1 - 44 / RAD;
+      list.forEach((p, j) => {
+        const off = (j - (list.length - 1) / 2) * 22, nx = -dy / RAD, ny = dx / RAD;
+        const tx = CX + dx * k + nx * off, ty = CY + dy * k + ny * off;
+        const g = svgEl('g', { class: 'tok', transform: `translate(${tx} ${ty})` });
+        g.append(svgEl('circle', { r: p === G.turn ? 13 : 11, fill: COLORS[p] }));
+        g.append(svgEl('text', {}, G.laps[p] ? '★' : String(p + 1)));
+        tokG.append(g);
+      });
+    }
+    $$('.s-st').forEach(g => g.classList.toggle('hit', G.last && +g.dataset.i === G.last.i));
+    $('#turnS').textContent = G.names[G.turn];
+    $('#turnS').style.fill = COLORS[G.turn];
+  }
+  function renderPlayers() {
+    $$('.pcount .chip').forEach(c => c.setAttribute('aria-pressed', +c.dataset.n === G.n));
+    const pl = $('#plist'); pl.innerHTML = '';
+    for (let p = 0; p < G.n; p++) {
+      const row = document.createElement('div'); row.className = 'prow' + (p === G.turn ? ' cur' : '');
+      row.innerHTML = `<i style="background:${COLORS[p]}"></i><input id="pn${p}" aria-label="Имя игрока ${p + 1}"><span class="st"></span>`;
+      const inp = row.querySelector('input'); inp.value = G.names[p];
+      inp.addEventListener('input', () => { G.names[p] = inp.value || ('Игрок ' + (p + 1)); saveG(); renderTokens(); });
+      row.querySelector('.st').innerHTML = (G.laps[p] ? '★ ' : '') + (p === G.turn ? 'ходит · ' : '') + ST[G.pos[p]].n;
+      pl.append(row);
+    }
+  }
+  function showTask(i, p) {
+    const s = ST[i];
+    const who = p == null ? 'Станция' : `<b style="color:${COLORS[p]}">${G.names[p]}</b> приезжает на станцию`;
+    let badge = '';
+    if (p != null && G.last && G.last.lap) badge = `<span class="badge">Круг пройден! 駅スタンプ ${G.first === p ? '· первый!' : ''}</span>`;
+    if (p != null && s.sp && i !== 0) badge += ' <span class="badge">Ещё один бросок!</span>';
+    $('#task').innerHTML = `<div class="who2">${who}</div><h3>${s.n}</h3><p class="j">${s.t}</p><p class="ru">${s.ru}</p>${badge}`;
+  }
+  function renderAll() { renderTokens(); renderPlayers(); drawDie(G.die); }
+  function nextTurn() { G.turn = (G.turn + 1) % G.n; }
+  $('#roll').onclick = () => {
+    if (busy) return; busy = true;
+    const p = G.turn, n = 1 + Math.floor(Math.random() * 6);
+    const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    let k = 0;
+    const shuffle = setInterval(() => {
+      drawDie(1 + Math.floor(Math.random() * 6));
+      if (++k >= (reduce ? 1 : 8)) {
+        clearInterval(shuffle); drawDie(n); G.die = n;
+        let steps = 0, lap = false;
+        const mv = setInterval(() => {
+          G.pos[p] = (G.pos[p] + 1) % ST.length;
+          if (G.pos[p] === 0) { lap = true; }
+          steps++; renderTokens();
+          if (steps < n) { chime('step'); return; }
+          clearInterval(mv);
+          if (lap) { G.laps[p]++; if (G.first == null) G.first = p; }
+          G.last = { i: G.pos[p], p, lap };
+          chime(lap ? 'lap' : 'arrive');
+          showTask(G.pos[p], p);
+          if (!(ST[G.pos[p]].sp && G.pos[p] !== 0)) nextTurn();
+          saveG(); renderAll(); busy = false;
+        }, reduce ? 60 : 260);
+      }
+    }, 70);
+  };
+  $('#skip').onclick = () => { if (busy) return; nextTurn(); saveG(); renderAll(); };
+  $('#sgReset').onclick = () => { if (busy) return; G.pos = [0, 0, 0, 0, 0, 0]; G.laps = [0, 0, 0, 0, 0, 0]; G.turn = 0; G.last = null; G.first = null; saveG(); renderAll(); showIntro(); };
+  $$('.pcount .chip').forEach(c => c.addEventListener('click', () => { G.n = +c.dataset.n; if (G.turn >= G.n) G.turn = 0; saveG(); renderAll(); }));
+  function showIntro() {
+    $('#task').innerHTML = `<div class="who2">Как играть</div><h3><ruby>東京<rt>とうきょう</rt></ruby>から<ruby>出発<rt>しゅっぱつ</rt></ruby>！</h3><p class="j">サイコロをふって、<ruby>駅<rt>えき</rt></ruby>のタスクに<ruby>答<rt>こた</rt></ruby>えてください。</p><p class="ru">Впишите имена, нажмите «サイコロ». На станции игрок отвечает 20–30 секунд, следующий задаёт один вопрос: どうしてですか？ だれと？ いくらぐらい？ Кто первым вернётся на 東京, получает 駅スタンプ. На 品川 синкансэн: ещё один бросок. Нажмите на любую станцию, чтобы посмотреть задание.</p>`;
+  }
+  renderAll();
+  if (G.last) showTask(G.last.i, G.last.p); else showIntro();
+
+  // shiori
+  const PLACES = [{"id": "asakusa", "n": "<ruby>浅草<rt>あさくさ</rt></ruby>", "c": 1000, "ru": "храм и уличная еда", "a": "<ruby>浅草寺<rt>せんそうじ</rt></ruby>を<ruby>見<rt>み</rt></ruby>たり、<ruby>食<rt>た</rt></ruby>べ<ruby>歩<rt>ある</rt></ruby>きをしたり"}, {"id": "ueno", "n": "<ruby>上野<rt>うえの</rt></ruby>", "c": 600, "ru": "зоопарк и парк", "a": "<ruby>動物園<rt>どうぶつえん</rt></ruby>でパンダを<ruby>見<rt>み</rt></ruby>たり、<ruby>公園<rt>こうえん</rt></ruby>を<ruby>散歩<rt>さんぽ</rt></ruby>したり"}, {"id": "akiba", "n": "<ruby>秋葉原<rt>あきはばら</rt></ruby>", "c": 2500, "ru": "игры и мейд-кафе", "a": "ゲームセンターで<ruby>遊<rt>あそ</rt></ruby>んだり、メイドカフェに<ruby>行<rt>い</rt></ruby>ったり"}, {"id": "harajuku", "n": "<ruby>原宿<rt>はらじゅく</rt></ruby>", "c": 2000, "ru": "шопинг и крепы", "a": "<ruby>竹下通<rt>たけしたどお</rt></ruby>りで<ruby>買<rt>か</rt></ruby>い<ruby>物<rt>もの</rt></ruby>をしたり、クレープを<ruby>食<rt>た</rt></ruby>べたり"}, {"id": "meiji", "n": "<ruby>明治神宮<rt>めいじじんぐう</rt></ruby>", "c": 500, "ru": "храм в лесу", "a": "<ruby>森<rt>もり</rt></ruby>の<ruby>中<rt>なか</rt></ruby>を<ruby>歩<rt>ある</rt></ruby>いたり、お<ruby>守<rt>まも</rt></ruby>りを<ruby>買<rt>か</rt></ruby>ったり"}, {"id": "shibuya", "n": "<ruby>渋谷<rt>しぶや</rt></ruby>", "c": 2500, "ru": "перекрёсток и смотровая", "a": "スクランブル<ruby>交差点<rt>こうさてん</rt></ruby>を<ruby>渡<rt>わた</rt></ruby>ったり、<ruby>展望台<rt>てんぼうだい</rt></ruby>から<ruby>景色<rt>けしき</rt></ruby>を<ruby>見<rt>み</rt></ruby>たり"}, {"id": "shinjuku", "n": "<ruby>新宿<rt>しんじゅく</rt></ruby>", "c": 1500, "ru": "ночной вид и якитори", "a": "<ruby>都庁<rt>とちょう</rt></ruby>から<ruby>夜景<rt>やけい</rt></ruby>を<ruby>見<rt>み</rt></ruby>たり、<ruby>焼<rt>や</rt></ruby>き<ruby>鳥<rt>とり</rt></ruby>を<ruby>食<rt>た</rt></ruby>べたり"}, {"id": "ginza", "n": "<ruby>銀座<rt>ぎんざ</rt></ruby>", "c": 3000, "ru": "универмаги и кабуки", "a": "デパートで<ruby>買<rt>か</rt></ruby>い<ruby>物<rt>もの</rt></ruby>をしたり、<ruby>歌舞伎<rt>かぶき</rt></ruby>を<ruby>見<rt>み</rt></ruby>たり"}, {"id": "ikebukuro", "n": "<ruby>池袋<rt>いけぶくろ</rt></ruby>", "c": 2600, "ru": "аквариум и Покемон-центр", "a": "<ruby>水族館<rt>すいぞくかん</rt></ruby>に<ruby>行<rt>い</rt></ruby>ったり、ポケモンセンターで<ruby>買<rt>か</rt></ruby>い<ruby>物<rt>もの</rt></ruby>をしたり"}, {"id": "shimokita", "n": "<ruby>下北沢<rt>しもきたざわ</rt></ruby>", "c": 1500, "ru": "секонд-хенды и карри", "a": "<ruby>古着屋<rt>ふるぎや</rt></ruby>を<ruby>見<rt>み</rt></ruby>たり、カレーを<ruby>食<rt>た</rt></ruby>べたり"}, {"id": "odaiba", "n": "お<ruby>台場<rt>だいば</rt></ruby>", "c": 1500, "ru": "Гандам и море", "a": "ガンダムを<ruby>見<rt>み</rt></ruby>たり、<ruby>海<rt>うみ</rt></ruby>の<ruby>近<rt>ちか</rt></ruby>くを<ruby>散歩<rt>さんぽ</rt></ruby>したり"}, {"id": "tsukiji", "n": "<ruby>築地<rt>つきじ</rt></ruby>", "c": 2000, "ru": "рынок и суши на завтрак", "a": "<ruby>市場<rt>いちば</rt></ruby>を<ruby>歩<rt>ある</rt></ruby>いたり、おすしを<ruby>食<rt>た</rt></ruby>べたり"}, {"id": "karaoke", "n": "カラオケ", "c": 1500, "ru": "караоке до ночи", "a": "<ruby>日本<rt>にほん</rt></ruby>の<ruby>歌<rt>うた</rt></ruby>を<ruby>歌<rt>うた</rt></ruby>ったり、みんなで<ruby>騒<rt>さわ</rt></ruby>いだり"}, {"id": "sento", "n": "<ruby>銭湯<rt>せんとう</rt></ruby>", "c": 550, "ru": "общественная баня", "a": "お<ruby>風呂<rt>ふろ</rt></ruby>に<ruby>入<rt>はい</rt></ruby>ったり、<ruby>牛乳<rt>ぎゅうにゅう</rt></ruby>を<ruby>飲<rt>の</rt></ruby>んだり"}, {"id": "rest", "n": "ホテル", "c": 0, "ru": "отдых в отеле", "a": "ゆっくり<ruby>休<rt>やす</rt></ruby>んだり、テレビを<ruby>見<rt>み</rt></ruby>たり"}];
+  const TRIPS = [{"id": "kamakura", "n": "<ruby>鎌倉<rt>かまくら</rt></ruby>", "c": 3000, "ru": "Большой Будда и море", "a": "<ruby>大仏<rt>だいぶつ</rt></ruby>を<ruby>見<rt>み</rt></ruby>たり、<ruby>海<rt>うみ</rt></ruby>の<ruby>近<rt>ちか</rt></ruby>くを<ruby>散歩<rt>さんぽ</rt></ruby>したり", "how": "Электричкой около часа от Токио."}, {"id": "hakone", "n": "<ruby>箱根<rt>はこね</rt></ruby>", "c": 7000, "ru": "онсэн и вид на Фудзи", "a": "<ruby>温泉<rt>おんせん</rt></ruby>に<ruby>入<rt>はい</rt></ruby>ったり、<ruby>富士山<rt>ふじさん</rt></ruby>を<ruby>見<rt>み</rt></ruby>たり", "how": "Около 1,5 часа от Синдзюку."}, {"id": "nikko", "n": "<ruby>日光<rt>にっこう</rt></ruby>", "c": 8000, "ru": "храмы в горах", "a": "<ruby>東照宮<rt>とうしょうぐう</rt></ruby>を<ruby>見<rt>み</rt></ruby>たり、<ruby>山<rt>やま</rt></ruby>の<ruby>中<rt>なか</rt></ruby>を<ruby>歩<rt>ある</rt></ruby>いたり", "how": "Около 2 часов от Асакусы."}, {"id": "yokohama", "n": "<ruby>横浜<rt>よこはま</rt></ruby>", "c": 2500, "ru": "Чайна-таун и порт", "a": "<ruby>中華街<rt>ちゅうかがい</rt></ruby>で<ruby>食<rt>た</rt></ruby>べたり、<ruby>港<rt>みなと</rt></ruby>を<ruby>散歩<rt>さんぽ</rt></ruby>したり", "how": "Около 30 минут от Токио."}, {"id": "fuji", "n": "<ruby>河口湖<rt>かわぐちこ</rt></ruby>", "c": 6000, "ru": "Фудзи и озеро", "a": "<ruby>富士山<rt>ふじさん</rt></ruby>の<ruby>写真<rt>しゃしん</rt></ruby>を<ruby>撮<rt>と</rt></ruby>ったり、<ruby>湖<rt>みずうみ</rt></ruby>でボートに<ruby>乗<rt>の</rt></ruby>ったり", "how": "Автобусом около 2 часов от Синдзюку."}, {"id": "stay", "n": "<ruby>東京<rt>とうきょう</rt></ruby>", "c": 0, "ru": "ещё день в Токио", "a": "<ruby>好<rt>す</rt></ruby>きな<ruby>町<rt>まち</rt></ruby>をもう<ruby>一度<rt>いちど</rt></ruby><ruby>歩<rt>ある</rt></ruby>いたり、お<ruby>土産<rt>みやげ</rt></ruby>を<ruby>買<rt>か</rt></ruby>ったり", "how": "Без поездки: свободный день."}];
+  const SLOTS = ['<ruby>午前<rt>ごぜん</rt></ruby>', '<ruby>午後<rt>ごご</rt></ruby>', '<ruby>夜<rt>よる</rt></ruby>'];
+  const EXAMPLE = { d: [['asakusa', 'ueno', 'shinjuku'], ['tsukiji', 'harajuku', 'shibuya'], ['akiba', 'ikebukuro', 'sento']], t: 'hakone' };
+  const strip = h => h.replace(/<rt>.*?<\/rt>/g, '').replace(/<[^>]+>/g, '');
+  let S = store.get('shiori') || { ...JSON.parse(JSON.stringify(EXAMPLE)), ex: true, bud: 25000 };
+  const daysEl = $('#days');
+  function buildDays() {
+    daysEl.innerHTML = '';
+    for (let d = 0; d < 3; d++) {
+      const box = document.createElement('div'); box.className = 'panel day';
+      box.innerHTML = `<h3><span class="dn">${d + 1}<ruby>日目<rt>にちめ</rt></ruby></span></h3>`;
+      SLOTS.forEach((sl, s) => {
+        const id = `sl${d}${s}`, w = document.createElement('div'); w.className = 'slot';
+        w.innerHTML = `<label for="${id}">${sl}</label><select id="${id}"><option value="">— выбрать —</option>${PLACES.map(p => `<option value="${p.id}">${strip(p.n)} · ${p.ru}</option>`).join('')}</select><span class="c"></span>`;
+        const sel = w.querySelector('select'); sel.value = S.d[d][s] || '';
+        sel.addEventListener('change', () => { S.d[d][s] = sel.value; S.ex = false; renderPlan(); });
+        box.append(w);
+      });
+      daysEl.append(box);
+    }
+    const t = document.createElement('div'); t.className = 'panel day trip';
+    t.innerHTML = `<h3><span class="dn">4<ruby>日目<rt>にちめ</rt></ruby></span><span>за город</span></h3><div class="slot"><label for="trip"><ruby>日帰<rt>ひがえ</rt></ruby>り</label><select id="trip"><option value="">— выбрать —</option>${TRIPS.map(p => `<option value="${p.id}">${strip(p.n)} · ${p.ru}</option>`).join('')}</select><span class="c"></span></div><p class="note" id="tripNote" style="margin:4px 0 0"></p>`;
+    const ts = t.querySelector('select'); ts.value = S.t || '';
+    ts.addEventListener('change', () => { S.t = ts.value; S.ex = false; renderPlan(); });
+    daysEl.append(t);
+    $('#bud').value = String(S.bud);
+  }
+  function renderPlan() {
+    let sum = 0; const out = [];
+    for (let d = 0; d < 3; d++) {
+      const parts = [];
+      S.d[d].forEach((id, s) => {
+        const p = PLACES.find(x => x.id === id), c = $(`#sl${d}${s}`).nextElementSibling;
+        c.textContent = p ? (p.c ? yen(p.c) : 'бесплатно') : '';
+        if (!p) return; sum += p.c;
+        parts.push(parts.length === 0 ? `${d + 1}<ruby>日目<rt>にちめ</rt></ruby>の${SLOTS[s]}は${p.n}に<ruby>行<rt>い</rt></ruby>くつもりです。${p.a}したいです。` : `${SLOTS[s]}は${p.n}で${p.a}したいです。`);
+      });
+      if (parts.length) out.push(parts.join(''));
+    }
+    const t = TRIPS.find(x => x.id === S.t), tc = $('#trip').nextElementSibling;
+    tc.textContent = t ? (t.c ? yen(t.c) : 'бесплатно') : '';
+    $('#tripNote').innerHTML = t ? t.how : 'Выберите поездку на день.';
+    if (t) { sum += t.c; out.push(t.id === 'stay' ? `4<ruby>日目<rt>にちめ</rt></ruby>は<ruby>東京<rt>とうきょう</rt></ruby>にいるつもりです。${t.a}したいです。` : `4<ruby>日目<rt>にちめ</rt></ruby>は<ruby>日帰<rt>ひがえ</rt></ruby>りで${t.n}に<ruby>行<rt>い</rt></ruby>くつもりです。${t.a}したいです。`); }
+    $('#plan').innerHTML = out.length ? out.map(x => `<li>${x}</li>`).join('') : '<li style="font-family:var(--ru);font-size:15px;color:var(--muted)">Выберите места, и здесь появится текст плана.</li>';
+    const B = S.bud, over = sum > B;
+    $('#sum').textContent = yen(sum);
+    $('#fill').style.width = Math.min(100, sum / B * 100) + '%';
+    $('#budget').classList.toggle('over', over);
+    $('#bmsg').textContent = over ? `Перебор на ${yen(sum - B)}. 予算オーバー！ Что убрать?` : `Осталось ${yen(B - sum)} из ${yen(B)}`;
+    $('#exNote').hidden = !S.ex;
+    store.set('shiori', S);
+  }
+  $('#bud').addEventListener('change', e => { S.bud = +e.target.value; renderPlan(); });
+  $('#shEx').onclick = () => { S = { ...JSON.parse(JSON.stringify(EXAMPLE)), ex: true, bud: S.bud }; buildDays(); renderPlan(); };
+  $('#shClear').onclick = () => { S = { d: [['', '', ''], ['', '', ''], ['', '', '']], t: '', ex: false, bud: S.bud }; buildDays(); renderPlan(); };
+  buildDays(); renderPlan();
+
+  // trouble cards
+  $$('#draw .card').forEach(c => c.addEventListener('click', () => c.classList.toggle('open')));
+  $('#drawReset').onclick = () => $$('#draw .card').forEach(c => c.classList.remove('open'));
+
+  // random question
+  const qs = $$('#qs li'); let last = -1;
+  $('#rand').onclick = () => {
+    let i; do { i = Math.floor(Math.random() * qs.length); } while (i === last && qs.length > 1);
+    last = i; qs.forEach((q, j) => q.classList.toggle('pick', j === i));
+    qs[i].scrollIntoView({ block: 'center', behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
+  };
+
+  // quiz
+  const QUIZ = [{"q": "<ruby>休<rt>やす</rt></ruby>みの<ruby>日<rt>ひ</rt></ruby>、<ruby>何<rt>なに</rt></ruby>をしたいですか？", "o": ["お<ruby>寺<rt>てら</rt></ruby>や<ruby>神社<rt>じんじゃ</rt></ruby>を<ruby>歩<rt>ある</rt></ruby>きたい", "ゲームをしたり、アニメを<ruby>見<rt>み</rt></ruby>たりしたい", "<ruby>新<rt>あたら</rt></ruby>しい<ruby>服<rt>ふく</rt></ruby>を<ruby>買<rt>か</rt></ruby>いたい", "<ruby>夜<rt>よる</rt></ruby>まで<ruby>友<rt>とも</rt></ruby>だちと<ruby>遊<rt>あそ</rt></ruby>びたい", "カフェで<ruby>本<rt>ほん</rt></ruby>を<ruby>読<rt>よ</rt></ruby>みたい", "<ruby>美術館<rt>びじゅつかん</rt></ruby>や<ruby>動物園<rt>どうぶつえん</rt></ruby>に<ruby>行<rt>い</rt></ruby>きたい"]}, {"q": "<ruby>日本<rt>にほん</rt></ruby>で<ruby>一番<rt>いちばん</rt></ruby><ruby>食<rt>た</rt></ruby>べてみたいのは？", "o": ["<ruby>天<rt>てん</rt></ruby>ぷらと<ruby>和菓子<rt>わがし</rt></ruby>", "メイドカフェのオムライス", "カラフルなクレープ", "ラーメンと<ruby>焼<rt>や</rt></ruby>き<ruby>鳥<rt>とり</rt></ruby>", "スープカレー", "<ruby>市場<rt>いちば</rt></ruby>の<ruby>海鮮丼<rt>かいせんどん</rt></ruby>"]}, {"q": "<ruby>旅行<rt>りょこう</rt></ruby>で<ruby>一番<rt>いちばん</rt></ruby><ruby>大切<rt>たいせつ</rt></ruby>なのは？", "o": ["<ruby>歴史<rt>れきし</rt></ruby>", "<ruby>趣味<rt>しゅみ</rt></ruby>", "<ruby>写真<rt>しゃしん</rt></ruby>と<ruby>流行<rt>りゅうこう</rt></ruby>", "にぎやかな<ruby>雰囲気<rt>ふんいき</rt></ruby>", "<ruby>小<rt>ちい</rt></ruby>さくて、いい<ruby>店<rt>みせ</rt></ruby>", "<ruby>自然<rt>しぜん</rt></ruby>と<ruby>美術<rt>びじゅつ</rt></ruby>"]}, {"q": "<ruby>好<rt>す</rt></ruby>きな<ruby>時間<rt>じかん</rt></ruby>は？", "o": ["<ruby>朝早<rt>あさはや</rt></ruby>く", "<ruby>家<rt>いえ</rt></ruby>でゆっくりする<ruby>夜<rt>よる</rt></ruby>", "<ruby>晴<rt>は</rt></ruby>れた<ruby>午後<rt>ごご</rt></ruby>", "<ruby>夜中<rt>よなか</rt></ruby>の<ruby>十二時<rt>じゅうにじ</rt></ruby>", "<ruby>夕方<rt>ゆうがた</rt></ruby>", "<ruby>春<rt>はる</rt></ruby>の<ruby>昼<rt>ひる</rt></ruby>"]}, {"q": "<ruby>東京<rt>とうきょう</rt></ruby>でやってみたいことは？", "o": ["<ruby>着物<rt>きもの</rt></ruby>を<ruby>着<rt>き</rt></ruby>て<ruby>歩<rt>ある</rt></ruby>きたい", "ガチャガチャをしたい", "<ruby>竹下通<rt>たけしたどお</rt></ruby>りで<ruby>買<rt>か</rt></ruby>い<ruby>物<rt>もの</rt></ruby>をしたい", "ネオンの<ruby>町<rt>まち</rt></ruby>を<ruby>歩<rt>ある</rt></ruby>きたい", "ライブハウスで<ruby>音楽<rt>おんがく</rt></ruby>を<ruby>聞<rt>き</rt></ruby>きたい", "<ruby>公園<rt>こうえん</rt></ruby>でお<ruby>花見<rt>はなみ</rt></ruby>をしたい"]}];
+  const TYPES = [{"n": "<ruby>浅草<rt>あさくさ</rt></ruby>", "j": "あなたは<ruby>浅草<rt>あさくさ</rt></ruby>タイプ！<ruby>古<rt>ふる</rt></ruby>いものと<ruby>静<rt>しず</rt></ruby>かな<ruby>朝<rt>あさ</rt></ruby>が<ruby>好<rt>す</rt></ruby>きです。", "ru": "Вам ближе старый Токио: храмы, деревянные улочки, рикши и сладости с бобовой пастой.", "say": "<ruby>私<rt>わたし</rt></ruby>は<ruby>浅草<rt>あさくさ</rt></ruby>タイプでした。<ruby>浅草寺<rt>せんそうじ</rt></ruby>に<ruby>行<rt>い</rt></ruby>ってみたいです。"}, {"n": "<ruby>秋葉原<rt>あきはばら</rt></ruby>", "j": "あなたは<ruby>秋葉原<rt>あきはばら</rt></ruby>タイプ！<ruby>趣味<rt>しゅみ</rt></ruby>の<ruby>話<rt>はなし</rt></ruby>なら、<ruby>何時間<rt>なんじかん</rt></ruby>でもできます。", "ru": "Ваш район: аниме, ретро-игры, автоматы с капсулами и восьмиэтажные магазины фигурок.", "say": "<ruby>私<rt>わたし</rt></ruby>は<ruby>秋葉原<rt>あきはばら</rt></ruby>タイプでした。ゲームセンターで<ruby>遊<rt>あそ</rt></ruby>びたいです。"}, {"n": "<ruby>原宿<rt>はらじゅく</rt></ruby>", "j": "あなたは<ruby>原宿<rt>はらじゅく</rt></ruby>タイプ！<ruby>新<rt>あたら</rt></ruby>しいものとかわいいものが<ruby>大好<rt>だいす</rt></ruby>きです。", "ru": "Вы за модой и цветом: крепы, уличный стиль, магазинчики на Такэсита-дори.", "say": "<ruby>私<rt>わたし</rt></ruby>は<ruby>原宿<rt>はらじゅく</rt></ruby>タイプでした。クレープを<ruby>食<rt>た</rt></ruby>べてみたいです。"}, {"n": "<ruby>新宿<rt>しんじゅく</rt></ruby>", "j": "あなたは<ruby>新宿<rt>しんじゅく</rt></ruby>タイプ！にぎやかな<ruby>夜<rt>よる</rt></ruby>が<ruby>好<rt>す</rt></ruby>きで、エネルギーがいっぱいです。", "ru": "Вам нужен город, который не спит: неон, крошечные бары, вид с небоскрёба ночью.", "say": "<ruby>私<rt>わたし</rt></ruby>は<ruby>新宿<rt>しんじゅく</rt></ruby>タイプでした。<ruby>夜<rt>よる</rt></ruby>のネオンを<ruby>見<rt>み</rt></ruby>たいです。"}, {"n": "<ruby>下北沢<rt>しもきたざわ</rt></ruby>", "j": "あなたは<ruby>下北沢<rt>しもきたざわ</rt></ruby>タイプ！<ruby>小<rt>ちい</rt></ruby>さい<ruby>店<rt>みせ</rt></ruby>と<ruby>音楽<rt>おんがく</rt></ruby>が<ruby>好<rt>す</rt></ruby>きです。", "ru": "Ваш Токио тихий и свой: секонд-хенды, кофейни, маленькие концерты и карри.", "say": "<ruby>私<rt>わたし</rt></ruby>は<ruby>下北沢<rt>しもきたざわ</rt></ruby>タイプでした。<ruby>古着屋<rt>ふるぎや</rt></ruby>を<ruby>見<rt>み</rt></ruby>たいです。"}, {"n": "<ruby>上野<rt>うえの</rt></ruby>", "j": "あなたは<ruby>上野<rt>うえの</rt></ruby>タイプ！<ruby>自然<rt>しぜん</rt></ruby>と<ruby>美術<rt>びじゅつ</rt></ruby>が<ruby>好<rt>す</rt></ruby>きで、のんびりしています。", "ru": "Вы любите парки, музеи и неспешные прогулки. И, возможно, панд.", "say": "<ruby>私<rt>わたし</rt></ruby>は<ruby>上野<rt>うえの</rt></ruby>タイプでした。パンダを<ruby>見<rt>み</rt></ruby>てみたいです。"}];
+  let Q = { step: 0, score: {} };
+  const shuffled = QUIZ.map(q => q.o.map((o, i) => i).sort(() => Math.random() - .5));
+  function renderQuiz() {
+    const box = $('#qbox');
+    if (Q.step < QUIZ.length) {
+      const q = QUIZ[Q.step];
+      box.innerHTML = `<div class="qstep">Вопрос ${Q.step + 1} из ${QUIZ.length}</div><h3>${q.q}</h3><div class="opts">${shuffled[Q.step].map(i => `<button data-t="${i}">${q.o[i]}</button>`).join('')}</div>`;
+      $$('.opts button', box).forEach(b => b.addEventListener('click', () => { const t = +b.dataset.t; Q.score[t] = (Q.score[t] || 0) + 1; Q.step++; renderQuiz(); }));
+      return;
+    }
+    let best = 0; for (let t = 0; t < TYPES.length; t++) if ((Q.score[t] || 0) > (Q.score[best] || 0)) best = t;
+    store.set('quiz', best); showResult(best);
+  }
+  function showResult(t) {
+    const r = TYPES[t];
+    $('#qbox').innerHTML = `<div class="res"><div class="stamp"><b>${r.n}</b><span>タイプ</span></div><div><div class="qstep">Ваш район</div><p class="j">${r.j}</p><p>${r.ru}</p><div class="say">${r.say}</div><div style="margin-top:12px"><button class="btn" id="qAgain">Пройти ещё раз</button></div></div></div>`;
+    $('#qAgain').onclick = () => { Q = { step: 0, score: {} }; renderQuiz(); };
+  }
+  const savedQ = store.get('quiz');
+  if (savedQ != null && TYPES[savedQ]) showResult(savedQ); else renderQuiz();
+
+  // timer
+  const clock = $('#clock'), go = $('#go'), mini = $('#miniClock');
+  let total = 29 * 60, left = total, end = 0, tick = null;
+  const fmt = s => String(Math.floor(s / 60)).padStart(2, '0') + ':' + String(s % 60).padStart(2, '0');
+  function paint() {
+    clock.textContent = fmt(left); clock.classList.toggle('end', left === 0);
+    mini.hidden = !tick && (left === total || left === 0);
+    mini.textContent = (left === 0 ? 'おわり' : '日本語だけ ') + (left ? fmt(left) : '');
+  }
+  function stop() { clearInterval(tick); tick = null; go.textContent = left ? 'つづける' : 'スタート'; paint(); }
+  function start() {
+    if (!left) left = total;
+    end = Date.now() + left * 1000; go.textContent = 'ストップ';
+    tick = setInterval(() => { left = Math.max(0, Math.round((end - Date.now()) / 1000)); if (!left) { stop(); chime('lap'); } paint(); }, 250);
+    paint();
+  }
+  go.onclick = () => tick ? stop() : start();
+  $('#reset').onclick = () => { clearInterval(tick); tick = null; left = total; go.textContent = 'スタート'; paint(); };
+  mini.onclick = () => $('#timer').scrollIntoView();
+  $$('.presets .btn').forEach(b => b.addEventListener('click', () => {
+    $$('.presets .btn').forEach(x => x.setAttribute('aria-pressed', x === b));
+    clearInterval(tick); tick = null; total = left = +b.dataset.m * 60; go.textContent = 'スタート'; paint();
+  }));
+  paint();
+})();
+</script>
+
+</body></html>
