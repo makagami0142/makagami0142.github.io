@@ -281,41 +281,6 @@ details.bonus .j{font-family:var(--jp);font-size:17px;line-height:1.85}
 .rid button{border:1px solid var(--rule);background:var(--paper);border-radius:6px;padding:3px 10px;font-family:var(--jp);font-weight:700;min-width:96px}
 .tips{margin:6px 0 0;padding-left:1.2em;font-size:15px;display:grid;gap:4px}
 
-
-/* photo wall */
-.pw-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px}
-.ph{background:var(--paper);border:1px solid var(--rule);border-radius:6px;overflow:hidden;display:flex;flex-direction:column}
-.ph button.img{border:0;padding:0;background:var(--soft);display:block;width:100%;aspect-ratio:4/3;cursor:zoom-in}
-.ph img{width:100%;height:100%;object-fit:cover;display:block}
-.ph .miss{display:grid;place-content:center;height:100%;color:var(--muted);font-size:13px;padding:10px;text-align:center}
-.ph .cap{padding:10px 12px;display:grid;gap:2px}
-.ph .nm{font-weight:600}
-.ph .pl{font-family:var(--jp);font-weight:700;font-size:13px;color:var(--line-ink)}
-.ph .tx{font-family:var(--jp);font-size:15px;line-height:1.7}
-.ph .del{justify-self:start;border:0;background:none;color:var(--muted);font-size:12px;padding:2px 0;text-decoration:underline}
-.pw-empty{border:2px dashed var(--rule);border-radius:6px;padding:28px 18px;text-align:center;color:var(--muted);display:grid;gap:6px;justify-items:center}
-.pw-empty b{font-family:var(--jp);font-size:20px;color:var(--ink)}
-.pw-form{padding:14px 16px;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px 14px;margin-bottom:14px}
-.pw-form .full{grid-column:1/-1}
-.pw-form label{display:grid;gap:3px;font-size:13px;color:var(--muted);font-weight:600}
-.pw-form input[type=text]{border:1px solid var(--rule);background:var(--paper);border-radius:6px;padding:7px 10px;font-size:15px;min-width:0}
-.pw-form input.jpin{font-family:var(--jp)}
-.pw-form .row2{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
-.pw-msg{font-size:14px;color:var(--muted)}
-.pw-msg.err{color:var(--signal);font-weight:600}
-.pw-tpl{background:var(--line-soft);border-radius:6px;padding:10px 14px;margin-bottom:14px;font-family:var(--jp);font-weight:700;font-size:18px;line-height:2}
-.pw-tpl small{display:block;font-family:var(--ru);font-weight:400;font-size:13px;color:var(--muted);line-height:1.4}
-.lb{position:fixed;inset:0;z-index:20;background:rgba(8,12,10,.94);color:#f2f5f3;display:grid;grid-template-rows:1fr auto;padding:calc(12px + env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-right,0px)) calc(12px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px))}
-.lb img{max-width:100%;max-height:100%;object-fit:contain;margin:auto;display:block;min-height:0}
-.lb .stage{min-height:0;display:flex}
-.lb .bot{display:grid;grid-template-columns:auto 1fr auto;gap:14px;align-items:center;padding-top:10px}
-.lb .who{font-size:22px;font-weight:600}
-.lb .who span{font-family:var(--jp);font-size:16px;color:#a5d66b;margin-left:10px}
-.lb .tx{font-family:var(--jp);font-size:clamp(18px,2.6vw,26px);line-height:1.6}
-.lb button{background:transparent;color:#f2f5f3;border:1px solid rgba(242,245,243,.4);border-radius:6px;padding:8px 14px;font-size:16px}
-.lb .x{position:absolute;top:calc(10px + env(safe-area-inset-top,0px));right:max(12px,env(safe-area-inset-right,0px))}
-@media (max-width:560px){.pw-form{grid-template-columns:1fr}}
-
 footer{color:var(--muted);font-size:13px;text-align:center;padding:30px 0 10px}
 
 @media (max-width:820px){
@@ -354,7 +319,6 @@ footer{color:var(--muted);font-size:13px;text-align:center;padding:30px 0 10px}
 
 <nav class="bar" aria-label="Разделы">
   <div class="wrap">
-    <a href="#photos"><ruby>写真<rt>しゃしん</rt></ruby><span>знакомство</span></a>
     <a href="#map"><ruby>町<rt>まち</rt></ruby><span>районы</span></a>
     <a href="#words">ことば<span>слова</span></a>
     <a href="#grammar"><ruby>文法<rt>ぶんぽう</rt></ruby><span>грамматика</span></a>
@@ -386,27 +350,12 @@ footer{color:var(--muted);font-size:13px;text-align:center;padding:30px 0 10px}
     <div class="hcards"><div class="hc"><div><div class="j">アニメとゲームが<ruby>大好<rt>だいす</rt></ruby>き</div><p>Ты обязательно хочешь в 秋葉原 или 池袋. Уговаривай: 〜に行きませんか？ Карточку не показывай.</p></div><button class="btn copy">Копировать</button></div><div class="hc"><div><div class="j">お<ruby>寺<rt>てら</rt></ruby>と<ruby>神社<rt>じんじゃ</rt></ruby>が<ruby>好<rt>す</rt></ruby>き、<ruby>静<rt>しず</rt></ruby>かなところが<ruby>好<rt>す</rt></ruby>き</div><p>Ты хочешь в 浅草, 明治神宮, 鎌倉 или 日光. Объясняй через 〜ので.</p></div><button class="btn copy">Копировать</button></div><div class="hc"><div><div class="j"><ruby>人<rt>ひと</rt></ruby>が<ruby>多<rt>おお</rt></ruby>いところが<ruby>苦手<rt>にがて</rt></ruby></div><p>Вечером в 渋谷 и 新宿 не хочешь. Скажи: 人が多いところが苦手なので… и предложи другое.</p></div><button class="btn copy">Копировать</button></div><div class="hc"><div><div class="j">お<ruby>金<rt>かね</rt></ruby>があまりない</div><p>Твой бюджет ¥15,000, а не ¥25,000. Предлагай дешёвое: お金があまりないので、〜はどうですか？</p></div><button class="btn copy">Копировать</button></div><div class="hc"><div><div class="j"><ruby>写真<rt>しゃしん</rt></ruby>を<ruby>撮<rt>と</rt></ruby>るのが<ruby>大好<rt>だいす</rt></ruby>き</div><p>Тебе нужны места с видом: смотровая, ночной город, 富士山. 〜で写真を撮りたいです。</p></div><button class="btn copy">Копировать</button></div><div class="hc"><div><div class="j"><ruby>温泉<rt>おんせん</rt></ruby>に<ruby>入<rt>はい</rt></ruby>りたい</div><p>На 4-й день обязательно 箱根 или 日光. 日本に行ったら、温泉に入りたいです！</p></div><button class="btn copy">Копировать</button></div></div>
     <p class="lbl">Напоминания</p>
     <ul class="tips">
-      <li>Вход: объявляйте каждого как станцию: 「<ruby>次<rt>つぎ</rt></ruby>は〜さん、〜さん。お<ruby>出口<rt>でぐち</rt></ruby>は<ruby>右側<rt>みぎがわ</rt></ruby>です。」 Второй штамп в карту. Потом раздел «写真»: нажмите на фото участника, оно откроется на весь экран, стрелки листают.</li>
+      <li>Вход: объявляйте каждого как станцию: 「<ruby>次<rt>つぎ</rt></ruby>は〜さん、〜さん。お<ruby>出口<rt>でぐち</rt></ruby>は<ruby>右側<rt>みぎがわ</rt></ruby>です。」 Второй штамп в карту.</li>
       <li>Сугороку: в Zoom включите «Share sound», чтобы была слышна мелодия. Если звук мешает, кнопка «おと» в шапке.</li>
       <li>Перед комнатами: один человек в комнате открывает раздел «旅のしおり» и делится экраном. Комнаты: 新宿, 浅草, 渋谷.</li>
       <li>Финал: второй штамп из трёх, подарок за три, разговорник под маршрут на индивидуальном занятии. Анонс 31.10: костюм или маска.</li>
     </ul>
   </div>
-</section>
-
-<section id="photos">
-  <div class="sh"><h2>わたしの<ruby>東京<rt>とうきょう</rt></ruby><ruby>写真<rt>しゃしん</rt></ruby></h2><p>Знакомство: ваше любимое фото из Токио или окрестностей</p></div>
-  <div class="pw-tpl">はじめまして、〜です。これは〜で<ruby>撮<rt>と</rt></ruby>った<ruby>写真<rt>しゃしん</rt></ruby>です。〜がとてもきれいでした。
-    <small>Шаблон на 30–40 секунд: «Приятно познакомиться, я 〜. Это фото я снял(а) в 〜. Там было очень красиво 〜». Нет своего фото из Японии? Возьмите любое, которое нравится, и скажите: 〜に<ruby>行<rt>い</rt></ruby>ってみたいです。</small></div>
-  <form class="panel pw-form" id="pwForm" hidden>
-    <label class="full">Фото (JPG, PNG или WebP)<input type="file" id="pwFile" accept="image/jpeg,image/png,image/webp,image/gif"></label>
-    <label>Имя<input type="text" id="pwName" maxlength="40" placeholder="Анна / アンナ"></label>
-    <label>Где снято<input type="text" class="jpin" id="pwPlace" maxlength="40" placeholder="浅草 / 鎌倉 / Сибуя"></label>
-    <label class="full">Подпись по-японски (одно предложение)<input type="text" class="jpin" id="pwCap" maxlength="120" placeholder="これは浅草で撮った写真です。"></label>
-    <div class="full row2"><button class="btn primary" type="submit" id="pwSend">Добавить на стену</button><span class="pw-msg" id="pwMsg" role="status"></span></div>
-  </form>
-  <p class="note" id="pwNote">Загружаю стену…</p>
-  <div id="pwWall"></div>
 </section>
 
 <section id="map">
@@ -605,104 +554,6 @@ footer{color:var(--muted);font-size:13px;text-align:center;padding:30px 0 10px}
       });
     } catch {}
   }
-
-  // photo wall (db + assets + user)
-  const pw = { db: null, assets: null, user: null, uid: null, canAll: false, items: [], idx: 0 };
-  const esc = t => String(t ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
-  function renderWall() {
-    const wall = $('#pwWall');
-    if (!pw.items.length) {
-      wall.innerHTML = `<div class="pw-empty"><b>まだ<ruby>写真<rt>しゃしん</rt></ruby>がありません</b><span>Здесь появятся фото участников с подписями. Нажмите на фото, чтобы открыть его на весь экран для демонстрации.</span></div>`;
-      return;
-    }
-    wall.innerHTML = '<div class="pw-grid">' + pw.items.map((it, i) => {
-      const mine = pw.uid && it.uid === pw.uid;
-      return `<div class="ph"><button class="img" data-i="${i}" aria-label="Открыть фото на весь экран"><img src="/_blob/${esc(it.asset)}" alt="${esc(it.place || 'Фото')}" loading="lazy"></button>
-        <div class="cap"><span class="nm">${esc(it.name || 'Участник')}</span>${it.place ? `<span class="pl">${esc(it.place)}</span>` : ''}${it.caption ? `<span class="tx">${esc(it.caption)}</span>` : ''}
-        ${mine || pw.canAll ? `<button class="del" data-id="${esc(it.id)}">Удалить</button>` : ''}</div></div>`;
-    }).join('') + '</div>';
-    $$('.ph img', wall).forEach(img => img.addEventListener('error', () => { img.parentElement.innerHTML = '<span class="miss">Фото не загрузилось у вас. Ведущий видит его на экране.</span>'; }, { once: true }));
-    $$('.ph button.img', wall).forEach(b => b.addEventListener('click', () => openLb(+b.dataset.i)));
-    $$('.ph .del', wall).forEach(b => b.addEventListener('click', () => delPhoto(b.dataset.id, b)));
-  }
-  async function delPhoto(id, b) {
-    if (b.dataset.sure !== '1') { b.dataset.sure = '1'; b.textContent = 'Точно удалить? Нажмите ещё раз'; setTimeout(() => { b.dataset.sure = ''; b.textContent = 'Удалить'; }, 4000); return; }
-    const it = pw.items.find(x => x.id === id); b.disabled = true; b.textContent = 'Удаляю…';
-    try {
-      await pw.db.collection('photos').doc(id).delete();
-      if (it && pw.assets) { try { await pw.assets.delete(it.asset); } catch {} }
-    } catch { b.disabled = false; b.textContent = 'Не удалось удалить'; }
-  }
-  // fullscreen viewer for screen share
-  let lb = null;
-  function openLb(i) {
-    pw.idx = i;
-    if (!lb) {
-      lb = document.createElement('div'); lb.className = 'lb'; lb.setAttribute('role', 'dialog'); lb.setAttribute('aria-modal', 'true');
-      lb.innerHTML = `<div class="stage"><img alt=""></div><div class="bot"><button class="prev" aria-label="Предыдущее">←</button><div><div class="who"></div><div class="tx"></div></div><button class="next" aria-label="Следующее">→</button></div><button class="x">Закрыть</button>`;
-      lb.querySelector('.prev').onclick = () => stepLb(-1); lb.querySelector('.next').onclick = () => stepLb(1); lb.querySelector('.x').onclick = closeLb;
-      lb.addEventListener('click', e => { if (e.target === lb || e.target.classList.contains('stage')) closeLb(); });
-      document.body.append(lb);
-    }
-    lb.hidden = false; paintLb(); lb.querySelector('.x').focus();
-  }
-  function paintLb() {
-    const it = pw.items[pw.idx]; if (!it) return closeLb();
-    lb.querySelector('img').src = '/_blob/' + it.asset;
-    lb.querySelector('.who').innerHTML = `${esc(it.name || 'Участник')}${it.place ? `<span>${esc(it.place)}</span>` : ''}`;
-    lb.querySelector('.tx').textContent = it.caption || '';
-  }
-  function stepLb(d) { pw.idx = (pw.idx + d + pw.items.length) % pw.items.length; paintLb(); }
-  function closeLb() { if (lb) lb.hidden = true; }
-  addEventListener('keydown', e => { if (!lb || lb.hidden) return; if (e.key === 'Escape') closeLb(); if (e.key === 'ArrowLeft') stepLb(-1); if (e.key === 'ArrowRight') stepLb(1); });
-
-  async function toJpeg(file) {
-    try {
-      const bmp = await createImageBitmap(file);
-      const k = Math.min(1, 1600 / Math.max(bmp.width, bmp.height));
-      const c = document.createElement('canvas'); c.width = Math.round(bmp.width * k); c.height = Math.round(bmp.height * k);
-      c.getContext('2d').drawImage(bmp, 0, 0, c.width, c.height);
-      const blob = await new Promise(r => c.toBlob(r, 'image/jpeg', .85));
-      return blob || file;
-    } catch { return file; }
-  }
-  const UPMSG = { too_large: 'Файл больше 20 МБ. Выберите фото поменьше.', unsupported_type: 'Этот формат не подходит. Сохраните фото как JPG или PNG.', quota_or_state: 'Место для фото на странице закончилось. Напишите ведущему.', rate_limited: 'Слишком часто. Подождите минуту и попробуйте снова.', upstream_auth: 'Обновите страницу или войдите в claude.ai заново.' };
-  $('#pwForm').addEventListener('submit', async e => {
-    e.preventDefault();
-    const f = $('#pwFile').files[0], msg = $('#pwMsg'), btn = $('#pwSend');
-    msg.className = 'pw-msg';
-    if (!f) { msg.textContent = 'Сначала выберите фото.'; msg.className = 'pw-msg err'; return; }
-    btn.disabled = true; msg.textContent = 'Загружаю…';
-    try {
-      const blob = await toJpeg(f);
-      const up = await pw.assets.upload(blob, blob.type ? undefined : { type: 'image/jpeg' });
-      await pw.db.collection('photos').add({ asset: up.id, name: $('#pwName').value.trim().slice(0, 40), place: $('#pwPlace').value.trim().slice(0, 40), caption: $('#pwCap').value.trim().slice(0, 120), uid: pw.uid || null, ts: Date.now() });
-      try { localStorage.setItem('tk-pwname', JSON.stringify($('#pwName').value.trim())); } catch {}
-      $('#pwFile').value = ''; $('#pwCap').value = ''; $('#pwPlace').value = '';
-      msg.textContent = 'Готово! Фото на стене.';
-    } catch (err) {
-      msg.textContent = UPMSG[err?.code] || 'Не получилось сохранить фото. Попробуйте ещё раз или отправьте его ведущему в чат.'; msg.className = 'pw-msg err';
-    }
-    btn.disabled = false;
-  });
-  (async () => {
-    renderWall();
-    const note = $('#pwNote');
-    if (!window.claude?.use) { note.textContent = 'Стена фото работает, когда страница открыта на claude.ai. Пришлите фото ведущему в чат.'; return; }
-    const [db, assets, user] = await Promise.all([claude.use('db'), claude.use('assets'), claude.use('user')]);
-    pw.db = db; pw.assets = assets; pw.user = user;
-    if (!db) { note.textContent = 'Чтобы видеть стену, войдите в claude.ai. Или пришлите фото ведущему в чат: он покажет его на экране.'; return; }
-    if (user) { try { pw.uid = await user.id(); } catch {} try { pw.canAll = await user.canEdit(); } catch {} }
-    if (assets) {
-      $('#pwForm').hidden = false;
-      const saved = store.get('pwname'); if (saved) $('#pwName').value = saved;
-      note.textContent = 'Добавьте одно фото с подписью. Удалить можно только своё.';
-    } else note.textContent = 'Добавлять фото может ведущий. Пришлите ему фото с подписью в чат, и оно появится здесь.';
-    db.collection('photos').orderBy('ts').limit(200).onSnapshot(snap => {
-      pw.items = snap.docs.map(d => ({ id: d.id, ...d.data() })).filter(x => typeof x.asset === 'string' && /^[0-9a-f]{32}$/.test(x.asset));
-      renderWall(); if (lb && !lb.hidden) paintLb();
-    }, () => { note.textContent = 'Стена фото сейчас недоступна. Обновите страницу.'; });
-  })();
 
   // map
   const mapG = $('#mapG');
