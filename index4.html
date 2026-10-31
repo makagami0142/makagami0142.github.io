@@ -1,0 +1,953 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>妖怪ナイト</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Yuji+Syuku&family=Golos+Text:wght@400;500;600&family=Zen+Kaku+Gothic+New:wght@400;700&display=swap">
+<style>
+/* Layout: the club's last station (終点). A night header hung with paper lanterns, then one column of sections; the zukan cards are sealed with ofuda talismans, 百物語 is a dark candle stage */
+:root{
+  --bg:#0b0c18; --paper:#151628; --ink:#e9e7f3; --muted:#a2a2bb; --rule:#2a2c46; --soft:#1e2038;
+  --lantern:#ff8a4c; --lantern-ink:#ffa36f; --lantern-soft:#3a2219;
+  --onibi:#5fd9c6; --onibi-soft:#11302c;
+  --night:#0d0e1d; --night-2:#0b0c18; --night-ink:#eceaf6; --night-muted:#a9a8c4;
+  --washi:#efe9da; --sumi:#1d1b26; --seal:#d8443a;
+  --display:"Yuji Syuku","Zen Kaku Gothic New","Hiragino Mincho ProN",serif;
+  --jp:"Zen Kaku Gothic New","Hiragino Sans","Yu Gothic",sans-serif;
+  --ru:"Golos Text",system-ui,-apple-system,"Segoe UI",sans-serif;
+  color-scheme:dark;
+}
+/* one deliberate night look in both themes: the lesson happens after dark */
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font:16px/1.55 var(--ru)}
+body::after{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
+  background:radial-gradient(ellipse 60% 40% at 15% 20%,rgba(95,217,198,.07),transparent 70%),
+    radial-gradient(ellipse 50% 35% at 85% 55%,rgba(255,138,76,.07),transparent 70%),
+    radial-gradient(ellipse 80% 30% at 50% 100%,rgba(120,110,200,.10),transparent 70%)}
+main{position:relative}
+.panel{box-shadow:0 1px 0 rgba(255,255,255,.03) inset}
+h1,h2,h3,h4{margin:0;font-weight:400;text-wrap:balance}
+ruby rt{font-size:.5em;color:var(--muted);font-family:var(--jp);font-weight:400}
+html.nofuri rt{visibility:hidden}
+button,select,input{font:inherit;color:inherit}
+button{cursor:pointer}
+button:focus-visible,a:focus-visible,select:focus-visible,input:focus-visible,[tabindex]:focus-visible{outline:3px solid var(--lantern);outline-offset:2px}
+.wrap{max-width:1000px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.jp{font-family:var(--jp)}
+
+/* night header */
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--night)}
+header{background:var(--night);color:var(--night-ink);position:relative;overflow:hidden}
+header::after{content:"";position:absolute;inset:auto 0 0;height:60px;background:linear-gradient(transparent,var(--night-2));pointer-events:none}
+header .wrap{position:relative;z-index:1;padding-block:0 18px}
+header rt{color:var(--night-muted)}
+.lanterns{display:flex;justify-content:center;gap:clamp(14px,5vw,54px);height:132px}
+.lt{position:relative;width:62px;transform-origin:50% 0;animation:sway 5s ease-in-out infinite}
+.lt:nth-child(2){animation-delay:-1.3s}.lt:nth-child(3){animation-delay:-2.6s}.lt:nth-child(4){animation-delay:-3.7s}
+.lt::before{content:"";position:absolute;left:50%;top:0;width:2px;height:28px;background:var(--night-muted)}
+.lt i{position:absolute;left:12px;right:12px;height:8px;background:#0b0b12;border-radius:2px}
+.lt i:first-of-type{top:28px}.lt i:last-of-type{top:118px}
+.lt b{position:absolute;left:0;right:0;top:34px;height:86px;border-radius:46% / 50%;background:radial-gradient(circle at 50% 45%,#ffd27a 0,#f39a3d 45%,#c4521e 100%);box-shadow:0 0 36px rgba(255,150,60,.55);display:grid;place-content:center;font:400 30px/1 var(--display);color:#3b1206;
+  background-image:radial-gradient(circle at 50% 45%,#ffd27a 0,#f39a3d 45%,#c4521e 100%),repeating-linear-gradient(transparent 0 11px,rgba(60,20,5,.25) 11px 12px);background-blend-mode:multiply}
+@keyframes sway{0%,100%{transform:rotate(-3deg)}50%{transform:rotate(3deg)}}
+.title{text-align:center;padding-top:6px}
+.title .kana{font-family:var(--jp);font-weight:700;letter-spacing:.45em;color:var(--night-muted);font-size:14px}
+.title h1{font-family:var(--display);font-size:clamp(52px,12vw,104px);line-height:1.05;letter-spacing:.06em;text-shadow:0 0 28px rgba(95,217,198,.35)}
+.title .lat{font-weight:500;letter-spacing:.32em;font-size:13px;text-transform:uppercase;color:var(--night-muted)}
+.title .meta{margin:10px auto 0;font-size:14px;color:var(--night-muted);max-width:56ch}
+.term{display:inline-flex;align-items:center;gap:8px;margin-top:12px;border:1px solid #f39a3d;color:#ffc78c;border-radius:999px;padding:3px 14px;font-family:var(--jp);font-weight:700;font-size:14px}
+.term rt{color:#ffc78c}
+.dir{display:flex;justify-content:space-between;gap:12px;margin-top:18px;padding-top:12px;border-top:1px solid rgba(255,255,255,.14);font-size:14px}
+.dir a{text-decoration:none;color:var(--night-ink);display:flex;flex-direction:column}
+.dir a:last-child{text-align:right}
+.dir b{font-family:var(--jp);font-weight:700;font-size:18px}
+.dir span{color:var(--night-muted);font-size:13px}
+
+nav.bar{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);border-bottom:1px solid var(--rule)}
+nav.bar .wrap{display:flex;gap:4px;align-items:center;padding-block:8px;overflow-x:auto;scrollbar-width:none}
+nav.bar a{flex:none;text-decoration:none;color:var(--ink);font-family:var(--jp);font-weight:700;font-size:14px;padding:6px 10px;border-radius:999px}
+nav.bar a span{font-family:var(--ru);font-weight:400;color:var(--muted);font-size:12px;margin-left:4px}
+nav.bar a:hover{background:var(--soft)}
+.tools{margin-left:auto;display:flex;gap:6px;flex:none}
+.chip{border:1px solid var(--rule);background:var(--paper);border-radius:999px;padding:5px 12px;font-size:13px;font-family:var(--jp);font-weight:700;white-space:nowrap}
+.chip[aria-pressed="true"]{background:var(--lantern);color:#1b0f06;border-color:var(--lantern)}
+.chip[aria-pressed="true"] rt{color:#1b0f06}
+.mini{font-variant-numeric:tabular-nums;background:var(--lantern);color:#1b0f06;border-color:var(--lantern)}
+
+main .wrap{padding-block:4px 64px}
+section{padding-top:44px;scroll-margin-top:56px}
+.sh{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 14px;margin-bottom:14px}
+.sh h2{font-family:var(--display);font-size:clamp(28px,4.4vw,38px);line-height:1.3}
+.sh p{margin:0;color:var(--muted)}
+.note{color:var(--muted);font-size:14px;margin:0 0 14px;max-width:70ch}
+.lbl{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:600;margin:0 0 6px}
+.btn{border:1px solid var(--rule);background:var(--paper);border-radius:6px;padding:6px 12px;font-size:14px}
+.btn.primary{background:var(--lantern);border-color:var(--lantern);color:#1b0f06;font-weight:600}
+.panel{background:var(--paper);border:1px solid var(--rule);border-radius:6px}
+.row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+
+/* treat */
+.treat{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);gap:14px}
+.door{padding:18px 20px;display:grid;gap:12px;align-content:start}
+.door .top{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.door .cnt2{font-size:13px;color:var(--muted);margin-left:auto}
+.door .big{font-size:18px;padding:10px 18px}
+.guest{display:grid;gap:10px}
+.who2{border:1px solid var(--rule);border-radius:8px;padding:14px 16px;background:linear-gradient(160deg,rgba(95,217,198,.10),transparent 60%)}
+.who2 .k{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--onibi);font-weight:600}
+.who2 .nm{font:400 clamp(30px,5vw,40px)/1.5 var(--display)}
+.who2 .r{font-size:14px;color:var(--muted)}
+.who2 .say{margin-top:6px;font-family:var(--jp);font-weight:700;font-size:18px;line-height:1.95}
+.sweet{border-radius:8px;padding:12px 16px;background:var(--lantern-soft);display:grid;gap:2px}
+.sweet .nm{font-family:var(--jp);font-weight:700;font-size:22px;line-height:1.7;color:var(--lantern-ink)}
+.sweet .say{font-family:var(--jp);font-weight:700;font-size:16px;line-height:1.85}
+.sweet .tr{font-size:14px;color:var(--muted)}
+.guest.pop .who2,.guest.pop .sweet{animation:pop .5s ease-out}
+@keyframes pop{0%{opacity:0;transform:translateY(8px) scale(.98)}100%{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){.guest.pop .who2,.guest.pop .sweet{animation:none}}
+.fears{padding:18px 20px}
+.fears .j{font-family:var(--jp);font-weight:700;font-size:17px;line-height:1.9;margin:0 0 4px}
+.fears .tr{font-size:14px;color:var(--muted);margin:0 0 10px}
+.tags{display:flex;flex-wrap:wrap;gap:6px}
+.tag{font-family:var(--jp);font-size:15px;border:1px dashed var(--rule);border-radius:4px;padding:2px 10px;line-height:1.9}
+
+/* zukan */
+.zk{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+.zc{position:relative;border:1px solid var(--rule);border-radius:6px;background:var(--paper);overflow:hidden;display:flex;flex-direction:column}
+.zc .pic{background:var(--washi);aspect-ratio:200/220;max-width:100%;position:relative}
+.yk{display:block;width:100%;height:100%}
+.zc .tx{padding:10px 12px 12px;display:grid;gap:4px}
+.zc h3{font-family:var(--jp);font-weight:700;font-size:20px;line-height:1.7}
+.zc .r{font-size:13px;color:var(--muted)}
+.zc .j{font-family:var(--jp);font-size:15px;line-height:1.85}
+.zc .ru{font-size:13px;margin:0}
+.zc .fc{font-size:13px;color:var(--onibi);margin:0}
+.seal{position:absolute;inset:0;border:0;padding:0;background:var(--washi);display:grid;place-items:center;cursor:pointer;transition:transform .6s ease,opacity .6s ease;transform-origin:50% 0}
+.seal .fu{width:46%;height:82%;background:#f6eed2;border:2px solid var(--seal);border-radius:2px;display:grid;justify-items:center;align-content:space-between;padding:10px 0;box-shadow:0 2px 0 rgba(0,0,0,.08)}
+.seal .fu b{font:400 44px/1 var(--display);color:var(--seal)}
+.seal .fu span{font:400 20px/1.15 var(--display);color:var(--sumi);writing-mode:vertical-rl;letter-spacing:.15em}
+.seal .fu em{font-style:normal;font-family:var(--ru);font-size:13px;font-weight:600;color:var(--seal)}
+.zc.open .seal{transform:rotateX(85deg) translateY(-20px);opacity:0;pointer-events:none}
+.zc:not(.open) .tx{display:none}
+@media (prefers-reduced-motion:reduce){.seal{transition:none}.lt{animation:none}}
+
+/* words */
+.vgroup{margin-bottom:18px}
+.vgroup h3{font-family:var(--jp);font-weight:700;font-size:20px;margin-bottom:8px;display:flex;align-items:baseline;gap:10px;line-height:1.8}
+.vgroup h3 span{font-family:var(--ru);font-weight:400;font-size:14px;color:var(--muted)}
+.vgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:6px}
+.v{background:var(--paper);border:1px solid var(--rule);border-radius:6px;padding:6px 10px}
+.v .w{font-family:var(--jp);font-weight:700;font-size:18px;line-height:1.85}
+.v .t{font-size:13px;color:var(--muted)}
+.cnt{font-size:14px;color:var(--muted);margin:-4px 0 18px;max-width:75ch}
+.cnt b{font-family:var(--jp);color:var(--ink)}
+.filters{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:4px 0 10px}
+.phr{padding:4px 0}
+.phr .it{display:grid;grid-template-columns:92px minmax(0,1fr) minmax(0,.8fr);gap:12px;align-items:center;padding:8px 14px;border-bottom:1px solid var(--rule)}
+.phr .it:last-child{border-bottom:0}
+.phr .who{font-size:12px;font-weight:600;border-radius:999px;padding:2px 8px;justify-self:start}
+.phr .who.s{background:var(--lantern-soft);color:var(--lantern-ink)}
+.phr .who.a{background:var(--onibi-soft);color:var(--onibi)}
+.phr .j{font-family:var(--jp);font-weight:700;font-size:17px;line-height:1.85}
+.phr .tr{font-size:14px;color:var(--muted)}
+.phr[data-f="s"] .it[data-w="a"],.phr[data-f="a"] .it[data-w="s"]{display:none}
+
+/* grammar */
+.gram{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:12px}
+.g{padding:14px 16px;display:grid;gap:6px;align-content:start}
+.g .k{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--lantern-ink);font-weight:600}
+.g h3{font-family:var(--jp);font-weight:700;font-size:22px}
+.g .d{margin:0;color:var(--muted);font-size:14px}
+.g .j{font-family:var(--jp);font-size:17px;line-height:1.85;margin:4px 0 0}
+.g .t{font-size:14px;color:var(--muted);margin:0}
+.g .q{margin-top:6px;background:var(--onibi-soft);border-radius:6px;padding:6px 10px;font-family:var(--jp);font-weight:700;font-size:16px;line-height:1.85}
+.g .q small{display:block;font-family:var(--ru);font-weight:400;font-size:12px;color:var(--muted)}
+.bonus{margin-top:12px}
+.bonus summary{cursor:pointer;font-weight:600}
+.bonus p{margin:8px 0 0}
+
+/* maker */
+.mk{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.1fr);gap:16px;align-items:start}
+.mk .stage{background:var(--washi);border-radius:6px;border:1px solid var(--rule);position:sticky;top:64px}
+.mk .stage svg{display:block;width:100%;max-width:100%;height:auto}
+.mk .stage .nm{position:absolute;left:12px;top:10px;font:400 22px/1.3 var(--display);color:var(--sumi)}
+.mk .opts{padding:14px 16px;display:grid;gap:10px}
+.opt{display:grid;grid-template-columns:96px minmax(0,1fr);gap:8px;align-items:center}
+.opt>label,.opt>.ol{font-family:var(--jp);font-weight:700;font-size:15px;line-height:1.8}
+.opt .row .chip{font-size:14px}
+.opt select,.opt input{width:100%;min-width:0;border:1px solid var(--rule);background:var(--paper);border-radius:6px;padding:6px 8px;font-family:var(--jp)}
+.sw{display:inline-block;width:12px;height:12px;border-radius:50%;border:1px solid var(--sumi);margin-right:5px;vertical-align:-1px}
+.prof{margin-top:14px;padding:16px 18px;border-left:6px solid var(--onibi)}
+.prof h3{font-family:var(--display);font-size:26px;margin-bottom:6px}
+.prof p{margin:0;font-family:var(--jp);font-size:17px;line-height:2}
+.prof .acts{margin-top:10px}
+
+/* hyakumonogatari: a deliberate dark stage in both themes */
+.stage100{background:#07070e;color:#ecebf5;border-radius:8px;padding:22px 18px 18px;position:relative;overflow:hidden}
+.stage100 rt{color:#a9a8c4}
+.stage100::before{content:"";position:absolute;inset:0;background:radial-gradient(ellipse at 50% 85%,rgba(255,170,70,var(--glow,.3)),transparent 65%);pointer-events:none;transition:background .8s}
+.candles{position:relative;display:flex;justify-content:center;align-items:flex-end;gap:clamp(10px,4vw,34px);min-height:190px;flex-wrap:wrap}
+.cd{border:0;background:none;padding:0;display:grid;justify-items:center;gap:6px;color:#ecebf5}
+.cd .fl{width:18px;height:34px;border-radius:50% 50% 45% 45% / 65% 65% 35% 35%;background:radial-gradient(circle at 50% 70%,#fff6c8 0,#ffc04a 45%,#ff7a1a 80%,transparent 82%);box-shadow:0 0 26px 8px rgba(255,160,60,.45);animation:flick 1.6s ease-in-out infinite;transform-origin:50% 100%}
+.cd:nth-child(2n) .fl{animation-duration:1.9s}.cd:nth-child(3n) .fl{animation-duration:1.3s}
+.cd .wk{width:2px;height:8px;background:#222}
+.cd .wax{width:34px;height:96px;border-radius:5px 5px 3px 3px;background:linear-gradient(90deg,#d9d2c3,#f6f1e6 45%,#cfc7b6);box-shadow:inset 0 6px 0 rgba(255,255,255,.4)}
+.cd span{font:400 20px/1 var(--display)}
+.cd.out .fl{opacity:0;box-shadow:none;animation:none}
+.cd.out .wk{background:#555}
+.cd.out .wax{filter:brightness(.45)}
+.cd .smoke{position:absolute;width:6px;height:30px;border-radius:3px;background:rgba(220,220,230,.35);opacity:0;filter:blur(2px)}
+.cd{position:relative}
+.cd.puff .smoke{animation:smoke 1.6s ease-out forwards}
+@keyframes flick{0%,100%{transform:scale(1,1) rotate(-1deg)}40%{transform:scale(.92,1.08) rotate(2deg)}70%{transform:scale(1.05,.95) rotate(-2deg)}}
+@keyframes smoke{0%{opacity:.8;transform:translateY(0)}100%{opacity:0;transform:translateY(-50px) scaleX(2)}}
+@media (prefers-reduced-motion:reduce){.cd .fl{animation:none}.cd.puff .smoke{animation:none}}
+.s100c{display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:center;margin-top:16px;position:relative}
+.s100c .btn{background:transparent;color:#ecebf5;border-color:rgba(236,235,245,.35)}
+.s100c .chip{background:transparent;color:#ecebf5;border-color:rgba(236,235,245,.35)}
+.s100c .chip[aria-pressed="true"]{background:#ecebf5;color:#07070e}
+.s100c .lab{font-size:13px;color:#a9a8c4}
+.s100n{position:relative;text-align:center;margin:12px 0 0;font-size:14px;color:#a9a8c4}
+.dice{margin-top:14px;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.15fr);gap:14px}
+.dice .rows{padding:12px 14px;display:grid;gap:6px}
+.dr{display:grid;grid-template-columns:78px minmax(0,1fr) auto;gap:8px;align-items:center;border-bottom:1px solid var(--rule);padding-bottom:6px}
+.dr:last-child{border-bottom:0}
+.dr b{font-family:var(--jp);font-size:15px;line-height:1.8}
+.dr span{font-family:var(--jp);font-weight:700;font-size:15px;line-height:1.85;color:var(--lantern-ink)}
+.dr button{font-size:13px;padding:3px 10px}
+.story{padding:14px 18px;font-family:var(--jp);font-size:18px;line-height:2.1}
+.story mark{background:var(--lantern-soft);color:var(--ink);border-radius:3px;padding:0 3px;font-weight:700}
+
+/* dimmer + reveal */
+#dim{position:fixed;inset:0;background:#000;opacity:0;pointer-events:none;z-index:20;transition:opacity 1.2s}
+.ovl{position:fixed;inset:0;z-index:30;display:grid;place-items:center;padding:max(16px,env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-right,0px)) max(16px,env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px));overflow:auto}
+.ovl[hidden],[hidden]{display:none!important}
+#reveal{background:#000;color:#ecebf5;text-align:center}
+#reveal rt{color:#9a99b4}
+#reveal .eye{width:min(60vw,320px);height:auto;display:block;margin:0 auto}
+#reveal .eye .lid{transform-origin:50% 50%;animation:open 2.4s ease-out forwards}
+#reveal p{font:400 clamp(26px,5vw,44px)/1.6 var(--display);margin:18px 0 26px;opacity:0;animation:fadein 1.5s 1.6s forwards}
+#reveal .btn{background:transparent;color:#ecebf5;border-color:rgba(236,235,245,.4);opacity:0;animation:fadein 1s 3s forwards}
+@keyframes open{0%{transform:scaleY(.02)}60%{transform:scaleY(.02)}100%{transform:scaleY(1)}}
+@keyframes fadein{to{opacity:1}}
+@media (prefers-reduced-motion:reduce){#reveal .eye .lid,#reveal p,#reveal .btn{animation:none;opacity:1;transform:none}}
+#secret{background:var(--bg)}
+.sc{max-width:560px;width:100%;display:grid;gap:12px}
+.sc .warn{background:var(--seal);color:#fff;border-radius:6px;padding:10px 14px;font-weight:600}
+.sc .pic{background:var(--washi);border:1px solid var(--rule);border-radius:6px;max-width:300px;width:100%;justify-self:center}
+.sc h3{font-family:var(--jp);font-weight:700;font-size:26px;text-align:center;line-height:1.7}
+.sc ul{margin:0;padding:12px 16px 12px 34px;font-family:var(--jp);font-size:19px;line-height:2.1}
+.sc .ask{font-size:14px;color:var(--muted);margin:0}
+
+/* talk */
+.qs{list-style:none;margin:0;padding:0;display:grid;gap:8px;counter-reset:q}
+.qs li{counter-increment:q;background:var(--paper);border:1px solid var(--rule);border-radius:6px;padding:12px 16px 12px 52px;position:relative;font-family:var(--jp);font-size:clamp(17px,2.3vw,20px);line-height:1.85}
+.qs li::before{content:counter(q);position:absolute;left:14px;top:14px;width:26px;height:26px;border-radius:50%;background:var(--soft);display:grid;place-content:center;font-family:var(--ru);font-size:13px;font-weight:600}
+.qs li.pick{border-color:var(--lantern);background:var(--lantern-soft)}
+.qs li.pick::before{background:var(--lantern);color:#fff}
+
+/* facts */
+.facts{display:grid;grid-template-columns:repeat(auto-fit,minmax(270px,1fr));gap:12px}
+.fact{padding:14px 16px}
+.fact h3{font-family:var(--jp);font-weight:700;font-size:18px;margin-bottom:4px;line-height:1.8}
+.fact p{margin:0;font-size:15px}
+
+/* timer */
+.timer{border:1px solid var(--rule);background:var(--night);color:var(--night-ink);border-radius:8px;padding:24px 20px;display:grid;gap:14px;justify-items:center;text-align:center}
+.timer h3{font-family:var(--display);font-size:clamp(26px,4.4vw,36px)}
+.timer rt{color:var(--night-muted)}
+.timer .rule{color:var(--night-muted);margin:0;max-width:52ch}
+.clock{font-family:var(--ru);font-weight:600;font-size:clamp(64px,16vw,140px);line-height:1;font-variant-numeric:tabular-nums}
+.clock.end{color:#ff8a4c}
+.presets,.ctrl{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
+.timer .btn{background:transparent;color:var(--night-ink);border-color:rgba(236,234,246,.35)}
+.timer .btn.primary{background:#f39a3d;border-color:#f39a3d;color:#1b0f06}
+.timer .btn[aria-pressed="true"]{background:var(--night-ink);color:var(--night)}
+.timer .btn[aria-pressed="true"] rt{color:var(--night)}
+
+/* final */
+.fin{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.2fr);gap:14px;align-items:start}
+.kuji{padding:18px 20px;display:grid;gap:12px;justify-items:center;text-align:center}
+.box{width:96px;height:120px;border-radius:8px;background:linear-gradient(#b8361f,#8f2614);display:grid;place-content:center;color:#ffe6b5;font:400 30px/1.15 var(--display);writing-mode:vertical-rl;box-shadow:inset 0 0 0 4px rgba(0,0,0,.15)}
+.box.shake{animation:shake .5s ease-in-out 2}
+@keyframes shake{0%,100%{transform:rotate(0)}25%{transform:rotate(-12deg)}75%{transform:rotate(12deg)}}
+@media (prefers-reduced-motion:reduce){.box.shake{animation:none}}
+.slip{width:100%;background:var(--washi);color:var(--sumi);border:1px solid var(--rule);border-radius:4px;padding:14px 16px;display:grid;gap:8px;text-align:left}
+.slip rt{color:#6b6a78}
+.slip .big{font:400 56px/1 var(--display);color:var(--seal);text-align:center}
+.slip ul{margin:0;padding-left:1.1em;font-family:var(--jp);font-size:15px;line-height:1.95}
+.slip .gift{border-top:1px dashed #b9b2a0;padding-top:8px;font-size:14px}
+.slip .gift b{font-family:var(--jp)}
+.cert{padding:0;overflow:hidden}
+.cert .ci{padding:14px 16px;border-bottom:1px solid var(--rule)}
+.paper{background:var(--washi);color:var(--sumi);margin:14px;border:2px solid #b9a77a;outline:1px solid #b9a77a;outline-offset:-8px;padding:26px 22px 22px;display:grid;gap:10px;text-align:center;position:relative}
+.paper rt{color:#6b6a78}
+.paper h3{font:400 clamp(34px,6vw,50px)/1.2 var(--display);letter-spacing:.3em}
+.paper .who{font:400 clamp(26px,5vw,38px)/1.3 var(--display);border-bottom:1px solid #b9a77a;justify-self:center;padding:0 18px 2px;min-width:60%}
+.paper .who small{font-size:.55em;margin-left:8px}
+.paper .body{font-family:var(--jp);font-size:16px;line-height:2;margin:0}
+.paper .route{font-family:var(--jp);font-weight:700;font-size:15px;line-height:1.9}
+.paper .ru{font-size:13px;color:#55545f;margin:0}
+.paper .foot{display:flex;justify-content:space-between;align-items:flex-end;gap:10px;font-size:13px;text-align:left;margin-top:6px}
+.paper .hanko{width:70px;height:70px;border-radius:50%;border:3px solid var(--seal);color:var(--seal);display:grid;place-content:center;font:400 22px/1.05 var(--display);transform:rotate(-10deg);flex:none}
+
+/* host */
+.host{display:none}
+.host.on{display:block}
+.host .hp{border:2px dashed var(--seal);padding:18px 20px}
+.host h3{font-family:var(--ru);font-weight:600;font-size:22px}
+.rid{list-style:none;margin:8px 0 18px;padding:0;display:grid;gap:6px}
+.rid li{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:center;border:1px solid var(--rule);border-radius:6px;padding:8px 12px}
+.rid .j{font-family:var(--jp);font-size:16px;line-height:1.85}
+.rid button{border:1px solid var(--rule);background:var(--paper);border-radius:6px;padding:3px 10px;font-family:var(--jp);font-weight:700;min-width:96px}
+.links{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:8px;margin:8px 0 18px}
+.links div{border:1px solid var(--rule);border-radius:6px;padding:8px 10px;display:grid;gap:4px;justify-items:start}
+.links b{font-family:var(--jp);font-size:16px;line-height:1.8}
+.links .btn{font-size:13px;padding:3px 10px;flex:none}
+.tips{margin:6px 0 0;padding-left:1.2em;font-size:15px;display:grid;gap:4px}
+
+footer{color:var(--muted);font-size:13px;text-align:center;padding:30px 0 10px}
+
+@media (max-width:820px){
+  .zk{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .mk,.dice,.fin,.treat{grid-template-columns:1fr}
+  .mk .stage{position:relative;top:0}
+}
+@media (max-width:560px){
+  .phr .it{grid-template-columns:1fr;gap:2px}
+  .opt{grid-template-columns:1fr;gap:4px}
+  .lanterns{height:118px}
+  .lt{width:50px}.lt b{font-size:24px;height:74px}.lt i:last-of-type{top:106px}
+}
+</style>
+
+<header>
+  <div class="wrap">
+    <div class="lanterns" aria-hidden="true"><div class="lt"><i></i><b>百</b><i></i></div><div class="lt"><i></i><b>鬼</b><i></i></div><div class="lt"><i></i><b>夜</b><i></i></div><div class="lt"><i></i><b>行</b><i></i></div></div>
+    <div class="title">
+      <div class="kana">ようかいナイト</div>
+      <h1>妖怪ナイト</h1>
+      <div class="lat">Yokai Night · Хэллоуин по-японски</div>
+      <div class="term"><ruby>終点<rt>しゅうてん</rt></ruby> · последняя станция клуба</div>
+      <p class="meta">Разговорный клуб Ma Kagami · суббота, 31 октября · N4 · онлайн, 60 минут</p>
+    </div>
+    <div class="dir">
+      <a href="https://claude.ai/artifact/FD7o9sHtyLKiGdQg5HTfXr" target="_blank" rel="noopener"><span>← прошлая станция · 24.10</span><b><ruby>東京<rt>とうきょう</rt></ruby>さんぽ</b></a>
+      <a href="#final"><span>а дальше →</span><b><ruby>個人<rt>こじん</rt></ruby>レッスン</b></a>
+    </div>
+  </div>
+</header>
+
+<nav class="bar" aria-label="Разделы">
+  <div class="wrap">
+    <a href="#treat">トリック<span>вход</span></a>
+    <a href="#zukan"><ruby>図鑑<rt>ずかん</rt></ruby><span>ёкаи</span></a>
+    <a href="#words">ことば<span>слова</span></a>
+    <a href="#grammar"><ruby>文法<rt>ぶんぽう</rt></ruby><span>грамматика</span></a>
+    <a href="#maker">メーカー<span>свой ёкай</span></a>
+    <a href="#hyaku"><ruby>百物語<rt>ひゃくものがたり</rt></ruby><span>свечи</span></a>
+    <a href="#talk">トーク<span>вопросы</span></a>
+    <a href="#facts"><ruby>豆知識<rt>まめちしき</rt></ruby><span>факты</span></a>
+    <a href="#timer">タイマー<span>таймер</span></a>
+    <a href="#final">おみくじ<span>финал</span></a>
+    <div class="tools">
+      <button class="chip mini" id="miniClock" hidden></button>
+      <button class="chip" id="snd" aria-pressed="true" title="Звук свечей и финала">おと</button>
+      <button class="chip" id="furi" aria-pressed="true" title="Показать или скрыть чтения над кандзи">ふりがな</button>
+    </div>
+  </div>
+</nav>
+
+<main>
+<div class="wrap">
+
+<section id="host" class="host" aria-label="Для ведущего">
+  <div class="panel hp">
+    <h3>Для ведущего</h3>
+    <p class="note" style="margin-top:6px">Этот блок видно только по ссылке с <b>#host</b> в конце. Участникам отправляйте ссылку без него и не показывайте этот блок в демонстрации экрана: здесь ответы и тайные карточки.</p>
+    <p class="lbl">14–18 мин · загадки «だれでしょう？» Все пишут ответ в чат одновременно</p>
+    <ul class="rid"><li><span class="j"><ruby>冬<rt>ふゆ</rt></ruby>の<ruby>山<rt>やま</rt></ruby>に<ruby>出<rt>で</rt></ruby>ます。<ruby>白<rt>しろ</rt></ruby>い<ruby>着物<rt>きもの</rt></ruby>を<ruby>着<rt>き</rt></ruby>た、きれいな<ruby>女<rt>おんな</rt></ruby>の<ruby>人<rt>ひと</rt></ruby>です。<ruby>息<rt>いき</rt></ruby>がとても<ruby>冷<rt>つめ</rt></ruby>たいです。</span><button data-a="&lt;ruby&gt;雪女&lt;rt&gt;ゆきおんな&lt;/rt&gt;&lt;/ruby&gt;" data-open="0">Ответ</button></li><li><span class="j"><ruby>古<rt>ふる</rt></ruby>い<ruby>家<rt>いえ</rt></ruby>に<ruby>住<rt>す</rt></ruby>んでいる<ruby>子<rt>こ</rt></ruby>どもの<ruby>妖怪<rt>ようかい</rt></ruby>です。この<ruby>妖怪<rt>ようかい</rt></ruby>がいる<ruby>家<rt>いえ</rt></ruby>は、お<ruby>金持<rt>かねも</rt></ruby>ちになります。</span><button data-a="&lt;ruby&gt;座敷&lt;rt&gt;ざしき&lt;/rt&gt;&lt;/ruby&gt;わらし" data-open="0">Ответ</button></li><li><span class="j">きつねの<ruby>妖怪<rt>ようかい</rt></ruby>です。しっぽが<ruby>九本<rt>きゅうほん</rt></ruby>あります。きれいな<ruby>女<rt>おんな</rt></ruby>の<ruby>人<rt>ひと</rt></ruby>になることができます。</span><button data-a="&lt;ruby&gt;九尾&lt;rt&gt;きゅうび&lt;/rt&gt;&lt;/ruby&gt;の&lt;ruby&gt;狐&lt;rt&gt;きつね&lt;/rt&gt;&lt;/ruby&gt;" data-open="0">Ответ</button></li><li><span class="j"><ruby>頭<rt>あたま</rt></ruby>につのがあって、<ruby>体<rt>からだ</rt></ruby>が<ruby>赤<rt>あか</rt></ruby>や<ruby>青<rt>あお</rt></ruby>です。とらのパンツをはいています。<ruby>節分<rt>せつぶん</rt></ruby>に<ruby>豆<rt>まめ</rt></ruby>を<ruby>投<rt>な</rt></ruby>げられます。</span><button data-a="&lt;ruby&gt;鬼&lt;rt&gt;おに&lt;/rt&gt;&lt;/ruby&gt;" data-open="0">Ответ</button></li><li><span class="j"><ruby>学校<rt>がっこう</rt></ruby>のトイレに<ruby>住<rt>す</rt></ruby>んでいる<ruby>女<rt>おんな</rt></ruby>の<ruby>子<rt>こ</rt></ruby>です。<ruby>三番目<rt>さんばんめ</rt></ruby>のドアをノックすると、「はーい」と<ruby>答<rt>こた</rt></ruby>えます。</span><button data-a="トイレの&lt;ruby&gt;花子&lt;rt&gt;はなこ&lt;/rt&gt;&lt;/ruby&gt;さん" data-open="0">Ответ</button></li></ul>
+    <p class="lbl">24–34 мин · тайные карточки для фоторобота (ссылку описывающему в личку)</p>
+    <div class="links"><div><b><ruby>一<rt>ひと</rt></ruby>つ<ruby>目<rt>め</rt></ruby><ruby>小僧<rt>こぞう</rt></ruby></b><button class="btn" data-url="https://claude.ai/artifact/B1igpQMgh1NH1ieCfgRYVF#card-hitotsume">Копировать ссылку</button></div><div><b>からかさお<ruby>化<rt>ば</rt></ruby>け</b><button class="btn" data-url="https://claude.ai/artifact/B1igpQMgh1NH1ieCfgRYVF#card-karakasa">Копировать ссылку</button></div><div><b>ろくろ<ruby>首<rt>くび</rt></ruby></b><button class="btn" data-url="https://claude.ai/artifact/B1igpQMgh1NH1ieCfgRYVF#card-rokuro">Копировать ссылку</button></div><div><b>のっぺらぼう</b><button class="btn" data-url="https://claude.ai/artifact/B1igpQMgh1NH1ieCfgRYVF#card-noppera">Копировать ссылку</button></div><div><b><ruby>河童<rt>かっぱ</rt></ruby></b><button class="btn" data-url="https://claude.ai/artifact/B1igpQMgh1NH1ieCfgRYVF#card-kappa">Копировать ссылку</button></div><div><b>ちょうちんお<ruby>化<rt>ば</rt></ruby>け</b><button class="btn" data-url="https://claude.ai/artifact/B1igpQMgh1NH1ieCfgRYVF#card-chochin">Копировать ссылку</button></div><div><b>ぬりかべ</b><button class="btn" data-url="https://claude.ai/artifact/B1igpQMgh1NH1ieCfgRYVF#card-nurikabe">Копировать ссылку</button></div><div><b><ruby>天狗<rt>てんぐ</rt></ruby></b><button class="btn" data-url="https://claude.ai/artifact/B1igpQMgh1NH1ieCfgRYVF#card-tengu">Копировать ссылку</button></div></div>
+    <p class="lbl">Напоминания</p>
+    <ul class="tips">
+      <li>Вход: 「<ruby>終点<rt>しゅうてん</rt></ruby>、<ruby>妖怪<rt>ようかい</rt></ruby>ナイトです。〜さん、いらっしゃい！」 Каждый вошедший говорит «トリック・オア・トリート！», вы жмёте кнопку: выпадает его персонаж и お<ruby>菓子<rt>かし</rt></ruby>. Персонажи не повторяются. Третий штамп.</li>
+      <li>Фоторобот: после каждого раунда снимите печать с этого ёкая в <ruby>図鑑<rt>ずかん</rt></ruby> и скажите один факт с карточки.</li>
+      <li>Комнаты на <ruby>妖怪<rt>ようかい</rt></ruby>メーカー: <ruby>河童<rt>かっぱ</rt></ruby>, <ruby>天狗<rt>てんぐ</rt></ruby>, <ruby>雪女<rt>ゆきおんな</rt></ruby>. Один в комнате делится экраном с разделом «メーカー».</li>
+      <li><ruby>百物語<rt>ひゃくものがたり</rt></ruby>: включите «Share sound», попросите всех выключить свет. Число свечей = число рассказчиков, вы последний. Фонарик снизу и 「……ようかいは、ここにいます。」</li>
+      <li>Финал: <ruby>修了証<rt>しゅうりょうしょう</rt></ruby> и おみくじ внизу страницы. Подарок: три штампа = бесплатное занятие, срок до 30 ноября. Общий скриншот, каждый называет своего персонажа.</li>
+    </ul>
+  </div>
+</section>
+
+<section id="treat">
+  <div class="sh"><h2>トリック・オア・トリート！</h2><p>Вход: кнопка выдаёт ваш костюм на сегодня и японскую сладость</p></div>
+  <div class="treat">
+    <div class="panel door">
+      <div class="top">
+        <button class="btn primary big" id="doorBtn">トリック・オア・トリート！</button>
+        <button class="btn" id="doorReset">Сначала</button>
+        <span class="cnt2" id="doorCnt"></span>
+      </div>
+      <div class="guest" id="guest" aria-live="polite"></div>
+    </div>
+    <div class="panel fears">
+      <p class="lbl">Разминка по кругу</p>
+      <p class="j"><ruby>子<rt>こ</rt></ruby>どものころ、<ruby>何<rt>なに</rt></ruby>がこわかったですか？ <ruby>今<rt>いま</rt></ruby>は？</p>
+      <p class="tr">Образец: 子どものころ、暗いところがこわかったです。今は月曜日の朝がこわいです。</p>
+      <div class="tags"><span class="tag">くも</span><span class="tag">へび</span><span class="tag"><ruby>暗<rt>くら</rt></ruby>いところ</span><span class="tag"><ruby>高<rt>たか</rt></ruby>いところ</span><span class="tag"><ruby>歯医者<rt>はいしゃ</rt></ruby></span><span class="tag">テスト</span><span class="tag"><ruby>月曜日<rt>げつようび</rt></ruby>の<ruby>朝<rt>あさ</rt></ruby></span><span class="tag"><ruby>上司<rt>じょうし</rt></ruby></span><span class="tag"><ruby>漢字<rt>かんじ</rt></ruby></span><span class="tag">ゾンビ</span><span class="tag">ピエロ</span><span class="tag"><ruby>一人<rt>ひとり</rt></ruby>でいること</span></div>
+    </div>
+  </div>
+</section>
+
+<section id="zukan">
+  <div class="sh"><h2><ruby>妖怪図鑑<rt>ようかいずかん</rt></ruby></h2><p>Карточки запечатаны. Печать снимает ведущий после раунда фоторобота</p></div>
+  <div class="row" style="margin-bottom:12px">
+    <button class="btn primary" id="secretRand">ひみつのカード</button>
+    <span class="note" style="margin:0">Для описывающего: откроется случайный ёкай. Экран не показывать.</span>
+    <button class="btn" id="sealAll" style="margin-left:auto">Запечатать все</button>
+  </div>
+  <div class="zk"><article class="zc" data-id="hitotsume"><div class="pic"><svg class="yk" viewBox="0 0 200 220" role="img" aria-hidden="true"><g stroke="#1d1b26" stroke-width="3" stroke-linejoin="round" stroke-linecap="round">
+<path d="M58 212 L72 128 Q100 116 128 128 L142 212 Z" fill="#5b6fa8"/>
+<path d="M86 126 L100 152 L114 126" fill="none"/>
+<path d="M70 176 L130 176" fill="none"/>
+<path d="M72 140 Q52 160 56 184 L70 184" fill="#5b6fa8"/>
+<path d="M128 140 Q148 160 144 184 L130 184" fill="#5b6fa8"/>
+<circle cx="100" cy="80" r="44" fill="#f1d9c0"/>
+<ellipse cx="58" cy="84" rx="6" ry="9" fill="#f1d9c0"/><ellipse cx="142" cy="84" rx="6" ry="9" fill="#f1d9c0"/>
+<ellipse cx="100" cy="74" rx="19" ry="21" fill="#fff"/><circle cx="100" cy="76" r="9.1" fill="#1d1b26" stroke="none"/><circle cx="96.8" cy="72.8" r="2.7" fill="#fff" stroke="none"/>
+<path d="M84 52 Q100 44 116 52" fill="none"/>
+<path d="M86 104 Q100 112 114 104" fill="none"/>
+<path d="M95 107 Q90 136 101 142 Q112 134 105 107 Z" fill="#d9463b"/>
+</g></svg><button class="seal" aria-label="Снять печать, карточка 1"><span class="fu"><b>封</b><span>妖怪一</span><em>1</em></span></button></div>
+<div class="tx"><h3><ruby>一<rt>ひと</rt></ruby>つ<ruby>目<rt>め</rt></ruby><ruby>小僧<rt>こぞう</rt></ruby></h3><div class="r">Хитоцумэ-кодзо</div><p class="j" style="margin:0"><ruby>目<rt>め</rt></ruby>が<ruby>一<rt>ひと</rt></ruby>つで、<ruby>舌<rt>した</rt></ruby>が<ruby>長<rt>なが</rt></ruby>い<ruby>子<rt>こ</rt></ruby>どもの<ruby>妖怪<rt>ようかい</rt></ruby>です。<ruby>夜<rt>よる</rt></ruby>、お<ruby>寺<rt>てら</rt></ruby>に<ruby>出<rt>で</rt></ruby>ます。</p><p class="ru">Мальчик-монах с одним огромным глазом и длинным красным языком. Пугает, но безобиден.</p><p class="fc">Его часто рисуют на фонарях и в детских книжках: самый «милый» из страшных.</p></div></article><article class="zc" data-id="karakasa"><div class="pic"><svg class="yk" viewBox="0 0 200 220" role="img" aria-hidden="true"><g stroke="#1d1b26" stroke-width="3" stroke-linejoin="round" stroke-linecap="round">
+<path d="M100 14 L146 150 Q100 162 54 150 Z" fill="#c9473d"/>
+<path d="M100 14 L84 156 M100 14 L117 156" fill="none" stroke-width="2"/>
+<path d="M60 132 Q100 142 140 132" fill="none" stroke-width="2"/>
+<ellipse cx="100" cy="82" rx="15" ry="17" fill="#fff"/><circle cx="101" cy="85" r="7.2" fill="#1d1b26" stroke="none"/><circle cx="98.5" cy="82.5" r="2.2" fill="#fff" stroke="none"/>
+<path d="M84 112 Q100 122 116 112" fill="none"/>
+<path d="M96 116 Q86 150 98 160 Q112 152 106 117 Z" fill="#e25a84"/>
+<path d="M100 158 L100 192" stroke-width="7" stroke="#8a5a2b"/>
+<path d="M100 158 L100 192" stroke-width="2.5" stroke="#1d1b26" opacity=".0"/>
+<rect x="80" y="192" width="40" height="9" rx="2" fill="#b07a42"/>
+<path d="M86 201 L86 210 M114 201 L114 210" stroke-width="5"/>
+</g></svg><button class="seal" aria-label="Снять печать, карточка 2"><span class="fu"><b>封</b><span>妖怪二</span><em>2</em></span></button></div>
+<div class="tx"><h3>からかさお<ruby>化<rt>ば</rt></ruby>け</h3><div class="r">Каракаса-обакэ</div><p class="j" style="margin:0"><ruby>古<rt>ふる</rt></ruby>いかさの<ruby>妖怪<rt>ようかい</rt></ruby>です。<ruby>目<rt>め</rt></ruby>が<ruby>一<rt>ひと</rt></ruby>つで、<ruby>足<rt>あし</rt></ruby>が<ruby>一本<rt>いっぽん</rt></ruby>です。</p><p class="ru">Старый бумажный зонтик, который прожил сто лет и ожил. Прыгает на одной ноге.</p><p class="fc">Это цукумогами (付喪神): вещь, которой исполнилось сто лет, обретает душу.</p></div></article><article class="zc" data-id="rokuro"><div class="pic"><svg class="yk" viewBox="0 0 200 220" role="img" aria-hidden="true"><g stroke="#1d1b26" stroke-width="3" stroke-linejoin="round" stroke-linecap="round">
+<path d="M54 214 L70 152 Q100 140 130 152 L146 214 Z" fill="#8c4f8a"/>
+<path d="M88 150 L100 172 L112 150" fill="none"/>
+<path d="M102 152 C40 128 166 104 116 80 C92 68 66 78 70 62" fill="none" stroke-width="18" stroke-linecap="round"/>
+<path d="M102 152 C40 128 166 104 116 80 C92 68 66 78 70 62" fill="none" stroke-width="12" stroke="#f1d9c0" stroke-linecap="round"/>
+<circle cx="70" cy="44" r="26" fill="#f1d9c0"/>
+<path d="M43 50 Q40 16 70 16 Q100 16 97 50 Q92 30 70 30 Q50 30 43 50 Z" fill="#1d1b26"/>
+<path d="M45 46 Q36 76 46 100" fill="none" stroke-width="6"/>
+<path d="M57 48 q5 -5 10 0 M74 48 q5 -5 10 0" fill="none"/>
+<path d="M65 59 q5 4 10 0" fill="none" stroke="#c43a3a"/>
+</g></svg><button class="seal" aria-label="Снять печать, карточка 3"><span class="fu"><b>封</b><span>妖怪三</span><em>3</em></span></button></div>
+<div class="tx"><h3>ろくろ<ruby>首<rt>くび</rt></ruby></h3><div class="r">Рокурокуби</div><p class="j" style="margin:0"><ruby>昼<rt>ひる</rt></ruby>はふつうの<ruby>女<rt>おんな</rt></ruby>の<ruby>人<rt>ひと</rt></ruby>ですが、<ruby>夜<rt>よる</rt></ruby>になると<ruby>首<rt>くび</rt></ruby>がとても<ruby>長<rt>なが</rt></ruby>くなります。</p><p class="ru">Днём обычная женщина, а ночью у неё вытягивается шея, и голова гуляет сама по себе.</p><p class="fc">Рокурокуби часто «работает» в старых гостиницах: днём хозяйка, ночью ёкай.</p></div></article><article class="zc" data-id="noppera"><div class="pic"><svg class="yk" viewBox="0 0 200 220" role="img" aria-hidden="true"><g stroke="#1d1b26" stroke-width="3" stroke-linejoin="round" stroke-linecap="round">
+<path d="M56 214 L64 140 Q100 126 136 140 L144 214 Z" fill="#3a3d4f"/>
+<path d="M86 132 L100 162 L114 132 Z" fill="#fff"/>
+<path d="M97 138 L103 138 L106 168 L100 176 L94 168 Z" fill="#d9463b"/>
+<path d="M136 146 Q150 168 150 182" fill="none" stroke-width="10"/>
+<path d="M136 146 Q150 168 150 182" fill="none" stroke-width="5" stroke="#3a3d4f"/>
+<rect x="132" y="180" width="44" height="30" rx="4" fill="#7a4f2c"/>
+<path d="M146 180 q8 -10 16 0" fill="none"/>
+<ellipse cx="100" cy="84" rx="34" ry="42" fill="#f1d9c0"/>
+<path d="M66 82 Q64 40 100 40 Q136 40 134 82 Q128 56 100 56 Q72 56 66 82 Z" fill="#1d1b26"/>
+<ellipse cx="88" cy="94" rx="9" ry="13" fill="#fff" stroke="none" opacity=".55"/>
+</g></svg><button class="seal" aria-label="Снять печать, карточка 4"><span class="fu"><b>封</b><span>妖怪四</span><em>4</em></span></button></div>
+<div class="tx"><h3>のっぺらぼう</h3><div class="r">Ноппэрабо</div><p class="j" style="margin:0"><ruby>顔<rt>かお</rt></ruby>に<ruby>目<rt>め</rt></ruby>も<ruby>鼻<rt>はな</rt></ruby>も<ruby>口<rt>くち</rt></ruby>もありません。<ruby>後<rt>うし</rt></ruby>ろから「すみません」と<ruby>声<rt>こえ</rt></ruby>をかけます。</p><p class="ru">Человек без лица. Окликает сзади, вы оборачиваетесь, а лицо гладкое, как яйцо.</p><p class="fc">В классической истории Лафкадио Хирна ноппэрабо встречается дважды: второй раз под видом продавца лапши.</p></div></article><article class="zc" data-id="kappa"><div class="pic"><svg class="yk" viewBox="0 0 200 220" role="img" aria-hidden="true"><g stroke="#1d1b26" stroke-width="3" stroke-linejoin="round" stroke-linecap="round">
+<ellipse cx="100" cy="152" rx="56" ry="54" fill="#8a6a3a"/>
+<path d="M78 196 L72 214 L60 214 M122 196 L128 214 L140 214" fill="none" stroke-width="7" stroke="#5d9e4f"/>
+<path d="M78 196 L72 214 L60 214 M122 196 L128 214 L140 214" fill="none" stroke-width="2"/>
+<ellipse cx="100" cy="152" rx="48" ry="48" fill="#5d9e4f"/>
+<ellipse cx="100" cy="160" rx="30" ry="32" fill="#cfe3a8"/>
+<path d="M52 144 Q34 158 44 176" fill="none" stroke-width="10"/><path d="M52 144 Q34 158 44 176" fill="none" stroke-width="5" stroke="#5d9e4f"/>
+<path d="M148 144 Q166 150 162 128" fill="none" stroke-width="10"/><path d="M148 144 Q166 150 162 128" fill="none" stroke-width="5" stroke="#5d9e4f"/>
+<rect x="150" y="84" width="16" height="50" rx="8" fill="#3f7a33" transform="rotate(14 158 109)"/>
+<circle cx="100" cy="80" r="38" fill="#5d9e4f"/>
+<path d="M64 68 L70 54 L77 64 L83 48 L90 60 L96 46 L102 58 L108 46 L114 60 L121 48 L127 64 L132 54 L137 68 Q100 60 64 68 Z" fill="#1d1b26"/>
+<ellipse cx="100" cy="56" rx="22" ry="7" fill="#dff1f5"/>
+<ellipse cx="85" cy="80" rx="9" ry="9" fill="#fff"/><circle cx="85" cy="82" r="4.3" fill="#1d1b26" stroke="none"/><circle cx="83.5" cy="80.5" r="1.3" fill="#fff" stroke="none"/><ellipse cx="115" cy="80" rx="9" ry="9" fill="#fff"/><circle cx="115" cy="82" r="4.3" fill="#1d1b26" stroke="none"/><circle cx="113.5" cy="80.5" r="1.3" fill="#fff" stroke="none"/>
+<path d="M84 96 Q100 89 116 96 Q100 114 84 96 Z" fill="#e6b23a"/>
+</g></svg><button class="seal" aria-label="Снять печать, карточка 5"><span class="fu"><b>封</b><span>妖怪五</span><em>5</em></span></button></div>
+<div class="tx"><h3><ruby>河童<rt>かっぱ</rt></ruby></h3><div class="r">Каппа</div><p class="j" style="margin:0"><ruby>川<rt>かわ</rt></ruby>に<ruby>住<rt>す</rt></ruby>んでいます。<ruby>頭<rt>あたま</rt></ruby>にお<ruby>皿<rt>さら</rt></ruby>があって、きゅうりが<ruby>大好<rt>だいす</rt></ruby>きです。</p><p class="ru">Водяной с блюдцем воды на голове и панцирем на спине. Обожает огурцы и сумо.</p><p class="fc">Ролл с огурцом называется かっぱ巻き. Если поклониться каппе, вода из блюдца прольётся, и он потеряет силу.</p></div></article><article class="zc" data-id="chochin"><div class="pic"><svg class="yk" viewBox="0 0 200 220" role="img" aria-hidden="true"><g stroke="#1d1b26" stroke-width="3" stroke-linejoin="round" stroke-linecap="round">
+<circle cx="100" cy="116" r="92" fill="#f0a63a" stroke="none" opacity=".18"/>
+<path d="M100 6 L100 38" fill="none"/>
+<rect x="72" y="36" width="56" height="14" rx="3" fill="#1d1b26"/>
+<path d="M76 50 Q34 116 76 184 L124 184 Q166 116 124 50 Z" fill="#f0a63a"/>
+<path d="M64 78 Q100 86 136 78 M56 104 Q100 112 144 104 M58 156 Q100 164 142 156" fill="none" stroke-width="1.6"/>
+<ellipse cx="100" cy="90" rx="15" ry="17" fill="#fff"/><circle cx="100" cy="92" r="7.2" fill="#1d1b26" stroke="none"/><circle cx="97.5" cy="89.5" r="2.2" fill="#fff" stroke="none"/>
+<path d="M58 128 Q100 172 142 126 Q100 142 58 128 Z" fill="#7d1d22"/>
+<path d="M95 146 Q88 196 106 206 Q120 192 108 148 Z" fill="#e25a84"/>
+<rect x="72" y="182" width="56" height="12" rx="3" fill="#1d1b26"/>
+</g></svg><button class="seal" aria-label="Снять печать, карточка 6"><span class="fu"><b>封</b><span>妖怪六</span><em>6</em></span></button></div>
+<div class="tx"><h3>ちょうちんお<ruby>化<rt>ば</rt></ruby>け</h3><div class="r">Тётин-обакэ</div><p class="j" style="margin:0"><ruby>古<rt>ふる</rt></ruby>いちょうちんの<ruby>妖怪<rt>ようかい</rt></ruby>です。<ruby>夜<rt>よる</rt></ruby>、<ruby>急<rt>きゅう</rt></ruby>に<ruby>目<rt>め</rt></ruby>と<ruby>口<rt>くち</rt></ruby>が<ruby>開<rt>あ</rt></ruby>きます。</p><p class="ru">Старый бумажный фонарь: ночью он рвётся пополам, и из дыры появляются рот и язык.</p><p class="fc">Тоже цукумогами. Бумажные фонари тётин до сих пор висят у входа в идзакаи и храмы.</p></div></article><article class="zc" data-id="nurikabe"><div class="pic"><svg class="yk" viewBox="0 0 200 220" role="img" aria-hidden="true"><g stroke="#1d1b26" stroke-width="3" stroke-linejoin="round" stroke-linecap="round">
+<path d="M36 128 L18 140 M164 128 L182 140" fill="none" stroke-width="10"/>
+<path d="M36 128 L18 140 M164 128 L182 140" fill="none" stroke-width="5" stroke="#9c9ca4"/>
+<rect x="58" y="188" width="18" height="20" rx="3" fill="#9c9ca4"/><rect x="124" y="188" width="18" height="20" rx="3" fill="#9c9ca4"/>
+<rect x="36" y="40" width="128" height="152" rx="12" fill="#9c9ca4"/>
+<path d="M50 64 L64 72 M140 150 L150 160 L146 172 M60 168 L72 162" fill="none" stroke-width="2"/>
+<circle cx="80" cy="102" r="5" fill="#1d1b26"/><circle cx="120" cy="102" r="5" fill="#1d1b26"/>
+<path d="M72 90 L88 92 M112 92 L128 90" fill="none"/>
+<path d="M90 128 Q100 133 110 128" fill="none"/>
+</g></svg><button class="seal" aria-label="Снять печать, карточка 7"><span class="fu"><b>封</b><span>妖怪七</span><em>7</em></span></button></div>
+<div class="tx"><h3>ぬりかべ</h3><div class="r">Нурикабэ</div><p class="j" style="margin:0"><ruby>夜<rt>よる</rt></ruby>の<ruby>道<rt>みち</rt></ruby>に<ruby>急<rt>きゅう</rt></ruby>に<ruby>出<rt>で</rt></ruby>る、<ruby>大<rt>おお</rt></ruby>きい<ruby>壁<rt>かべ</rt></ruby>の<ruby>妖怪<rt>ようかい</rt></ruby>です。<ruby>前<rt>まえ</rt></ruby>に<ruby>進<rt>すす</rt></ruby>めません。</p><p class="ru">Невидимая стена на ночной дороге: идёшь, а дальше никак. Обойти её нельзя.</p><p class="fc">Говорят, если постучать палкой по низу стены, она исчезнет. Таким его нарисовал Мидзуки Сигэру.</p></div></article><article class="zc" data-id="tengu"><div class="pic"><svg class="yk" viewBox="0 0 200 220" role="img" aria-hidden="true"><g stroke="#1d1b26" stroke-width="3" stroke-linejoin="round" stroke-linecap="round">
+<path d="M70 150 Q18 122 20 64 Q44 100 76 118 Z" fill="#1d1b26"/>
+<path d="M130 150 Q182 122 180 64 Q156 100 124 118 Z" fill="#1d1b26"/>
+<path d="M54 214 L68 142 Q100 130 132 142 L146 214 Z" fill="#f2efe8"/>
+<circle cx="86" cy="156" r="6" fill="#d9463b"/><circle cx="114" cy="156" r="6" fill="#d9463b"/>
+<path d="M36 172 Q26 140 50 132 Q58 152 46 174 Z" fill="#6a8d3a"/>
+<path d="M44 172 L60 196" fill="none"/>
+<circle cx="100" cy="86" r="34" fill="#d9463b"/>
+<rect x="91" y="46" width="18" height="14" rx="2" fill="#1d1b26"/>
+<path d="M76 72 Q84 64 94 72 M108 70 Q118 62 126 70" fill="none" stroke="#f2efe8" stroke-width="5"/>
+<circle cx="86" cy="80" r="4" fill="#1d1b26"/><circle cx="114" cy="78" r="4" fill="#1d1b26"/>
+<path d="M90 106 Q100 100 110 106" fill="none"/>
+<path d="M98 84 L148 72 L101 97 Z" fill="#d9463b"/>
+</g></svg><button class="seal" aria-label="Снять печать, карточка 8"><span class="fu"><b>封</b><span>妖怪八</span><em>8</em></span></button></div>
+<div class="tx"><h3><ruby>天狗<rt>てんぐ</rt></ruby></h3><div class="r">Тэнгу</div><p class="j" style="margin:0"><ruby>山<rt>やま</rt></ruby>に<ruby>住<rt>す</rt></ruby>んでいます。<ruby>顔<rt>かお</rt></ruby>が<ruby>赤<rt>あか</rt></ruby>くて、<ruby>鼻<rt>はな</rt></ruby>がとても<ruby>長<rt>なが</rt></ruby>いです。<ruby>空<rt>そら</rt></ruby>を<ruby>飛<rt>と</rt></ruby>びます。</p><p class="ru">Горный дух с красным лицом и длинным носом. Летает и учит людей боевым искусствам.</p><p class="fc">Слово «тэнгу» значит «небесная собака». Маски тэнгу продают у храмов как обереги.</p></div></article></div>
+</section>
+
+<section id="words">
+  <div class="sh"><h2>ことば</h2><p>Слова к встрече</p></div>
+  <div class="vgroup"><h3><ruby>体<rt>からだ</rt></ruby><span>Тело</span></h3><div class="vgrid"><div class="v"><div class="w"><ruby>頭<rt>あたま</rt></ruby></div><div class="t">голова</div></div><div class="v"><div class="w"><ruby>顔<rt>かお</rt></ruby></div><div class="t">лицо</div></div><div class="v"><div class="w"><ruby>目<rt>め</rt></ruby></div><div class="t">глаз</div></div><div class="v"><div class="w"><ruby>鼻<rt>はな</rt></ruby></div><div class="t">нос</div></div><div class="v"><div class="w"><ruby>口<rt>くち</rt></ruby></div><div class="t">рот</div></div><div class="v"><div class="w"><ruby>耳<rt>みみ</rt></ruby></div><div class="t">ухо</div></div><div class="v"><div class="w"><ruby>歯<rt>は</rt></ruby></div><div class="t">зуб, зубы</div></div><div class="v"><div class="w"><ruby>舌<rt>した</rt></ruby></div><div class="t">язык</div></div><div class="v"><div class="w"><ruby>首<rt>くび</rt></ruby></div><div class="t">шея</div></div><div class="v"><div class="w"><ruby>手<rt>て</rt></ruby></div><div class="t">рука, кисть</div></div><div class="v"><div class="w"><ruby>足<rt>あし</rt></ruby></div><div class="t">нога</div></div><div class="v"><div class="w"><ruby>背中<rt>せなか</rt></ruby></div><div class="t">спина</div></div><div class="v"><div class="w">かみ</div><div class="t">волосы</div></div><div class="v"><div class="w">つの</div><div class="t">рог</div></div><div class="v"><div class="w">しっぽ</div><div class="t">хвост</div></div><div class="v"><div class="w">つばさ</div><div class="t">крыло</div></div></div></div><div class="vgroup"><h3><ruby>見<rt>み</rt></ruby>た<ruby>目<rt>め</rt></ruby><span>Внешность</span></h3><div class="vgrid"><div class="v"><div class="w"><ruby>長<rt>なが</rt></ruby>い・<ruby>短<rt>みじか</rt></ruby>い</div><div class="t">длинный, короткий</div></div><div class="v"><div class="w"><ruby>大<rt>おお</rt></ruby>きい・<ruby>小<rt>ちい</rt></ruby>さい</div><div class="t">большой, маленький</div></div><div class="v"><div class="w"><ruby>太<rt>ふと</rt></ruby>い・<ruby>細<rt>ほそ</rt></ruby>い</div><div class="t">толстый, тонкий</div></div><div class="v"><div class="w"><ruby>丸<rt>まる</rt></ruby>い</div><div class="t">круглый</div></div><div class="v"><div class="w"><ruby>四角<rt>しかく</rt></ruby>い</div><div class="t">квадратный</div></div><div class="v"><div class="w"><ruby>赤<rt>あか</rt></ruby>い・<ruby>白<rt>しろ</rt></ruby>い・<ruby>黒<rt>くろ</rt></ruby>い</div><div class="t">красный, белый, чёрный</div></div><div class="v"><div class="w"><ruby>緑<rt>みどり</rt></ruby>（の）</div><div class="t">зелёный (сущ.)</div></div><div class="v"><div class="w">こわい</div><div class="t">страшный</div></div><div class="v"><div class="w">かわいい</div><div class="t">милый</div></div><div class="v"><div class="w"><ruby>気持<rt>きも</rt></ruby>ち<ruby>悪<rt>わる</rt></ruby>い</div><div class="t">противный, жуткий</div></div><div class="v"><div class="w">つるつる</div><div class="t">гладкий</div></div><div class="v"><div class="w"><ruby>光<rt>ひか</rt></ruby>る</div><div class="t">светиться</div></div></div></div><div class="vgroup"><h3><ruby>身<rt>み</rt></ruby>につける<span>Что надето</span></h3><div class="vgrid"><div class="v"><div class="w"><ruby>着物<rt>きもの</rt></ruby>を<ruby>着<rt>き</rt></ruby>る</div><div class="t">надеть кимоно</div></div><div class="v"><div class="w">スーツを<ruby>着<rt>き</rt></ruby>る</div><div class="t">надеть костюм</div></div><div class="v"><div class="w">げたをはく</div><div class="t">надеть гэта</div></div><div class="v"><div class="w">ぼうしをかぶる</div><div class="t">надеть шляпу</div></div><div class="v"><div class="w">めがねをかける</div><div class="t">надеть очки</div></div><div class="v"><div class="w">うちわを<ruby>持<rt>も</rt></ruby>つ</div><div class="t">держать веер</div></div></div></div><div class="vgroup"><h3>こわい<ruby>話<rt>はなし</rt></ruby><span>Страшная история</span></h3><div class="vgrid"><div class="v"><div class="w">お<ruby>化<rt>ば</rt></ruby>け</div><div class="t">привидение, нечисть</div></div><div class="v"><div class="w"><ruby>幽霊<rt>ゆうれい</rt></ruby></div><div class="t">призрак</div></div><div class="v"><div class="w"><ruby>妖怪<rt>ようかい</rt></ruby></div><div class="t">ёкай</div></div><div class="v"><div class="w"><ruby>怪談<rt>かいだん</rt></ruby></div><div class="t">страшная история</div></div><div class="v"><div class="w"><ruby>暗<rt>くら</rt></ruby>い</div><div class="t">тёмный</div></div><div class="v"><div class="w"><ruby>音<rt>おと</rt></ruby>・<ruby>声<rt>こえ</rt></ruby></div><div class="t">звук, голос</div></div><div class="v"><div class="w"><ruby>影<rt>かげ</rt></ruby></div><div class="t">тень</div></div><div class="v"><div class="w"><ruby>出<rt>で</rt></ruby>る</div><div class="t">появляться (о призраках)</div></div><div class="v"><div class="w"><ruby>消<rt>き</rt></ruby>える・<ruby>消<rt>け</rt></ruby>す</div><div class="t">гаснуть, гасить</div></div><div class="v"><div class="w"><ruby>逃<rt>に</rt></ruby>げる</div><div class="t">убегать</div></div><div class="v"><div class="w">さけぶ</div><div class="t">кричать</div></div><div class="v"><div class="w">びっくりする</div><div class="t">испугаться, вздрогнуть</div></div><div class="v"><div class="w">ろうそく</div><div class="t">свеча</div></div><div class="v"><div class="w"><ruby>夢<rt>ゆめ</rt></ruby></div><div class="t">сон</div></div></div></div><div class="vgroup"><h3>ハロウィン<span>Хэллоуин</span></h3><div class="vgrid"><div class="v"><div class="w"><ruby>仮装<rt>かそう</rt></ruby>する</div><div class="t">переодеваться</div></div><div class="v"><div class="w">お<ruby>菓子<rt>かし</rt></ruby></div><div class="t">сладости</div></div><div class="v"><div class="w">いたずら</div><div class="t">шалость</div></div><div class="v"><div class="w">かぼちゃ</div><div class="t">тыква</div></div><div class="v"><div class="w"><ruby>魔女<rt>まじょ</rt></ruby></div><div class="t">ведьма</div></div><div class="v"><div class="w">お<ruby>面<rt>めん</rt></ruby></div><div class="t">маска</div></div></div></div>
+  <p class="cnt">Счёт: глаза <b>一つ・二つ・三つ</b>, длинное (ноги, шея, хвост, рога) <b>一本・二本・三本・四本</b> (いっぽん・にほん・さんぼん・よんほん).</p>
+  <div class="filters">
+    <span class="lbl" style="margin:0 6px 0 0">Фразы</span>
+    <button class="chip" data-f="all" aria-pressed="true">Все</button>
+    <button class="chip" data-f="s" aria-pressed="false">Рассказ</button>
+    <button class="chip" data-f="a" aria-pressed="false">Реакция</button>
+  </div>
+  <div class="panel phr" id="phr" data-f="all"><div class="it" data-w="s"><span class="who s">Рассказ</span><span class="j">これは、<ruby>本当<rt>ほんとう</rt></ruby>にあった<ruby>話<rt>はなし</rt></ruby>です。</span><span class="tr">Это реальная история.</span></div><div class="it" data-w="s"><span class="who s">Рассказ</span><span class="j">ある<ruby>夜<rt>よる</rt></ruby>、〜に<ruby>行<rt>い</rt></ruby>きました。</span><span class="tr">Однажды ночью я пошёл в 〜.</span></div><div class="it" data-w="s"><span class="who s">Рассказ</span><span class="j">とても<ruby>暗<rt>くら</rt></ruby>くて、<ruby>静<rt>しず</rt></ruby>かでした。</span><span class="tr">Было очень темно и тихо.</span></div><div class="it" data-w="s"><span class="who s">Рассказ</span><span class="j">すると、〜が<ruby>聞<rt>き</rt></ruby>こえました。</span><span class="tr">И тут послышалось 〜.</span></div><div class="it" data-w="s"><span class="who s">Рассказ</span><span class="j"><ruby>後<rt>うし</rt></ruby>ろを<ruby>見<rt>み</rt></ruby>ると、〜がいました。</span><span class="tr">Я оглянулся, а там был 〜.</span></div><div class="it" data-w="s"><span class="who s">Рассказ</span><span class="j"><ruby>私<rt>わたし</rt></ruby>はびっくりして、<ruby>逃<rt>に</rt></ruby>げてしまいました。</span><span class="tr">Я испугался и убежал.</span></div><div class="it" data-w="s"><span class="who s">Рассказ</span><span class="j">……それは、<ruby>夢<rt>ゆめ</rt></ruby>でした。</span><span class="tr">…Это был сон.</span></div><div class="it" data-w="a"><span class="who a">Реакция</span><span class="j">きゃー！ こわーい！</span><span class="tr">А-а! Страшно!</span></div><div class="it" data-w="a"><span class="who a">Реакция</span><span class="j">うそ！ <ruby>本当<rt>ほんとう</rt></ruby>？</span><span class="tr">Да ладно! Правда?</span></div><div class="it" data-w="a"><span class="who a">Реакция</span><span class="j">それで？ どうなったんですか？</span><span class="tr">И что? Чем кончилось?</span></div><div class="it" data-w="a"><span class="who a">Реакция</span><span class="j">こわそうですね。</span><span class="tr">Звучит страшно.</span></div><div class="it" data-w="a"><span class="who a">Реакция</span><span class="j"><ruby>私<rt>わたし</rt></ruby>も<ruby>見<rt>み</rt></ruby>たことがあります。</span><span class="tr">Я тоже такое видел(а).</span></div><div class="it" data-w="a"><span class="who a">Реакция</span><span class="j">ぜんぜんこわくないですよ。</span><span class="tr">Совсем не страшно.</span></div></div>
+</section>
+
+<section id="grammar">
+  <div class="sh"><h2><ruby>妖怪<rt>ようかい</rt></ruby>の<ruby>文法<rt>ぶんぽう</rt></ruby></h2><p>Пять конструкций N4. Отвечаете и задаёте вопрос следующему</p></div>
+  <div class="gram"><div class="panel g"><div class="k">Внешность</div><h3>AはBがCです・〜くて</h3><p class="d">описание: «у A такое-то B»</p><p class="j"><ruby>天狗<rt>てんぐ</rt></ruby>は<ruby>鼻<rt>はな</rt></ruby>が<ruby>長<rt>なが</rt></ruby>いです。</p><p class="t">У тэнгу длинный нос.</p><p class="j">ろくろ<ruby>首<rt>くび</rt></ruby>は<ruby>首<rt>くび</rt></ruby>が<ruby>長<rt>なが</rt></ruby>くて、かみが<ruby>黒<rt>くろ</rt></ruby>いです。</p><p class="t">У рокурокуби длинная шея и чёрные волосы.</p><p class="j"><ruby>河童<rt>かっぱ</rt></ruby>は<ruby>体<rt>からだ</rt></ruby>が<ruby>緑<rt>みどり</rt></ruby>で、<ruby>背中<rt>せなか</rt></ruby>にこうらがあります。</p><p class="t">Каппа зелёный, на спине панцирь.</p><div class="q"><small>Вопрос по цепочке</small>あなたの<ruby>好<rt>す</rt></ruby>きな<ruby>動物<rt>どうぶつ</rt></ruby>は、どんな<ruby>顔<rt>かお</rt></ruby>ですか？</div></div><div class="panel g"><div class="k">Одежда</div><h3>〜ている</h3><p class="d">что надето, что в руках, что сейчас</p><p class="j">のっぺらぼうはスーツを<ruby>着<rt>き</rt></ruby>て、かばんを<ruby>持<rt>も</rt></ruby>っています。</p><p class="t">Ноппэрабо в костюме и с портфелем.</p><p class="j">からかさお<ruby>化<rt>ば</rt></ruby>けはげたをはいています。</p><p class="t">Каракаса-обакэ в гэта.</p><div class="q"><small>Вопрос по цепочке</small><ruby>今日<rt>きょう</rt></ruby>は<ruby>何<rt>なに</rt></ruby>を<ruby>着<rt>き</rt></ruby>ていますか？</div></div><div class="panel g"><div class="k">Вид</div><h3>〜そうです</h3><p class="d">«выглядит…»</p><p class="j">この<ruby>妖怪<rt>ようかい</rt></ruby>はこわそうですね。</p><p class="t">Этот ёкай выглядит страшно.</p><p class="j">でも、<ruby>目<rt>め</rt></ruby>はやさしそうです。</p><p class="t">Но глаза у него добрые.</p><div class="q"><small>Вопрос по цепочке</small><ruby>図鑑<rt>ずかん</rt></ruby>の<ruby>妖怪<rt>ようかい</rt></ruby>、どれが<ruby>一番<rt>いちばん</rt></ruby><ruby>強<rt>つよ</rt></ruby>そうですか？</div></div><div class="panel g"><div class="k">Суеверия</div><h3>〜と</h3><p class="d">«если… то всегда», «смотрю, а там…»</p><p class="j"><ruby>夜<rt>よる</rt></ruby>に<ruby>口笛<rt>くちぶえ</rt></ruby>を<ruby>吹<rt>ふ</rt></ruby>くと、へびが<ruby>来<rt>き</rt></ruby>ます。</p><p class="t">Если свистеть ночью, приползёт змея.</p><p class="j"><ruby>後<rt>うし</rt></ruby>ろを<ruby>見<rt>み</rt></ruby>ると、だれもいませんでした。</p><p class="t">Я оглянулся, а там никого.</p><div class="q"><small>Вопрос по цепочке</small><ruby>夜<rt>よる</rt></ruby>になると、あなたは<ruby>何<rt>なに</rt></ruby>をしますか？</div></div><div class="panel g"><div class="k">Незадача</div><h3>〜てしまいました</h3><p class="d">«так вышло», «вот незадача»</p><p class="j">びっくりして、<ruby>逃<rt>に</rt></ruby>げてしまいました。</p><p class="t">Испугался и сбежал.</p><p class="j">ろうそくの<ruby>火<rt>ひ</rt></ruby>が<ruby>消<rt>き</rt></ruby>えてしまいました。</p><p class="t">Свеча погасла.</p><div class="q"><small>Вопрос по цепочке</small><ruby>最近<rt>さいきん</rt></ruby>、<ruby>何<rt>なに</rt></ruby>か<ruby>忘<rt>わす</rt></ruby>れてしまいましたか？</div></div></div>
+  <details class="bonus"><summary>Бонус для сильных</summary><p><b class="jp">〜たら</b> · <span class="jp">もし<ruby>河童<rt>かっぱ</rt></ruby>に<ruby>会<rt>あ</rt></ruby>ったら、きゅうりをあげます。</span><br><span style="color:var(--muted);font-size:14px">Если встречу каппу, дам ему огурец.</span></p><p><b class="jp">〜られる</b> · <span class="jp"><ruby>河童<rt>かっぱ</rt></ruby>に<ruby>追<rt>お</rt></ruby>いかけられました。</span><br><span style="color:var(--muted);font-size:14px">За мной гнался каппа.</span></p><p><b class="jp">〜みたいです</b> · <span class="jp">だれかいるみたいです。</span><br><span style="color:var(--muted);font-size:14px">Кажется, тут кто-то есть.</span></p></details>
+</section>
+
+<section id="maker">
+  <div class="sh"><h2><ruby>妖怪<rt>ようかい</rt></ruby>メーカー</h2><p>Создайте своего ёкая. Сначала договоритесь по-японски, потом выбирайте</p></div>
+  <p class="note">В комнате один человек делится экраном с этим разделом. Внизу страница соберёт профиль ёкая, его и читаете на презентации.</p>
+  <div class="mk">
+    <div class="stage" style="position:relative"><div class="nm" id="mkName"></div><svg id="mkSvg" viewBox="0 0 240 260" role="img" aria-label="Ваш ёкай"></svg></div>
+    <div class="panel opts" id="mkOpts"></div>
+  </div>
+  <div class="panel prof">
+    <h3>わたしたちの<ruby>妖怪<rt>ようかい</rt></ruby></h3>
+    <p id="mkText"></p>
+    <div class="row acts"><button class="btn" id="mkEx">Пример</button><button class="btn" id="mkRand">Случайный ёкай</button></div>
+  </div>
+</section>
+
+<section id="hyaku">
+  <div class="sh"><h2><ruby>百物語<rt>ひゃくものがたり</rt></ruby></h2><p>История на 5–6 предложений. Рассказали, сказали «ふっ», свеча гаснет</p></div>
+  <div class="stage100" id="stage100">
+    <div class="candles" id="candles"></div>
+    <div class="s100c">
+      <span class="lab">Рассказчиков:</span>
+      <span id="ncount"></span>
+      <button class="btn" id="relight">Зажечь все</button>
+    </div>
+    <p class="s100n" id="s100n"></p>
+  </div>
+  <div class="dice">
+    <div class="panel rows" id="diceRows"></div>
+    <div class="panel story">
+      <p class="lbl" style="font-family:var(--ru)">Ваша история · <button class="btn" id="diceAll" style="font-size:13px;padding:2px 10px">怪談サイコロ: всё сразу</button></p>
+      <div id="storyT"></div>
+    </div>
+  </div>
+</section>
+
+<section id="talk">
+  <div class="sh"><h2>こわいものトーク</h2><p>Отвечаете на вопрос и выбираете вопрос для следующего</p></div>
+  <button class="btn primary" id="rand" style="margin-bottom:12px">Случайный вопрос</button>
+  <ol class="qs" id="qs"><li><ruby>子<rt>こ</rt></ruby>どものころ、<ruby>何<rt>なに</rt></ruby>がこわかったですか？ <ruby>今<rt>いま</rt></ruby>は<ruby>何<rt>なに</rt></ruby>がこわいですか？</li><li>お<ruby>化<rt>ば</rt></ruby>けや<ruby>幽霊<rt>ゆうれい</rt></ruby>を<ruby>見<rt>み</rt></ruby>たことがありますか？ <ruby>見<rt>み</rt></ruby>てみたいですか？</li><li><ruby>日本<rt>にほん</rt></ruby>の<ruby>妖怪<rt>ようかい</rt></ruby>の<ruby>中<rt>なか</rt></ruby>で、<ruby>一番<rt>いちばん</rt></ruby><ruby>会<rt>あ</rt></ruby>いたい<ruby>妖怪<rt>ようかい</rt></ruby>はどれですか？ どうしてですか？</li><li>もし<ruby>河童<rt>かっぱ</rt></ruby>に<ruby>会<rt>あ</rt></ruby>ったら、<ruby>何<rt>なに</rt></ruby>をしますか？</li><li>ロシアにも、<ruby>妖怪<rt>ようかい</rt></ruby>みたいなものがいますか？</li><li>「<ruby>夜<rt>よる</rt></ruby>に<ruby>口笛<rt>くちぶえ</rt></ruby>を<ruby>吹<rt>ふ</rt></ruby>くと、へびが<ruby>来<rt>く</rt></ruby>る」。ロシアにも、こんな<ruby>迷信<rt>めいしん</rt></ruby>がありますか？</li><li>ハロウィンに<ruby>仮装<rt>かそう</rt></ruby>するなら、<ruby>何<rt>なに</rt></ruby>になりたいですか？</li><li><ruby>日本語<rt>にほんご</rt></ruby>の<ruby>勉強<rt>べんきょう</rt></ruby>で、<ruby>一番<rt>いちばん</rt></ruby>こわいものは<ruby>何<rt>なん</rt></ruby>ですか？</li></ol>
+</section>
+
+<section id="facts">
+  <div class="sh"><h2><ruby>豆知識<rt>まめちしき</rt></ruby></h2><p>Факты о ёкаях</p></div>
+  <div class="facts"><div class="panel fact"><h3><ruby>百物語<rt>ひゃくものがたり</rt></ruby></h3><p>Игра эпохи Эдо: сто фитилей, сто страшных историй. На сотой должен появиться ёкай, поэтому останавливались на 99-й.</p></div><div class="panel fact"><h3><ruby>付喪神<rt>つくもがみ</rt></ruby></h3><p>Вещь, которой исполнилось сто лет, обретает душу. Так появились からかさお化け и ちょうちんお化け.</p></div><div class="panel fact"><h3><ruby>画図百鬼夜行<rt>がずひゃっきやこう</rt></ruby></h3><p>В 1776 году художник 鳥山石燕 издал иллюстрированный справочник ёкаев. Многие из них до сих пор рисуют «по нему».</p></div><div class="panel fact"><h3><ruby>水木<rt>みずき</rt></ruby>しげるロード</h3><p>Автор манги «ゲゲゲの鬼太郎» родом из Сакаиминато. Там на улице стоят больше 170 бронзовых ёкаев.</p></div><div class="panel fact"><h3>かっぱ<ruby>巻<rt>ま</rt></ruby>き</h3><p>Каппа обожает огурцы, отсюда название ролла. А если ему поклониться, вода из блюдца прольётся.</p></div><div class="panel fact"><h3><ruby>足<rt>あし</rt></ruby>のない<ruby>幽霊<rt>ゆうれい</rt></ruby></h3><p>Японских призраков рисуют без ног с XVIII века. Считается, что первым так нарисовал 円山応挙.</p></div><div class="panel fact"><h3><ruby>口裂<rt>くちさ</rt></ruby>け<ruby>女<rt>おんな</rt></ruby></h3><p>В 1979 году слухи о женщине с разрезанным ртом напугали всю Японию. Защита: три раза сказать «ポマード».</p></div><div class="panel fact"><h3><ruby>座敷<rt>ざしき</rt></ruby>わらし</h3><p>Дух ребёнка в старом доме приносит удачу. Если уходит, дом беднеет. Почти наш домовой.</p></div><div class="panel fact"><h3>ハロウィン</h3><p>Массовым праздником стал только в 2000-х. Одним из первых его начал отмечать Tokyo Disneyland в 1997 году.</p></div><div class="panel fact"><h3><ruby>夏<rt>なつ</rt></ruby>の<ruby>怪談<rt>かいだん</rt></ruby></h3><p>Сезон страшилок в Японии летом, на お盆: от страха «холодеет спина», 背筋が寒くなる.</p></div></div>
+</section>
+
+<section id="timer">
+  <div class="timer">
+    <h3><ruby>日本語<rt>にほんご</rt></ruby>だけタイム</h3>
+    <p class="rule">Только японский: фоторобот и 妖怪メーカー. Перешли на русский? Скажите すみません и продолжайте.</p>
+    <div class="clock" id="clock" role="timer" aria-live="off">20:00</div>
+    <div class="presets" role="group" aria-label="Длительность">
+      <button class="btn" data-m="4" aria-pressed="false">4 <ruby>分<rt>ぷん</rt></ruby></button>
+      <button class="btn" data-m="8" aria-pressed="false">8 <ruby>分<rt>ふん</rt></ruby></button>
+      <button class="btn" data-m="10" aria-pressed="false">10 <ruby>分<rt>ぷん</rt></ruby></button>
+      <button class="btn" data-m="20" aria-pressed="true">20 <ruby>分<rt>ぷん</rt></ruby></button>
+    </div>
+    <div class="ctrl">
+      <button class="btn primary" id="go">スタート</button>
+      <button class="btn" id="reset">Сброс</button>
+    </div>
+  </div>
+</section>
+
+<section id="final">
+  <div class="sh"><h2>おみくじ と <ruby>修了証<rt>しゅうりょうしょう</rt></ruby></h2><p>Последняя омикудзи клуба и ваш сертификат</p></div>
+  <div class="fin">
+    <div class="panel kuji">
+      <div class="box" id="kujiBox" aria-hidden="true">おみくじ</div>
+      <button class="btn primary" id="kujiBtn">おみくじを<ruby>引<rt>ひ</rt></ruby>く</button>
+      <div id="kujiOut" style="width:100%" aria-live="polite"></div>
+    </div>
+    <div class="panel cert">
+      <div class="ci">
+        <label for="certName" class="lbl" style="display:block">Ваше имя катаканой, как на бейджике</label>
+        <input id="certName" placeholder="アンナ" style="width:100%;border:1px solid var(--rule);background:var(--paper);border-radius:6px;padding:8px 10px;font-family:var(--jp);font-size:18px">
+        <p class="note" style="margin:6px 0 0">Сделайте скриншот сертификата: он ваш.</p>
+      </div>
+      <div class="paper">
+        <h3><ruby>修了証<rt>しゅうりょうしょう</rt></ruby></h3>
+        <div class="who"><span id="certWho">アンナ</span><small>さま</small></div>
+        <p class="body">あなたは、Ma Kagami <ruby>日本語<rt>にほんご</rt></ruby><ruby>会話<rt>かいわ</rt></ruby>クラブの<ruby>三<rt>みっ</rt></ruby>つの<ruby>駅<rt>えき</rt></ruby>を、<ruby>全部<rt>ぜんぶ</rt></ruby>まわりました。よくがんばりました。</p>
+        <div class="route"><ruby>居酒屋<rt>いざかや</rt></ruby> → <ruby>東京<rt>とうきょう</rt></ruby>さんぽ → <ruby>妖怪<rt>ようかい</rt></ruby>ナイト</div>
+        <p class="ru">Сертификат участника разговорного клуба Ma Kagami, октябрь 2026</p>
+        <div class="foot"><span>2026<ruby>年<rt>ねん</rt></ruby>10<ruby>月<rt>がつ</rt></ruby>31<ruby>日<rt>にち</rt></ruby><br>Ma Kagami</span><span class="hanko">修<br>了</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>Разговорный клуб Ma Kagami · 妖怪ナイト · 31.10.2026 · <ruby>終点<rt>しゅうてん</rt></ruby>です。お<ruby>疲<rt>つか</rt></ruby>れさまでした！</footer>
+</div>
+</main>
+
+<div id="dim" aria-hidden="true"></div>
+<div class="ovl" id="reveal" hidden>
+  <div>
+    <svg class="eye" viewBox="0 0 200 120" aria-hidden="true"><g class="lid"><path d="M10 60 Q100 -10 190 60 Q100 130 10 60 Z" fill="#f3efe4"/><circle cx="100" cy="60" r="34" fill="#c8372d"/><circle cx="100" cy="60" r="16" fill="#07070e"/><circle cx="90" cy="50" r="6" fill="#fff"/></g></svg>
+    <p>……ようかいは、ここにいます。</p>
+    <button class="btn" id="lights"><ruby>電気<rt>でんき</rt></ruby>をつける</button>
+  </div>
+</div>
+<div class="ovl" id="secret" hidden role="dialog" aria-label="Тайная карточка"><div class="sc" id="secretBody"></div></div>
+
+<script>
+(() => {
+  const $ = (s, r = document) => r.querySelector(s), $$ = (s, r = document) => [...r.querySelectorAll(s)];
+  const store = {
+    get(k) { try { return JSON.parse(localStorage.getItem('yk-' + k)); } catch { return null; } },
+    set(k, v) { try { localStorage.setItem('yk-' + k, JSON.stringify(v)); } catch {} }
+  };
+  const pick = a => a[Math.floor(Math.random() * a.length)];
+  const D = {"yokai": [{"id": "hitotsume", "n": "<ruby>一<rt>ひと</rt></ruby>つ<ruby>目<rt>め</rt></ruby><ruby>小僧<rt>こぞう</rt></ruby>", "f": ["<ruby>子<rt>こ</rt></ruby>どもです。<ruby>頭<rt>あたま</rt></ruby>に<ruby>毛<rt>け</rt></ruby>がありません。", "<ruby>目<rt>め</rt></ruby>が<ruby>一<rt>ひと</rt></ruby>つで、とても<ruby>大<rt>おお</rt></ruby>きいです。", "<ruby>舌<rt>した</rt></ruby>が<ruby>長<rt>なが</rt></ruby>くて、<ruby>赤<rt>あか</rt></ruby>いです。", "<ruby>青<rt>あお</rt></ruby>い<ruby>着物<rt>きもの</rt></ruby>を<ruby>着<rt>き</rt></ruby>ています。"], "svg": "<svg class=\"yk\" viewBox=\"0 0 200 220\" role=\"img\" aria-hidden=\"true\"><g stroke=\"#1d1b26\" stroke-width=\"3\" stroke-linejoin=\"round\" stroke-linecap=\"round\">\n<path d=\"M58 212 L72 128 Q100 116 128 128 L142 212 Z\" fill=\"#5b6fa8\"/>\n<path d=\"M86 126 L100 152 L114 126\" fill=\"none\"/>\n<path d=\"M70 176 L130 176\" fill=\"none\"/>\n<path d=\"M72 140 Q52 160 56 184 L70 184\" fill=\"#5b6fa8\"/>\n<path d=\"M128 140 Q148 160 144 184 L130 184\" fill=\"#5b6fa8\"/>\n<circle cx=\"100\" cy=\"80\" r=\"44\" fill=\"#f1d9c0\"/>\n<ellipse cx=\"58\" cy=\"84\" rx=\"6\" ry=\"9\" fill=\"#f1d9c0\"/><ellipse cx=\"142\" cy=\"84\" rx=\"6\" ry=\"9\" fill=\"#f1d9c0\"/>\n<ellipse cx=\"100\" cy=\"74\" rx=\"19\" ry=\"21\" fill=\"#fff\"/><circle cx=\"100\" cy=\"76\" r=\"9.1\" fill=\"#1d1b26\" stroke=\"none\"/><circle cx=\"96.8\" cy=\"72.8\" r=\"2.7\" fill=\"#fff\" stroke=\"none\"/>\n<path d=\"M84 52 Q100 44 116 52\" fill=\"none\"/>\n<path d=\"M86 104 Q100 112 114 104\" fill=\"none\"/>\n<path d=\"M95 107 Q90 136 101 142 Q112 134 105 107 Z\" fill=\"#d9463b\"/>\n</g></svg>"}, {"id": "karakasa", "n": "からかさお<ruby>化<rt>ば</rt></ruby>け", "f": ["かさです。<ruby>色<rt>いろ</rt></ruby>は<ruby>赤<rt>あか</rt></ruby>いです。", "<ruby>目<rt>め</rt></ruby>が<ruby>一<rt>ひと</rt></ruby>つです。", "<ruby>口<rt>くち</rt></ruby>から<ruby>長<rt>なが</rt></ruby>い<ruby>舌<rt>した</rt></ruby>が<ruby>出<rt>で</rt></ruby>ています。", "<ruby>足<rt>あし</rt></ruby>が<ruby>一本<rt>いっぽん</rt></ruby>で、げたをはいています。"], "svg": "<svg class=\"yk\" viewBox=\"0 0 200 220\" role=\"img\" aria-hidden=\"true\"><g stroke=\"#1d1b26\" stroke-width=\"3\" stroke-linejoin=\"round\" stroke-linecap=\"round\">\n<path d=\"M100 14 L146 150 Q100 162 54 150 Z\" fill=\"#c9473d\"/>\n<path d=\"M100 14 L84 156 M100 14 L117 156\" fill=\"none\" stroke-width=\"2\"/>\n<path d=\"M60 132 Q100 142 140 132\" fill=\"none\" stroke-width=\"2\"/>\n<ellipse cx=\"100\" cy=\"82\" rx=\"15\" ry=\"17\" fill=\"#fff\"/><circle cx=\"101\" cy=\"85\" r=\"7.2\" fill=\"#1d1b26\" stroke=\"none\"/><circle cx=\"98.5\" cy=\"82.5\" r=\"2.2\" fill=\"#fff\" stroke=\"none\"/>\n<path d=\"M84 112 Q100 122 116 112\" fill=\"none\"/>\n<path d=\"M96 116 Q86 150 98 160 Q112 152 106 117 Z\" fill=\"#e25a84\"/>\n<path d=\"M100 158 L100 192\" stroke-width=\"7\" stroke=\"#8a5a2b\"/>\n<path d=\"M100 158 L100 192\" stroke-width=\"2.5\" stroke=\"#1d1b26\" opacity=\".0\"/>\n<rect x=\"80\" y=\"192\" width=\"40\" height=\"9\" rx=\"2\" fill=\"#b07a42\"/>\n<path d=\"M86 201 L86 210 M114 201 L114 210\" stroke-width=\"5\"/>\n</g></svg>"}, {"id": "rokuro", "n": "ろくろ<ruby>首<rt>くび</rt></ruby>", "f": ["<ruby>女<rt>おんな</rt></ruby>の<ruby>人<rt>ひと</rt></ruby>です。", "<ruby>首<rt>くび</rt></ruby>がとても<ruby>長<rt>なが</rt></ruby>くて、くねくねしています。", "かみが<ruby>黒<rt>くろ</rt></ruby>くて、<ruby>長<rt>なが</rt></ruby>いです。", "<ruby>紫<rt>むらさき</rt></ruby>の<ruby>着物<rt>きもの</rt></ruby>を<ruby>着<rt>き</rt></ruby>ています。"], "svg": "<svg class=\"yk\" viewBox=\"0 0 200 220\" role=\"img\" aria-hidden=\"true\"><g stroke=\"#1d1b26\" stroke-width=\"3\" stroke-linejoin=\"round\" stroke-linecap=\"round\">\n<path d=\"M54 214 L70 152 Q100 140 130 152 L146 214 Z\" fill=\"#8c4f8a\"/>\n<path d=\"M88 150 L100 172 L112 150\" fill=\"none\"/>\n<path d=\"M102 152 C40 128 166 104 116 80 C92 68 66 78 70 62\" fill=\"none\" stroke-width=\"18\" stroke-linecap=\"round\"/>\n<path d=\"M102 152 C40 128 166 104 116 80 C92 68 66 78 70 62\" fill=\"none\" stroke-width=\"12\" stroke=\"#f1d9c0\" stroke-linecap=\"round\"/>\n<circle cx=\"70\" cy=\"44\" r=\"26\" fill=\"#f1d9c0\"/>\n<path d=\"M43 50 Q40 16 70 16 Q100 16 97 50 Q92 30 70 30 Q50 30 43 50 Z\" fill=\"#1d1b26\"/>\n<path d=\"M45 46 Q36 76 46 100\" fill=\"none\" stroke-width=\"6\"/>\n<path d=\"M57 48 q5 -5 10 0 M74 48 q5 -5 10 0\" fill=\"none\"/>\n<path d=\"M65 59 q5 4 10 0\" fill=\"none\" stroke=\"#c43a3a\"/>\n</g></svg>"}, {"id": "noppera", "n": "のっぺらぼう", "f": ["<ruby>男<rt>おとこ</rt></ruby>の<ruby>人<rt>ひと</rt></ruby>です。かみは<ruby>短<rt>みじか</rt></ruby>くて、<ruby>黒<rt>くろ</rt></ruby>いです。", "<ruby>顔<rt>かお</rt></ruby>に<ruby>目<rt>め</rt></ruby>も<ruby>鼻<rt>はな</rt></ruby>も<ruby>口<rt>くち</rt></ruby>もありません。つるつるです。", "スーツを<ruby>着<rt>き</rt></ruby>て、ネクタイをしています。", "かばんを<ruby>持<rt>も</rt></ruby>っています。"], "svg": "<svg class=\"yk\" viewBox=\"0 0 200 220\" role=\"img\" aria-hidden=\"true\"><g stroke=\"#1d1b26\" stroke-width=\"3\" stroke-linejoin=\"round\" stroke-linecap=\"round\">\n<path d=\"M56 214 L64 140 Q100 126 136 140 L144 214 Z\" fill=\"#3a3d4f\"/>\n<path d=\"M86 132 L100 162 L114 132 Z\" fill=\"#fff\"/>\n<path d=\"M97 138 L103 138 L106 168 L100 176 L94 168 Z\" fill=\"#d9463b\"/>\n<path d=\"M136 146 Q150 168 150 182\" fill=\"none\" stroke-width=\"10\"/>\n<path d=\"M136 146 Q150 168 150 182\" fill=\"none\" stroke-width=\"5\" stroke=\"#3a3d4f\"/>\n<rect x=\"132\" y=\"180\" width=\"44\" height=\"30\" rx=\"4\" fill=\"#7a4f2c\"/>\n<path d=\"M146 180 q8 -10 16 0\" fill=\"none\"/>\n<ellipse cx=\"100\" cy=\"84\" rx=\"34\" ry=\"42\" fill=\"#f1d9c0\"/>\n<path d=\"M66 82 Q64 40 100 40 Q136 40 134 82 Q128 56 100 56 Q72 56 66 82 Z\" fill=\"#1d1b26\"/>\n<ellipse cx=\"88\" cy=\"94\" rx=\"9\" ry=\"13\" fill=\"#fff\" stroke=\"none\" opacity=\".55\"/>\n</g></svg>"}, {"id": "kappa", "n": "<ruby>河童<rt>かっぱ</rt></ruby>", "f": ["<ruby>体<rt>からだ</rt></ruby>が<ruby>緑<rt>みどり</rt></ruby>です。", "<ruby>頭<rt>あたま</rt></ruby>の<ruby>上<rt>うえ</rt></ruby>にお<ruby>皿<rt>さら</rt></ruby>があります。", "<ruby>口<rt>くち</rt></ruby>はくちばしで、<ruby>背中<rt>せなか</rt></ruby>にこうらがあります。", "<ruby>手<rt>て</rt></ruby>にきゅうりを<ruby>持<rt>も</rt></ruby>っています。"], "svg": "<svg class=\"yk\" viewBox=\"0 0 200 220\" role=\"img\" aria-hidden=\"true\"><g stroke=\"#1d1b26\" stroke-width=\"3\" stroke-linejoin=\"round\" stroke-linecap=\"round\">\n<ellipse cx=\"100\" cy=\"152\" rx=\"56\" ry=\"54\" fill=\"#8a6a3a\"/>\n<path d=\"M78 196 L72 214 L60 214 M122 196 L128 214 L140 214\" fill=\"none\" stroke-width=\"7\" stroke=\"#5d9e4f\"/>\n<path d=\"M78 196 L72 214 L60 214 M122 196 L128 214 L140 214\" fill=\"none\" stroke-width=\"2\"/>\n<ellipse cx=\"100\" cy=\"152\" rx=\"48\" ry=\"48\" fill=\"#5d9e4f\"/>\n<ellipse cx=\"100\" cy=\"160\" rx=\"30\" ry=\"32\" fill=\"#cfe3a8\"/>\n<path d=\"M52 144 Q34 158 44 176\" fill=\"none\" stroke-width=\"10\"/><path d=\"M52 144 Q34 158 44 176\" fill=\"none\" stroke-width=\"5\" stroke=\"#5d9e4f\"/>\n<path d=\"M148 144 Q166 150 162 128\" fill=\"none\" stroke-width=\"10\"/><path d=\"M148 144 Q166 150 162 128\" fill=\"none\" stroke-width=\"5\" stroke=\"#5d9e4f\"/>\n<rect x=\"150\" y=\"84\" width=\"16\" height=\"50\" rx=\"8\" fill=\"#3f7a33\" transform=\"rotate(14 158 109)\"/>\n<circle cx=\"100\" cy=\"80\" r=\"38\" fill=\"#5d9e4f\"/>\n<path d=\"M64 68 L70 54 L77 64 L83 48 L90 60 L96 46 L102 58 L108 46 L114 60 L121 48 L127 64 L132 54 L137 68 Q100 60 64 68 Z\" fill=\"#1d1b26\"/>\n<ellipse cx=\"100\" cy=\"56\" rx=\"22\" ry=\"7\" fill=\"#dff1f5\"/>\n<ellipse cx=\"85\" cy=\"80\" rx=\"9\" ry=\"9\" fill=\"#fff\"/><circle cx=\"85\" cy=\"82\" r=\"4.3\" fill=\"#1d1b26\" stroke=\"none\"/><circle cx=\"83.5\" cy=\"80.5\" r=\"1.3\" fill=\"#fff\" stroke=\"none\"/><ellipse cx=\"115\" cy=\"80\" rx=\"9\" ry=\"9\" fill=\"#fff\"/><circle cx=\"115\" cy=\"82\" r=\"4.3\" fill=\"#1d1b26\" stroke=\"none\"/><circle cx=\"113.5\" cy=\"80.5\" r=\"1.3\" fill=\"#fff\" stroke=\"none\"/>\n<path d=\"M84 96 Q100 89 116 96 Q100 114 84 96 Z\" fill=\"#e6b23a\"/>\n</g></svg>"}, {"id": "chochin", "n": "ちょうちんお<ruby>化<rt>ば</rt></ruby>け", "f": ["ちょうちんです。オレンジ<ruby>色<rt>いろ</rt></ruby>に<ruby>光<rt>ひか</rt></ruby>っています。", "<ruby>目<rt>め</rt></ruby>が<ruby>一<rt>ひと</rt></ruby>つです。", "<ruby>口<rt>くち</rt></ruby>がとても<ruby>大<rt>おお</rt></ruby>きいです。", "<ruby>長<rt>なが</rt></ruby>い<ruby>舌<rt>した</rt></ruby>が<ruby>出<rt>で</rt></ruby>ています。"], "svg": "<svg class=\"yk\" viewBox=\"0 0 200 220\" role=\"img\" aria-hidden=\"true\"><g stroke=\"#1d1b26\" stroke-width=\"3\" stroke-linejoin=\"round\" stroke-linecap=\"round\">\n<circle cx=\"100\" cy=\"116\" r=\"92\" fill=\"#f0a63a\" stroke=\"none\" opacity=\".18\"/>\n<path d=\"M100 6 L100 38\" fill=\"none\"/>\n<rect x=\"72\" y=\"36\" width=\"56\" height=\"14\" rx=\"3\" fill=\"#1d1b26\"/>\n<path d=\"M76 50 Q34 116 76 184 L124 184 Q166 116 124 50 Z\" fill=\"#f0a63a\"/>\n<path d=\"M64 78 Q100 86 136 78 M56 104 Q100 112 144 104 M58 156 Q100 164 142 156\" fill=\"none\" stroke-width=\"1.6\"/>\n<ellipse cx=\"100\" cy=\"90\" rx=\"15\" ry=\"17\" fill=\"#fff\"/><circle cx=\"100\" cy=\"92\" r=\"7.2\" fill=\"#1d1b26\" stroke=\"none\"/><circle cx=\"97.5\" cy=\"89.5\" r=\"2.2\" fill=\"#fff\" stroke=\"none\"/>\n<path d=\"M58 128 Q100 172 142 126 Q100 142 58 128 Z\" fill=\"#7d1d22\"/>\n<path d=\"M95 146 Q88 196 106 206 Q120 192 108 148 Z\" fill=\"#e25a84\"/>\n<rect x=\"72\" y=\"182\" width=\"56\" height=\"12\" rx=\"3\" fill=\"#1d1b26\"/>\n</g></svg>"}, {"id": "nurikabe", "n": "ぬりかべ", "f": ["とても<ruby>大<rt>おお</rt></ruby>きくて、<ruby>四角<rt>しかく</rt></ruby>いです。", "<ruby>色<rt>いろ</rt></ruby>は<ruby>灰色<rt>はいいろ</rt></ruby>です。", "<ruby>目<rt>め</rt></ruby>が<ruby>二<rt>ふた</rt></ruby>つで、とても<ruby>小<rt>ちい</rt></ruby>さいです。", "<ruby>手<rt>て</rt></ruby>と<ruby>足<rt>あし</rt></ruby>が<ruby>短<rt>みじか</rt></ruby>いです。"], "svg": "<svg class=\"yk\" viewBox=\"0 0 200 220\" role=\"img\" aria-hidden=\"true\"><g stroke=\"#1d1b26\" stroke-width=\"3\" stroke-linejoin=\"round\" stroke-linecap=\"round\">\n<path d=\"M36 128 L18 140 M164 128 L182 140\" fill=\"none\" stroke-width=\"10\"/>\n<path d=\"M36 128 L18 140 M164 128 L182 140\" fill=\"none\" stroke-width=\"5\" stroke=\"#9c9ca4\"/>\n<rect x=\"58\" y=\"188\" width=\"18\" height=\"20\" rx=\"3\" fill=\"#9c9ca4\"/><rect x=\"124\" y=\"188\" width=\"18\" height=\"20\" rx=\"3\" fill=\"#9c9ca4\"/>\n<rect x=\"36\" y=\"40\" width=\"128\" height=\"152\" rx=\"12\" fill=\"#9c9ca4\"/>\n<path d=\"M50 64 L64 72 M140 150 L150 160 L146 172 M60 168 L72 162\" fill=\"none\" stroke-width=\"2\"/>\n<circle cx=\"80\" cy=\"102\" r=\"5\" fill=\"#1d1b26\"/><circle cx=\"120\" cy=\"102\" r=\"5\" fill=\"#1d1b26\"/>\n<path d=\"M72 90 L88 92 M112 92 L128 90\" fill=\"none\"/>\n<path d=\"M90 128 Q100 133 110 128\" fill=\"none\"/>\n</g></svg>"}, {"id": "tengu", "n": "<ruby>天狗<rt>てんぐ</rt></ruby>", "f": ["<ruby>顔<rt>かお</rt></ruby>が<ruby>赤<rt>あか</rt></ruby>くて、<ruby>鼻<rt>はな</rt></ruby>がとても<ruby>長<rt>なが</rt></ruby>いです。", "<ruby>背中<rt>せなか</rt></ruby>に<ruby>黒<rt>くろ</rt></ruby>いつばさがあります。", "<ruby>白<rt>しろ</rt></ruby>い<ruby>服<rt>ふく</rt></ruby>を<ruby>着<rt>き</rt></ruby>ています。", "<ruby>手<rt>て</rt></ruby>にうちわを<ruby>持<rt>も</rt></ruby>っています。"], "svg": "<svg class=\"yk\" viewBox=\"0 0 200 220\" role=\"img\" aria-hidden=\"true\"><g stroke=\"#1d1b26\" stroke-width=\"3\" stroke-linejoin=\"round\" stroke-linecap=\"round\">\n<path d=\"M70 150 Q18 122 20 64 Q44 100 76 118 Z\" fill=\"#1d1b26\"/>\n<path d=\"M130 150 Q182 122 180 64 Q156 100 124 118 Z\" fill=\"#1d1b26\"/>\n<path d=\"M54 214 L68 142 Q100 130 132 142 L146 214 Z\" fill=\"#f2efe8\"/>\n<circle cx=\"86\" cy=\"156\" r=\"6\" fill=\"#d9463b\"/><circle cx=\"114\" cy=\"156\" r=\"6\" fill=\"#d9463b\"/>\n<path d=\"M36 172 Q26 140 50 132 Q58 152 46 174 Z\" fill=\"#6a8d3a\"/>\n<path d=\"M44 172 L60 196\" fill=\"none\"/>\n<circle cx=\"100\" cy=\"86\" r=\"34\" fill=\"#d9463b\"/>\n<rect x=\"91\" y=\"46\" width=\"18\" height=\"14\" rx=\"2\" fill=\"#1d1b26\"/>\n<path d=\"M76 72 Q84 64 94 72 M108 70 Q118 62 126 70\" fill=\"none\" stroke=\"#f2efe8\" stroke-width=\"5\"/>\n<circle cx=\"86\" cy=\"80\" r=\"4\" fill=\"#1d1b26\"/><circle cx=\"114\" cy=\"78\" r=\"4\" fill=\"#1d1b26\"/>\n<path d=\"M90 106 Q100 100 110 106\" fill=\"none\"/>\n<path d=\"M98 84 L148 72 L101 97 Z\" fill=\"#d9463b\"/>\n</g></svg>"}], "sweets": [["<ruby>羊羹<rt>ようかん</rt></ruby>", "Ёкан, плотное желе из сладкой фасоли. «Ёкан» почти как «ёкай»!"], ["<ruby>大福<rt>だいふく</rt></ruby>", "Дайфуку, моти с бобовой пастой"], ["どら<ruby>焼<rt>や</rt></ruby>き", "Дораяки, два блинчика с пастой анко"], ["みたらし<ruby>団子<rt>だんご</rt></ruby>", "Данго на палочке в сладко-солёном соусе"], ["たい<ruby>焼<rt>や</rt></ruby>き", "Тайяки, вафельная рыбка с начинкой"], ["<ruby>桜餅<rt>さくらもち</rt></ruby>", "Сакура-моти в солёном листе сакуры"], ["わらび<ruby>餅<rt>もち</rt></ruby>", "Варабимоти в соевой муке кинако"], ["おはぎ", "Охаги, рисовые шарики в анко"], ["<ruby>最中<rt>もなか</rt></ruby>", "Монака, вафля с бобовой начинкой"], ["<ruby>八<rt>や</rt></ruby>ツ<ruby>橋<rt>はし</rt></ruby>", "Яцухаси, сувенир из Киото с корицей"], ["お<ruby>煎餅<rt>せんべい</rt></ruby>", "Сэмбэй, хрустящий рисовый крекер"], ["<ruby>金平糖<rt>こんぺいとう</rt></ruby>", "Конпэйто, сахарные звёздочки"], ["カステラ", "Кастэра, бисквит из Нагасаки"], ["<ruby>練<rt>ね</rt></ruby>り<ruby>切<rt>き</rt></ruby>り", "Нэрикири, фигурка-сладость к чайной церемонии"], ["<ruby>抹茶<rt>まっちゃ</rt></ruby>キットカット", "KitKat с маття, современная классика"]], "personas": [["<ruby>鬼<rt>おに</rt></ruby>", "Óни", "<ruby>今日<rt>きょう</rt></ruby>は<ruby>鬼<rt>おに</rt></ruby>です。<ruby>頭<rt>あたま</rt></ruby>につのが<ruby>二本<rt>にほん</rt></ruby>あって、とらのパンツをはいています。", "Рогатый демон в тигровой повязке."], ["<ruby>雪女<rt>ゆきおんな</rt></ruby>", "Юки-онна", "<ruby>今日<rt>きょう</rt></ruby>は<ruby>雪女<rt>ゆきおんな</rt></ruby>です。<ruby>白<rt>しろ</rt></ruby>い<ruby>着物<rt>きもの</rt></ruby>を<ruby>着<rt>き</rt></ruby>ていて、<ruby>手<rt>て</rt></ruby>がとても<ruby>冷<rt>つめ</rt></ruby>たいです。", "Снежная женщина в белом кимоно."], ["<ruby>九尾<rt>きゅうび</rt></ruby>の<ruby>狐<rt>きつね</rt></ruby>", "Девятихвостая лиса", "<ruby>今日<rt>きょう</rt></ruby>は<ruby>九尾<rt>きゅうび</rt></ruby>の<ruby>狐<rt>きつね</rt></ruby>です。しっぽが<ruby>九本<rt>きゅうほん</rt></ruby>あります。", "Лиса-оборотень с девятью хвостами."], ["<ruby>座敷<rt>ざしき</rt></ruby>わらし", "Дзасики-вараси", "<ruby>今日<rt>きょう</rt></ruby>は<ruby>座敷<rt>ざしき</rt></ruby>わらしです。<ruby>赤<rt>あか</rt></ruby>い<ruby>着物<rt>きもの</rt></ruby>を<ruby>着<rt>き</rt></ruby>た<ruby>子<rt>こ</rt></ruby>どもで、みんなに<ruby>幸<rt>しあわ</rt></ruby>せをあげます。", "Дух-ребёнок, который приносит удачу дому."], ["<ruby>化<rt>ば</rt></ruby>け<ruby>猫<rt>ねこ</rt></ruby>", "Бакэнэко", "<ruby>今日<rt>きょう</rt></ruby>は<ruby>化<rt>ば</rt></ruby>け<ruby>猫<rt>ねこ</rt></ruby>です。<ruby>夜<rt>よる</rt></ruby>になると、<ruby>二本<rt>にほん</rt></ruby>の<ruby>足<rt>あし</rt></ruby>で<ruby>歩<rt>ある</rt></ruby>いて、<ruby>踊<rt>おど</rt></ruby>ります。", "Кошка-оборотень, по ночам ходит на задних лапах и танцует."], ["<ruby>口裂<rt>くちさ</rt></ruby>け<ruby>女<rt>おんな</rt></ruby>", "Кути-сакэ-онна", "<ruby>今日<rt>きょう</rt></ruby>は<ruby>口裂<rt>くちさ</rt></ruby>け<ruby>女<rt>おんな</rt></ruby>です。マスクをしています。「わたし、きれい？」", "Женщина в маске из городской легенды."], ["トイレの<ruby>花子<rt>はなこ</rt></ruby>さん", "Ханако-сан из туалета", "<ruby>今日<rt>きょう</rt></ruby>はトイレの<ruby>花子<rt>はなこ</rt></ruby>さんです。<ruby>赤<rt>あか</rt></ruby>いスカートをはいています。", "Школьный призрак в красной юбке."], ["<ruby>雷様<rt>かみなりさま</rt></ruby>", "Каминари-сама", "<ruby>今日<rt>きょう</rt></ruby>は<ruby>雷様<rt>かみなりさま</rt></ruby>です。たいこを<ruby>持<rt>も</rt></ruby>っていて、おへそが<ruby>大好<rt>だいす</rt></ruby>きです。", "Бог грома: бьёт в барабаны и ворует пупки."], ["<ruby>魔女<rt>まじょ</rt></ruby>", "Ведьма", "<ruby>今日<rt>きょう</rt></ruby>は<ruby>魔女<rt>まじょ</rt></ruby>です。<ruby>黒<rt>くろ</rt></ruby>いぼうしをかぶって、ほうきに<ruby>乗<rt>の</rt></ruby>っています。", "Ведьма в чёрной шляпе на метле."], ["ドラキュラ", "Дракула", "<ruby>今日<rt>きょう</rt></ruby>はドラキュラです。<ruby>黒<rt>くろ</rt></ruby>いマントを<ruby>着<rt>き</rt></ruby>ていて、<ruby>歯<rt>は</rt></ruby>がとても<ruby>長<rt>なが</rt></ruby>いです。", "Вампир в чёрном плаще."], ["ゾンビ", "Зомби", "<ruby>今日<rt>きょう</rt></ruby>はゾンビです。<ruby>顔<rt>かお</rt></ruby>が<ruby>緑<rt>みどり</rt></ruby>で、ゆっくり<ruby>歩<rt>ある</rt></ruby>きます。", "Зелёный и медленный."], ["かぼちゃのお<ruby>化<rt>ば</rt></ruby>け", "Тыква-фонарь", "<ruby>今日<rt>きょう</rt></ruby>はかぼちゃのお<ruby>化<rt>ば</rt></ruby>けです。<ruby>頭<rt>あたま</rt></ruby>が<ruby>大<rt>おお</rt></ruby>きくて、オレンジ<ruby>色<rt>いろ</rt></ruby>です。", "Хэллоуинская тыква с горящими глазами."]], "dice": [["いつ", ["<ruby>去年<rt>きょねん</rt></ruby>の<ruby>夏<rt>なつ</rt></ruby>", "ある<ruby>雨<rt>あめ</rt></ruby>の<ruby>夜<rt>よる</rt></ruby>", "<ruby>夜中<rt>よなか</rt></ruby>の<ruby>二時<rt>にじ</rt></ruby>ごろ", "<ruby>修学旅行<rt>しゅうがくりょこう</rt></ruby>の<ruby>夜<rt>よる</rt></ruby>", "<ruby>先週<rt>せんしゅう</rt></ruby>の<ruby>金曜日<rt>きんようび</rt></ruby>の<ruby>夜<rt>よる</rt></ruby>", "<ruby>子<rt>こ</rt></ruby>どものころのお<ruby>盆<rt>ぼん</rt></ruby>"]], ["どこ", ["<ruby>古<rt>ふる</rt></ruby>い<ruby>旅館<rt>りょかん</rt></ruby>", "<ruby>学校<rt>がっこう</rt></ruby>のトイレ", "<ruby>山<rt>やま</rt></ruby>の<ruby>中<rt>なか</rt></ruby>の<ruby>神社<rt>じんじゃ</rt></ruby>", "おばあちゃんの<ruby>家<rt>いえ</rt></ruby>", "<ruby>会社<rt>かいしゃ</rt></ruby>のエレベーター", "だれもいない<ruby>駅<rt>えき</rt></ruby>"]], ["<ruby>音<rt>おと</rt></ruby>", ["だれかが<ruby>笑<rt>わら</rt></ruby>う<ruby>声<rt>こえ</rt></ruby>", "<ruby>足音<rt>あしおと</rt></ruby>", "「すみません……」という<ruby>声<rt>こえ</rt></ruby>", "<ruby>子<rt>こ</rt></ruby>どもが<ruby>歌<rt>うた</rt></ruby>う<ruby>声<rt>こえ</rt></ruby>", "ドアが<ruby>開<rt>あ</rt></ruby>く<ruby>音<rt>おと</rt></ruby>", "<ruby>電話<rt>でんわ</rt></ruby>の<ruby>音<rt>おと</rt></ruby>"]], ["<ruby>見<rt>み</rt></ruby>たもの", ["<ruby>顔<rt>かお</rt></ruby>がない<ruby>男<rt>おとこ</rt></ruby>の<ruby>人<rt>ひと</rt></ruby>", "<ruby>首<rt>くび</rt></ruby>がとても<ruby>長<rt>なが</rt></ruby>い<ruby>女<rt>おんな</rt></ruby>の<ruby>人<rt>ひと</rt></ruby>", "<ruby>目<rt>め</rt></ruby>が<ruby>一<rt>ひと</rt></ruby>つの<ruby>子<rt>こ</rt></ruby>ども", "<ruby>鼻<rt>はな</rt></ruby>が<ruby>長<rt>なが</rt></ruby>くて、<ruby>顔<rt>かお</rt></ruby>が<ruby>赤<rt>あか</rt></ruby>い<ruby>男<rt>おとこ</rt></ruby>", "<ruby>白<rt>しろ</rt></ruby>い<ruby>着物<rt>きもの</rt></ruby>を<ruby>着<rt>き</rt></ruby>た<ruby>女<rt>おんな</rt></ruby>の<ruby>人<rt>ひと</rt></ruby>", "<ruby>一本足<rt>いっぽんあし</rt></ruby>のかさ"]], ["<ruby>最後<rt>さいご</rt></ruby>", ["びっくりして、<ruby>逃<rt>に</rt></ruby>げてしまいました", "「こんばんは」と<ruby>言<rt>い</rt></ruby>いました。そして、<ruby>友<rt>とも</rt></ruby>だちになりました", "<ruby>写真<rt>しゃしん</rt></ruby>を<ruby>撮<rt>と</rt></ruby>りましたが、<ruby>何<rt>なに</rt></ruby>も<ruby>写<rt>うつ</rt></ruby>っていませんでした", "<ruby>目<rt>め</rt></ruby>を<ruby>閉<rt>と</rt></ruby>じて、<ruby>百<rt>ひゃく</rt></ruby>まで<ruby>数<rt>かぞ</rt></ruby>えました。<ruby>目<rt>め</rt></ruby>を<ruby>開<rt>あ</rt></ruby>けると、だれもいませんでした", "<ruby>大<rt>おお</rt></ruby>きい<ruby>声<rt>こえ</rt></ruby>でさけんで、<ruby>目<rt>め</rt></ruby>が<ruby>覚<rt>さ</rt></ruby>めました。<ruby>夢<rt>ゆめ</rt></ruby>でした", "<ruby>気<rt>き</rt></ruby>を<ruby>失<rt>うしな</rt></ruby>ってしまいました"]]], "maker": {"shape": [["round", "《丸|まる》い"], ["square", "《四角|しかく》い"], ["tall", "《細長|ほそなが》い"]], "color": [["white", "《白|しろ》", "#f4f2ec", "《白|しろ》くて"], ["red", "《赤|あか》", "#d9463b", "《赤|あか》くて"], ["blue", "《青|あお》", "#4a76d6", "《青|あお》くて"], ["green", "《緑|みどり》", "#5d9e4f", "《緑|みどり》で"], ["black", "《黒|くろ》", "#3a3946", "《黒|くろ》くて"], ["purple", "《紫|むらさき》", "#8a55c0", "《紫|むらさき》で"]], "eyes": [["1", "《一|ひと》つ"], ["2", "《二|ふた》つ"], ["3", "《三|みっ》つ"], ["many", "たくさん"]], "mouth": [["big", "《大|おお》きい"], ["small", "《小|ちい》さい"], ["tongue", "《長|なが》い《舌|した》"], ["none", "なし"]], "head": [["none", "なし"], ["horns", "つの"], ["hair", "《長|なが》いかみ"], ["dish", "お《皿|さら》"]], "neck": [["normal", "ふつう"], ["long", "《長|なが》い"]], "arms": [["0", "なし"], ["2", "《二本|にほん》"], ["4", "《四本|よんほん》"]], "legs": [["0", "なし"], ["1", "《一本|いっぽん》"], ["2", "《二本|にほん》"], ["many", "たくさん"]], "tail": [["no", "なし"], ["yes", "ある"]], "place": ["《学校|がっこう》", "《会社|かいしゃ》", "《台所|だいどころ》", "《駅|えき》", "ベッドの《下|した》", "おふろ"], "action": ["しめきりの《前|まえ》に、《時計|とけい》を《速|はや》くします。", "《夜中|よなか》に《冷蔵庫|れいぞうこ》を《開|あ》けて、プリンを《食|た》べます。", "《月曜日|げつようび》の《朝|あさ》、《目覚|めざ》まし《時計|どけい》を《止|と》めます。", "くつしたを《片方|かたほう》だけ《持|も》っていきます。", "Wi-Fiをおそくします。", "《電車|でんしゃ》の《中|なか》で、イヤホンを《片方|かたほう》だけかくします。", "《宿題|しゅくだい》を《食|た》べてしまいます。"], "char": [["やさしい", "こわそうですが、《本当|ほんとう》はやさしいです。"], ["いじわる", "いじわるで、いたずらが《大好|だいす》きです。"], ["はずかしがりや", "はずかしがりやで、《人|ひと》に《会|あ》うと、すぐ《消|き》えてしまいます。"], ["ねむそう", "いつもねむそうです。"], ["おしゃべり", "おしゃべりで、《一日中|いちにちじゅう》《話|はな》しています。"]], "weak": ["ねこ", "《塩|しお》", "《太陽|たいよう》", "《歌|うた》", "《早起|はやお》き", "《金曜日|きんようび》", "《日本語|にほんご》の《先生|せんせい》"]}, "makerDefault": {"shape": "tall", "color": "purple", "eyes": "3", "mouth": "big", "head": "horns", "neck": "normal", "arms": "4", "legs": "0", "tail": "no", "place": 1, "action": 0, "char": 0, "weak": 0, "name": "しめきりおばけ"}, "omikuji": ["<ruby>勉強<rt>べんきょう</rt></ruby>：<ruby>漢字<rt>かんじ</rt></ruby>が<ruby>友<rt>とも</rt></ruby>だちになるでしょう。", "<ruby>旅行<rt>りょこう</rt></ruby>：<ruby>日本<rt>にほん</rt></ruby>で<ruby>道<rt>みち</rt></ruby>に<ruby>迷<rt>まよ</rt></ruby>っても、だいじょうぶ。", "<ruby>恋愛<rt>れんあい</rt></ruby>：<ruby>日本語<rt>にほんご</rt></ruby>で<ruby>話<rt>はな</rt></ruby>すと、いいことがあります。", "<ruby>妖怪<rt>ようかい</rt></ruby>：<ruby>河童<rt>かっぱ</rt></ruby>と<ruby>友<rt>とも</rt></ruby>だちになれるでしょう。", "<ruby>仕事<rt>しごと</rt></ruby>：しめきりおばけに<ruby>勝<rt>か</rt></ruby>つでしょう。", "<ruby>健康<rt>けんこう</rt></ruby>：よく<ruby>寝<rt>ね</rt></ruby>ると、もっと<ruby>元気<rt>げんき</rt></ruby>になります。", "<ruby>会話<rt>かいわ</rt></ruby>：たくさん<ruby>話<rt>はな</rt></ruby>すと、もっと<ruby>上手<rt>じょうず</rt></ruby>になります。"]};
+
+  // furigana + sound
+  const furi = $('#furi');
+  const setFuri = on => { document.documentElement.classList.toggle('nofuri', !on); furi.setAttribute('aria-pressed', on); store.set('furi', on); };
+  setFuri(store.get('furi') !== false);
+  furi.onclick = () => setFuri(furi.getAttribute('aria-pressed') !== 'true');
+  const snd = $('#snd'); let soundOn = store.get('snd') !== false;
+  const setSnd = on => { soundOn = on; snd.setAttribute('aria-pressed', on); store.set('snd', on); };
+  setSnd(soundOn); snd.onclick = () => setSnd(!soundOn);
+  let actx = null;
+  const ac = () => (actx = actx || new (window.AudioContext || window.webkitAudioContext)());
+  function puffSound() {
+    if (!soundOn) return;
+    try {
+      const a = ac(), len = a.sampleRate * .35, buf = a.createBuffer(1, len, a.sampleRate), d = buf.getChannelData(0);
+      for (let i = 0; i < len; i++) d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / len, 2);
+      const s = a.createBufferSource(), f = a.createBiquadFilter(), g = a.createGain();
+      f.type = 'lowpass'; f.frequency.value = 900; g.gain.value = .35;
+      s.buffer = buf; s.connect(f).connect(g).connect(a.destination); s.start();
+    } catch {}
+  }
+  function droneSound() {
+    if (!soundOn) return;
+    try {
+      const a = ac(), t = a.currentTime;
+      [55, 55.7, 82.4].forEach((fq, i) => {
+        const o = a.createOscillator(), g = a.createGain();
+        o.type = i === 2 ? 'triangle' : 'sawtooth'; o.frequency.value = fq;
+        const f = a.createBiquadFilter(); f.type = 'lowpass'; f.frequency.value = 300;
+        g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(.09, t + 1.2); g.gain.exponentialRampToValueAtTime(.001, t + 5);
+        o.connect(f).connect(g).connect(a.destination); o.start(t); o.stop(t + 5.2);
+      });
+      const b = a.createOscillator(), bg = a.createGain(); b.type = 'sine'; b.frequency.value = 660;
+      bg.gain.setValueAtTime(0, t + 1.6); bg.gain.linearRampToValueAtTime(.12, t + 1.62); bg.gain.exponentialRampToValueAtTime(.001, t + 4.5);
+      b.connect(bg).connect(a.destination); b.start(t + 1.6); b.stop(t + 4.6);
+    } catch {}
+  }
+  function bell() {
+    if (!soundOn) return;
+    try {
+      const a = ac(), t = a.currentTime;
+      [880, 1318].forEach((fq, i) => { const o = a.createOscillator(), g = a.createGain(); o.frequency.value = fq; g.gain.setValueAtTime(.15, t + i * .25); g.gain.exponentialRampToValueAtTime(.001, t + i * .25 + 1.2); o.connect(g).connect(a.destination); o.start(t + i * .25); o.stop(t + i * .25 + 1.3); });
+    } catch {}
+  }
+
+  // host + secret card routing
+  const host = $('#host');
+  function route() {
+    const h = location.hash;
+    host.classList.toggle('on', h === '#host');
+    const m = h.match(/^#card-([a-z]+)$/);
+    const y = m && D.yokai.find(x => x.id === m[1]);
+    $('#secret').hidden = !y;
+    if (y) {
+      $('#secretBody').innerHTML = `<div class="warn">Тайная карточка. Не показывайте экран и не называйте ёкая.</div>
+        <div class="pic">${y.svg}</div><h3>${y.n}</h3>
+        <ul class="panel">${y.f.map(x => `<li>${x}</li>`).join('')}</ul>
+        <p class="ask">Скажите минимум 4 предложения. Вас могут спросить: <span class="jp">目はいくつですか？ 何を持っていますか？ 色は何ですか？</span></p>
+        <button class="btn primary" id="secretClose" style="justify-self:center">Закрыть карточку</button>`;
+      $('#secretClose').onclick = () => { history.replaceState(null, '', location.pathname + location.search); route(); };
+    }
+  }
+  route(); addEventListener('hashchange', route);
+  $$('.rid button').forEach(b => b.addEventListener('click', () => {
+    const open = b.dataset.open === '1'; b.dataset.open = open ? '0' : '1';
+    b.innerHTML = open ? 'Ответ' : b.dataset.a;
+  }));
+  $$('.links .btn').forEach(b => b.addEventListener('click', () => {
+    const txt = b.dataset.url;
+    const done = () => { b.textContent = 'Скопировано'; setTimeout(() => b.textContent = 'Копировать ссылку', 1500); };
+    const fallback = () => { const s = b.previousElementSibling; s.dataset.t = s.innerHTML; s.textContent = txt; getSelection().selectAllChildren(s); b.textContent = 'Выделено'; };
+    try { navigator.clipboard.writeText(txt).then(done, fallback); } catch { fallback(); }
+  }));
+
+  // treat: persona + sweet, no repeats until the deck runs out
+  let T = store.get('door') || { p: [], s: [], n: 0 };
+  const draw = (used, len) => { if (used.length >= len) used.length = 0; let i; do { i = Math.floor(Math.random() * len); } while (used.includes(i)); used.push(i); return i; };
+  function showGuest(pi, si, anim) {
+    const [pn, pr, say, pru] = D.personas[pi], [sn, sr] = D.sweets[si];
+    const g = $('#guest');
+    g.innerHTML = `<div class="who2"><div class="k">Гость ${T.n} · ваш костюм на сегодня</div><div class="nm">${pn}</div><div class="r">${pr}. ${pru}</div><div class="say">${say}</div></div>
+      <div class="sweet"><div class="nm">${sn}をどうぞ。</div><div class="say">ありがとうございます。いただきます！</div><div class="tr">${sr}</div></div>`;
+    g.classList.remove('pop'); if (anim) { void g.offsetWidth; g.classList.add('pop'); }
+    $('#doorCnt').textContent = T.n ? `Гостей: ${T.n}` : '';
+  }
+  $('#doorBtn').onclick = () => { T.n++; const pi = draw(T.p, D.personas.length), si = draw(T.s, D.sweets.length); T.cur = [pi, si]; store.set('door', T); showGuest(pi, si, true); bell(); };
+  $('#doorReset').onclick = () => { T = { p: [], s: [], n: 0 }; store.set('door', T); idleGuest(); };
+  function idleGuest() { $('#guest').innerHTML = `<div class="who2"><div class="k">Как это работает</div><div class="say">トリック・オア・トリート！</div><div class="r">Гость входит и говорит эту фразу. Ведущий жмёт кнопку: выпадает персонаж, гость повторяет фразу о нём по-японски и получает сладость.</div></div>`; $('#doorCnt').textContent = ''; }
+  if (T.cur) showGuest(T.cur[0], T.cur[1]); else idleGuest();
+
+  // zukan
+  let opened = store.get('open') || [];
+  const syncZ = () => $$('.zc').forEach(c => c.classList.toggle('open', opened.includes(c.dataset.id)));
+  $$('.zc .seal').forEach(s => s.addEventListener('click', () => { const id = s.closest('.zc').dataset.id; if (!opened.includes(id)) opened.push(id); store.set('open', opened); syncZ(); bell(); }));
+  $('#sealAll').onclick = () => { opened = []; store.set('open', opened); syncZ(); };
+  $('#secretRand').onclick = () => { const left = D.yokai.filter(y => !opened.includes(y.id)); location.hash = 'card-' + pick(left.length ? left : D.yokai).id; };
+  syncZ();
+
+  // phrases filter
+  $$('.filters .chip').forEach(b => b.addEventListener('click', () => {
+    $$('.filters .chip').forEach(x => x.setAttribute('aria-pressed', x === b)); $('#phr').dataset.f = b.dataset.f;
+  }));
+
+  // maker
+  const M = D.maker, NS = 'http://www.w3.org/2000/svg', SK = '#1d1b26';
+  let Y = Object.assign({}, D.makerDefault, store.get('maker') || {});
+  const optDefs = [
+    ['shape', '《体|からだ》の《形|かたち》'], ['color', '《色|いろ》'], ['eyes', '《目|め》'], ['mouth', '《口|くち》'], ['head', '《頭|あたま》'],
+    ['neck', '《首|くび》'], ['arms', '《手|て》'], ['legs', '《足|あし》'], ['tail', 'しっぽ']
+  ];
+  const rb = s => s.replace(/《(.+?)\|(.+?)》/g, '<ruby>$1<rt>$2</rt></ruby>');
+  const strip = h => h.replace(/<rt>.*?<\/rt>/g, '').replace(/<[^>]+>/g, '');
+  function buildOpts() {
+    const box = $('#mkOpts');
+    let h = `<div class="opt"><label for="yName">《名前|なまえ》</label><input id="yName" maxlength="18"></div>`;
+    optDefs.forEach(([k, l]) => {
+      h += `<div class="opt"><span class="ol">${l}</span><div class="row" role="group">${M[k].map(o => `<button class="chip" data-k="${k}" data-v="${o[0]}">${k === 'color' ? `<span class="sw" style="background:${o[2]}"></span>` : ''}${o[1]}</button>`).join('')}</div></div>`;
+    });
+    [['place', '《出|で》るところ', M.place], ['action', '《何|なに》をする？', M.action], ['char', '《性格|せいかく》', M.char.map(c => c[0])], ['weak', 'こわいもの', M.weak]].forEach(([k, l, arr]) => {
+      h += `<div class="opt"><label for="y_${k}">${l}</label><select id="y_${k}" data-k="${k}">${arr.map((o, i) => `<option value="${i}">${strip(rb(o))}</option>`).join('')}</select></div>`;
+    });
+    box.innerHTML = rb(h);
+    $$('#mkOpts .chip').forEach(b => b.onclick = () => { Y[b.dataset.k] = b.dataset.v; renderMaker(); });
+    $$('#mkOpts select').forEach(s => s.onchange = () => { Y[s.dataset.k] = +s.value; renderMaker(); });
+    $('#yName').oninput = e => { Y.name = e.target.value; renderMaker(true); };
+  }
+  const el = (t, a) => { const e = document.createElementNS(NS, t); for (const k in a) e.setAttribute(k, a[k]); return e; };
+  function ghost(cx, top, w, h) {
+    const r = w / 2, s = w / 4; let d = `M${cx - r} ${top + r} A${r} ${r} 0 0 1 ${cx + r} ${top + r} L${cx + r} ${top + h}`;
+    for (let i = 0; i < 4; i++) d += ` q${-s / 2} ${i % 2 ? 12 : -12} ${-s} 0`;
+    return d + ' Z';
+  }
+  function drawMonster() {
+    const g = $('#mkSvg'); g.innerHTML = '';
+    const root = el('g', { stroke: SK, 'stroke-width': 3, 'stroke-linejoin': 'round', 'stroke-linecap': 'round' }); g.append(root);
+    const col = M.color.find(c => c[0] === Y.color)[2], long = Y.neck === 'long';
+    // geometry
+    let body, bt, bb, bl, br, face, headTop, head = null;
+    if (Y.shape === 'round') { body = long ? ['ellipse', { cx: 120, cy: 200, rx: 58, ry: 44 }] : ['ellipse', { cx: 120, cy: 160, rx: 74, ry: 74 }]; bt = long ? 156 : 86; bb = long ? 244 : 234; bl = long ? 62 : 46; br = long ? 178 : 194; }
+    else if (Y.shape === 'square') { body = long ? ['rect', { x: 66, y: 160, width: 108, height: 82, rx: 12 }] : ['rect', { x: 46, y: 88, width: 148, height: 150, rx: 16 }]; bt = long ? 160 : 88; bb = long ? 242 : 238; bl = long ? 66 : 46; br = long ? 174 : 194; }
+    else { body = long ? ['path', { d: ghost(120, 150, 100, 92) }] : ['path', { d: ghost(120, 34, 112, 204) }]; bt = long ? 150 : 34; bb = long ? 242 : 238; bl = long ? 70 : 64; br = long ? 170 : 176; }
+    if (long) { face = { x: 120, y: 66, s: .72 }; headTop = 26; head = Y.shape === 'square' ? ['rect', { x: 84, y: 28, width: 72, height: 66, rx: 10 }] : ['circle', { cx: 120, cy: 62, r: 36 }]; }
+    else { face = { x: 120, y: Y.shape === 'tall' ? 100 : 150, s: 1 }; headTop = bt; }
+    const dbl = (d, w) => { root.append(el('path', { d, fill: 'none', 'stroke-width': w + 5 })); root.append(el('path', { d, fill: 'none', stroke: col, 'stroke-width': w })); };
+    // behind body: horns, tail, arms, legs
+    if (Y.head === 'horns') [-1, 1].forEach(s => { const x = 120 + s * (long ? 22 : 30), y = headTop + (long ? 10 : (Y.shape === 'round' ? 18 : 10)); root.append(el('path', { d: `M${x - 9} ${y + 10} L${x + s * 4} ${y - 26} L${x + 9} ${y + 10} Z`, fill: '#f3efe4' })); });
+    if (Y.tail === 'yes') dbl(`M${br - 14} ${bb - 26} Q${br + 34} ${bb - 10} ${br + 26} ${bb - 60} Q${br + 22} ${bb - 82} ${br + 38} ${bb - 88}`, 7);
+    const ay = long ? bt + 26 : (Y.shape === 'tall' ? 150 : bt + 74);
+    const arms = +Y.arms;
+    if (arms) { const rows = arms === 4 ? [ay - 14, ay + 22] : [ay];
+      rows.forEach(y => { dbl(`M${bl + 10} ${y} Q${bl - 26} ${y + 6} ${bl - 30} ${y + 30}`, 6); dbl(`M${br - 10} ${y} Q${br + 26} ${y + 6} ${br + 30} ${y + 30}`, 6);
+        root.append(el('circle', { cx: bl - 30, cy: y + 32, r: 6, fill: col })); root.append(el('circle', { cx: br + 30, cy: y + 32, r: 6, fill: col })); }); }
+    const legs = Y.legs === 'many' ? [-48, -28, -9, 9, 28, 48] : Y.legs === '2' ? [-24, 24] : Y.legs === '1' ? [0] : [];
+    legs.forEach(dx => { const x = 120 + dx, short = Y.legs === 'many'; dbl(`M${x} ${bb - 12} L${x} ${bb + (short ? 6 : 12)}`, 7); root.append(el('ellipse', { cx: x + (dx < 0 ? -4 : dx > 0 ? 4 : 0), cy: bb + (short ? 8 : 14), rx: 9, ry: 4, fill: col })); });
+    if (!legs.length) root.append(el('ellipse', { cx: 120, cy: 254, rx: 48, ry: 4, fill: SK, stroke: 'none', opacity: .18 }));
+    // neck, body, head
+    if (long) { const d = `M120 ${bt + 8} C 64 ${bt - 18}, 176 128, 120 ${head[0] === 'rect' ? 92 : 96}`; root.append(el('path', { d, fill: 'none', 'stroke-width': 19 })); root.append(el('path', { d, fill: 'none', stroke: col, 'stroke-width': 13 })); }
+    root.append(el(body[0], Object.assign({ fill: col }, body[1])));
+    if (head) root.append(el(head[0], Object.assign({ fill: col }, head[1])));
+    // hair, dish
+    if (Y.head === 'hair') { const hw = long ? 36 : (Y.shape === 'tall' ? 50 : 48), y0 = headTop + (Y.shape === 'round' && !long ? 14 : 2);
+      root.append(el('path', { d: `M${120 - hw} ${y0 + 30} Q${120 - hw} ${y0 - 8} 120 ${y0 - 8} Q${120 + hw} ${y0 - 8} ${120 + hw} ${y0 + 30} Q${120 + hw * .6} ${y0 + 8} 120 ${y0 + 10} Q${120 - hw * .6} ${y0 + 8} ${120 - hw} ${y0 + 30} Z`, fill: SK }));
+      [-1, 1].forEach(s => root.append(el('path', { d: `M${120 + s * (hw - 4)} ${y0 + 24} Q${120 + s * (hw + 12)} ${y0 + 70} ${120 + s * (hw + 2)} ${y0 + 118}`, fill: 'none', 'stroke-width': 7 }))); }
+    if (Y.head === 'dish') { const y0 = headTop + (Y.shape === 'round' && !long ? 10 : 2); root.append(el('ellipse', { cx: 120, cy: y0, rx: long ? 22 : 28, ry: 8, fill: '#dff1f5' })); }
+    // eyes
+    const s = face.s, E = (x, y, r) => { root.append(el('circle', { cx: x, cy: y, r, fill: '#fff' })); root.append(el('circle', { cx: x, cy: y + r * .12, r: r * .48, fill: SK, stroke: 'none' })); root.append(el('circle', { cx: x - r * .18, cy: y - r * .12, r: r * .15, fill: '#fff', stroke: 'none' })); };
+    const fx = face.x, fy = face.y;
+    if (Y.eyes === '1') E(fx, fy - 10 * s, 21 * s);
+    else if (Y.eyes === '2') { E(fx - 24 * s, fy - 10 * s, 13 * s); E(fx + 24 * s, fy - 10 * s, 13 * s); }
+    else if (Y.eyes === '3') { E(fx - 28 * s, fy - 4 * s, 11 * s); E(fx + 28 * s, fy - 4 * s, 11 * s); E(fx, fy - 28 * s, 11 * s); }
+    else [[-34, -6, 8], [-12, -24, 9], [14, -26, 7], [34, -8, 9], [0, -2, 7], [-24, 12, 6], [24, 12, 6]].forEach(([x, y, r]) => E(fx + x * s, fy + y * s, r * s));
+    const my = fy + (Y.eyes === 'many' ? 32 : 26) * s;
+    if (Y.mouth === 'big') { root.append(el('path', { d: `M${fx - 30 * s} ${my} Q${fx} ${my + 30 * s} ${fx + 30 * s} ${my} Z`, fill: '#5b1620' }));
+      [-18, -6, 6, 18].forEach(dx => root.append(el('path', { d: `M${fx + dx * s - 4 * s} ${my + 1} L${fx + dx * s} ${my + 9 * s} L${fx + dx * s + 4 * s} ${my + 1} Z`, fill: '#fff', 'stroke-width': 1.5 }))); }
+    else if (Y.mouth === 'small') root.append(el('ellipse', { cx: fx, cy: my + 4 * s, rx: 6 * s, ry: 5 * s, fill: '#5b1620' }));
+    else if (Y.mouth === 'tongue') { root.append(el('path', { d: `M${fx - 16 * s} ${my} Q${fx} ${my + 8 * s} ${fx + 16 * s} ${my}`, fill: 'none' }));
+      root.append(el('path', { d: `M${fx - 6 * s} ${my + 3 * s} Q${fx - 10 * s} ${my + 44 * s} ${fx + 2 * s} ${my + 50 * s} Q${fx + 14 * s} ${my + 40 * s} ${fx + 6 * s} ${my + 3 * s} Z`, fill: '#e25a84' })); }
+  }
+  function makerText() {
+    const c = M.color.find(x => x[0] === Y.color), sh = M.shape.find(x => x[0] === Y.shape);
+    const esc = t => t.replace(/[&<>"]/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[ch]);
+    const nm = esc((Y.name || '').trim()) || 'なまえのない<ruby>妖怪<rt>ようかい</rt></ruby>';
+    const cnt = { '1': rb('《一|ひと》つ'), '2': rb('《二|ふた》つ'), '3': rb('《三|みっ》つ') };
+    const out = [];
+    out.push(`「${nm}」は、${rb(M.place[Y.place])}に${rb('《出|で》る《妖怪|ようかい》です。')}`);
+    out.push(rb(`《体|からだ》が${c[3]}、${sh[1]}です。`));
+    const eyes = Y.eyes === 'many' ? rb('《目|め》がたくさんあって、') : rb('《目|め》が') + cnt[Y.eyes] + 'で、';
+    const mouth = { big: '《口|くち》がとても《大|おお》きいです。', small: '《口|くち》が《小|ちい》さいです。', tongue: '《長|なが》い《舌|した》を《出|だ》しています。', none: '《口|くち》がありません。' }[Y.mouth];
+    out.push(eyes + rb(mouth));
+    const head = { horns: '《頭|あたま》につのが《二本|にほん》あります。', hair: 'かみがとても《長|なが》いです。', dish: '《頭|あたま》にお《皿|さら》があります。', none: '' }[Y.head];
+    if (head) out.push(rb(head));
+    if (Y.neck === 'long') out.push(rb('《首|くび》がとても《長|なが》いです。'));
+    const hands = { '0': '《手|て》がなくて、', '2': '《手|て》が《二本|にほん》あって、', '4': '《手|て》が《四本|よんほん》あって、' }[Y.arms];
+    const legs = { '0': '《足|あし》がありません。いつも、うかんでいます。', '1': '《足|あし》が《一本|いっぽん》です。', '2': '《足|あし》が《二本|にほん》です。', 'many': '《足|あし》がたくさんあります。' }[Y.legs];
+    out.push(rb(hands + legs));
+    if (Y.tail === 'yes') out.push(rb('《長|なが》いしっぽがあります。'));
+    out.push(rb(M.action[Y.action]));
+    out.push(rb(M.char[Y.char][1]));
+    out.push(`でも、${rb(M.weak[Y.weak])}がこわいです。`);
+    return out.join('');
+  }
+  function renderMaker(textOnly) {
+    if (!textOnly) {
+      $$('#mkOpts .chip').forEach(b => b.setAttribute('aria-pressed', String(Y[b.dataset.k]) === b.dataset.v));
+      $$('#mkOpts select').forEach(s => s.value = Y[s.dataset.k]);
+      if ($('#yName').value !== Y.name) $('#yName').value = Y.name;
+      drawMonster();
+    }
+    $('#mkName').textContent = (Y.name || '').trim();
+    $('#mkText').innerHTML = makerText();
+    store.set('maker', Y);
+  }
+  buildOpts(); renderMaker();
+  $('#mkEx').onclick = () => { Y = Object.assign({}, D.makerDefault); renderMaker(); };
+  $('#mkRand').onclick = () => {
+    ['shape', 'color', 'eyes', 'mouth', 'head', 'neck', 'arms', 'legs', 'tail'].forEach(k => Y[k] = pick(M[k])[0]);
+    Y.place = Math.floor(Math.random() * M.place.length); Y.action = Math.floor(Math.random() * M.action.length);
+    Y.char = Math.floor(Math.random() * M.char.length); Y.weak = Math.floor(Math.random() * M.weak.length);
+    renderMaker();
+  };
+
+  // hyakumonogatari
+  const KN = ['一', '二', '三', '四', '五', '六', '七'];
+  let C = store.get('candles') || { n: 6, out: [] };
+  function renderCandles() {
+    $('#ncount').innerHTML = [3, 4, 5, 6, 7].map(n => `<button class="chip" data-n="${n}" aria-pressed="${n === C.n}">${n}</button>`).join(' ');
+    $$('#ncount .chip').forEach(b => b.onclick = () => { C = { n: +b.dataset.n, out: [] }; store.set('candles', C); renderCandles(); dimSync(); });
+    $('#candles').innerHTML = Array.from({ length: C.n }, (_, i) => `<button class="cd${C.out.includes(i) ? ' out' : ''}" data-i="${i}" aria-label="Свеча ${i + 1}"><span class="smoke"></span><span class="fl"></span><span class="wk"></span><span class="wax"></span><span>${KN[i]}</span></button>`).join('');
+    $$('#candles .cd').forEach(b => b.onclick = () => blow(+b.dataset.i, b));
+    const lit = C.n - C.out.length;
+    $('#stage100').style.setProperty('--glow', (.06 + .3 * lit / C.n).toFixed(2));
+    $('#s100n').innerHTML = lit ? `Горит свечей: ${lit} из ${C.n}. Нажмите на свечу после истории.` : 'Все свечи погасли.';
+  }
+  function dimSync() { const out = C.out.length; $('#dim').style.opacity = out && out < C.n ? (out / C.n * .45).toFixed(2) : 0; }
+  function blow(i, b) {
+    if (C.out.includes(i)) { C.out = C.out.filter(x => x !== i); store.set('candles', C); renderCandles(); dimSync(); return; }
+    C.out.push(i); store.set('candles', C); puffSound();
+    b.classList.add('out', 'puff');
+    setTimeout(() => { renderCandles(); dimSync(); }, 900);
+    if (C.out.length === C.n) {
+      $('#dim').style.opacity = .92;
+      setTimeout(() => { $('#reveal').hidden = false; $('#dim').style.opacity = 0; droneSound(); }, 1800);
+    }
+  }
+  $('#relight').onclick = () => { C.out = []; store.set('candles', C); renderCandles(); dimSync(); };
+  $('#lights').onclick = () => { $('#reveal').hidden = true; C.out = []; store.set('candles', C); renderCandles(); dimSync(); };
+  renderCandles(); dimSync();
+
+  // kaidan dice
+  let S = store.get('dice') || D.dice.map(() => 0);
+  function renderDice() {
+    $('#diceRows').innerHTML = D.dice.map((d, i) => `<div class="dr"><b>${d[0]}</b><span>${d[1][S[i]]}</span><button class="btn" data-i="${i}">サイコロ</button></div>`).join('');
+    $$('#diceRows button').forEach(b => b.onclick = () => { const i = +b.dataset.i; let v; do { v = Math.floor(Math.random() * 6); } while (v === S[i]); S[i] = v; renderDice(); });
+    const v = i => `<mark>${D.dice[i][1][S[i]]}</mark>`;
+    $('#storyT').innerHTML = `これは、<ruby>本当<rt>ほんとう</rt></ruby>にあった<ruby>話<rt>はなし</rt></ruby>です。${v(0)}、${v(1)}に<ruby>行<rt>い</rt></ruby>きました。とても<ruby>暗<rt>くら</rt></ruby>くて、<ruby>静<rt>しず</rt></ruby>かでした。すると、${v(2)}が<ruby>聞<rt>き</rt></ruby>こえました。<ruby>後<rt>うし</rt></ruby>ろを<ruby>見<rt>み</rt></ruby>ると、${v(3)}がいました。<ruby>私<rt>わたし</rt></ruby>は${v(4)}。`;
+    store.set('dice', S);
+  }
+  $('#diceAll').onclick = () => { S = S.map(() => Math.floor(Math.random() * 6)); renderDice(); };
+  renderDice();
+
+  // talk
+  const qs = $$('#qs li'); let last = -1;
+  $('#rand').onclick = () => {
+    let i; do { i = Math.floor(Math.random() * qs.length); } while (i === last && qs.length > 1);
+    last = i; qs.forEach((q, j) => q.classList.toggle('pick', j === i));
+    qs[i].scrollIntoView({ block: 'center', behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
+  };
+
+  // timer
+  const clock = $('#clock'), go = $('#go'), mini = $('#miniClock');
+  let total = 20 * 60, left = total, end = 0, tick = null;
+  const fmt = s => String(Math.floor(s / 60)).padStart(2, '0') + ':' + String(s % 60).padStart(2, '0');
+  function paint() {
+    clock.textContent = fmt(left); clock.classList.toggle('end', left === 0);
+    mini.hidden = !tick && (left === total || left === 0);
+    mini.textContent = (left === 0 ? 'おわり' : '日本語だけ ') + (left ? fmt(left) : '');
+  }
+  function stop() { clearInterval(tick); tick = null; go.textContent = left ? 'つづける' : 'スタート'; paint(); }
+  function start() {
+    if (!left) left = total;
+    end = Date.now() + left * 1000; go.textContent = 'ストップ';
+    tick = setInterval(() => { left = Math.max(0, Math.round((end - Date.now()) / 1000)); if (!left) { stop(); bell(); } paint(); }, 250);
+    paint();
+  }
+  go.onclick = () => tick ? stop() : start();
+  $('#reset').onclick = () => { clearInterval(tick); tick = null; left = total; go.textContent = 'スタート'; paint(); };
+  mini.onclick = () => $('#timer').scrollIntoView();
+  $$('.presets .btn').forEach(b => b.addEventListener('click', () => {
+    $$('.presets .btn').forEach(x => x.setAttribute('aria-pressed', x === b));
+    clearInterval(tick); tick = null; total = left = +b.dataset.m * 60; go.textContent = 'スタート'; paint();
+  }));
+  paint();
+
+  // omikuji + certificate
+  function showKuji() {
+    const lines = [...D.omikuji].sort(() => Math.random() - .5).slice(0, 3);
+    $('#kujiOut').innerHTML = `<div class="slip"><div class="big">大吉</div><div style="text-align:center;font-size:13px">だいきち · великая удача</div>
+      <ul>${lines.map(l => `<li>${l}</li>`).join('')}</ul>
+      <div class="gift"><b>ラッキー：<ruby>個人<rt>こじん</rt></ruby>レッスン</b><br>Три штампа в карте = бесплатное занятие с ведущим, 60 минут, тема ваша. Пропустили встречу? Первое занятие со скидкой. Напишите ведущему «大吉» до 30 ноября.</div></div>`;
+  }
+  $('#kujiBtn').onclick = () => {
+    const b = $('#kujiBox'); b.classList.remove('shake'); void b.offsetWidth; b.classList.add('shake');
+    setTimeout(() => { showKuji(); bell(); store.set('kuji', 1); }, matchMedia('(prefers-reduced-motion: reduce)').matches ? 0 : 1000);
+  };
+  if (store.get('kuji')) showKuji();
+  const cn = $('#certName');
+  const syncCert = () => { $('#certWho').textContent = cn.value.trim() || 'アンナ'; store.set('cert', cn.value); };
+  cn.value = store.get('cert') || ''; cn.oninput = syncCert; syncCert();
+})();
+</script>
+
+</body></html>
