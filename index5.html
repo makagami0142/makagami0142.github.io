@@ -1,0 +1,349 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>冒険の書: ноябрь в Ma Kagami</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@500;700;800&family=Literata:opsz,wght@7..72,600;7..72,700&family=Onest:wght@400;500;600&display=swap">
+<style>
+/* Layout: 紅葉狩り, an autumn walk. Each meeting is a 丸窓 (round temple window) framing an autumn scene along one path of falling momiji; the stamp card is a 御朱印帳 page stamped with maple leaves. Light = misty November day, dark = evening 紅葉ライトアップ. */
+:root{
+  --bg:#eef0eb; --paper:#fbfaf6; --ink:#2b201c; --muted:#6c615b; --rule:#d8d3c9;
+  --momiji:#c4361d; --ichou:#c98b10; --moss:#4e6a48; --leafbg:#f6e3d9;
+  --jp:"Shippori Mincho","Hiragino Mincho ProN","Yu Mincho",serif;
+  --head:"Literata","Shippori Mincho",Georgia,serif;
+  --body:"Onest","Hiragino Sans","Yu Gothic",system-ui,sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#14100e; --paper:#1e1815; --ink:#f2e9e0; --muted:#b4a79c; --rule:#3a302a;
+  --momiji:#f0603f; --ichou:#efb53c; --moss:#93b487; --leafbg:#3a1f17; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#14100e; --paper:#1e1815; --ink:#f2e9e0; --muted:#b4a79c; --rule:#3a302a;
+  --momiji:#f0603f; --ichou:#efb53c; --moss:#93b487; --leafbg:#3a1f17; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font:16px/1.65 var(--body);
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+#fall{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:0}
+.wrap{position:relative;z-index:1;max-width:1020px;margin:0 auto;padding-block:36px 64px;display:grid;gap:64px}
+.jp{font-family:var(--jp)}
+h1,h2,h3{margin:0;text-wrap:balance}
+h2{font:700 clamp(24px,3.2vw,32px)/1.2 var(--head);display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 14px}
+h2 .jp{font-weight:700;color:var(--momiji);font-size:.72em;letter-spacing:.08em}
+section{display:grid;gap:22px}
+.lead{color:var(--muted);max-width:64ch;margin:0}
+.card{background:var(--paper);border:1px solid var(--rule);border-radius:4px;padding:22px;min-width:0}
+button{font:inherit;color:inherit}
+button:focus-visible,a:focus-visible{outline:2px solid var(--momiji);outline-offset:3px}
+svg.leaf{display:inline-block;vertical-align:-2px}
+
+/* hero */
+.hero{display:grid;grid-template-columns:minmax(0,1.45fr) minmax(0,1fr);gap:32px;align-items:center}
+@media (max-width:780px){.hero{grid-template-columns:1fr}}
+.hero .copy{display:grid;gap:18px}
+.brand{display:flex;flex-wrap:wrap;gap:6px 12px;align-items:baseline;font-weight:600}
+.brand span{color:var(--muted);font-weight:400;font-size:14px}
+.hero h1{display:grid;gap:10px}
+.hero h1 .jp{font-size:clamp(56px,11vw,108px);line-height:1;font-weight:800;letter-spacing:.04em}
+.hero h1 .jp em{font-style:normal;color:var(--momiji)}
+.hero h1 .ru{font:700 clamp(22px,3.2vw,30px)/1.25 var(--head)}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{border:1px solid var(--rule);background:var(--paper);border-radius:999px;padding:3px 12px;font-size:14px}
+.chip.m{background:var(--momiji);border-color:var(--momiji);color:var(--paper);font-weight:600}
+.season{display:grid;gap:10px;justify-items:center;text-align:center}
+.season .moon{width:min(300px,100%);aspect-ratio:1;max-width:100%}
+.season .moon svg{width:100%;height:100%;display:block}
+.season small{color:var(--muted);font-size:13px}
+.season .jp{font-size:20px;letter-spacing:.3em}
+
+/* path of chapters */
+.path{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:26px}
+@media (max-width:880px){.path{grid-template-columns:1fr}}
+.ch{display:grid;gap:14px;align-content:start;padding:26px 22px 22px}
+.ch .win{width:170px;height:170px;max-width:100%;justify-self:center;border-radius:50%;border:6px solid var(--ink);overflow:hidden;line-height:0}
+.ch .win svg{width:100%;height:100%;display:block}
+.ch .ep{display:flex;justify-content:space-between;align-items:baseline;gap:8px;flex-wrap:wrap;border-bottom:1px solid var(--rule);padding-bottom:8px}
+.ep .n{font-family:var(--jp);font-weight:700;color:var(--momiji)}
+.ep .d{font-weight:600;font-variant-numeric:tabular-nums}
+.ep .sk{font-family:var(--jp);color:var(--muted);font-size:13px;width:100%}
+.ch h3{font-family:var(--jp);font-weight:800;font-size:30px;line-height:1.15}
+.ch .sub{color:var(--muted);font-size:14px;margin-top:-6px}
+.ch ul{margin:0;padding:0;list-style:none;display:grid;gap:8px;font-size:14.5px}
+.ch li{display:grid;grid-template-columns:14px 1fr;gap:8px}
+.ch li svg{margin-top:5px;fill:var(--momiji)}
+.ch li b{font-family:var(--jp);font-weight:700}
+.bars{display:grid;gap:6px;font-size:13.5px;background:var(--bg);border-radius:4px;padding:10px 12px}
+.bars div{display:grid;grid-template-columns:5.2em 1fr;gap:8px}
+.bars .k{font-family:var(--jp);font-weight:700;color:var(--moss)}
+.bars span:last-child{color:var(--muted)}
+
+/* goshuin save */
+.save{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:24px}
+@media (max-width:780px){.save{grid-template-columns:1fr}}
+.book{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:0;padding:0;overflow:hidden}
+.page{display:grid;justify-items:center;align-content:space-between;gap:12px;padding:20px 8px;border-right:1px dashed var(--rule);min-height:260px;text-align:center}
+.page:last-child{border-right:0}
+.page .v{writing-mode:vertical-rl;font-family:var(--jp);font-weight:700;font-size:20px;letter-spacing:.15em;min-height:7em}
+.page .dt{font-size:13px;color:var(--muted);font-variant-numeric:tabular-nums}
+.stamp{width:62px;height:62px;border-radius:50%;border:1.5px dashed var(--rule);display:grid;place-content:center}
+.stamp svg{width:40px;height:40px;fill:var(--rule)}
+.page.on .stamp{border:2px solid var(--momiji);background:var(--leafbg);transform:rotate(-12deg)}
+.page.on .stamp svg{fill:var(--momiji)}
+.page.on .v{color:var(--momiji)}
+.pop{animation:pop .4s ease-out}
+@keyframes pop{0%{transform:scale(1.7) rotate(-30deg);opacity:0}100%{transform:scale(1) rotate(-12deg);opacity:1}}
+.dlg{display:grid;gap:14px;align-content:start}
+.dlg .who{font-size:13px;color:var(--muted);letter-spacing:.06em}
+.dlg .say{font-family:var(--jp);font-weight:700;font-size:24px;line-height:1.4;min-height:68px}
+.dlg .tr{color:var(--muted);font-size:14px;margin-top:-8px}
+.yn{display:flex;gap:10px;flex-wrap:wrap}
+.btn{border:0;border-radius:999px;padding:9px 22px;cursor:pointer;font-family:var(--jp);font-weight:700;font-size:18px;background:var(--momiji);color:var(--paper)}
+.btn.alt{background:transparent;color:var(--ink);border:1px solid var(--rule)}
+.prize{border-top:1px solid var(--rule);padding-top:14px;display:grid;gap:6px}
+.prize strong{font:700 20px/1.3 var(--head)}
+.prize p{margin:0;color:var(--muted);font-size:14.5px}
+.reset{justify-self:start;background:none;border:0;color:var(--muted);font-size:13px;text-decoration:underline;cursor:pointer;padding:0}
+
+/* how */
+.how{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,1fr);gap:24px}
+@media (max-width:780px){.how{grid-template-columns:1fr}}
+.tl div{display:grid;grid-template-columns:64px 1fr;gap:14px;padding:11px 0;border-bottom:1px solid var(--rule)}
+.tl div:first-child{padding-top:0}.tl div:last-child{border-bottom:0;padding-bottom:0}
+.tl .m{font-family:var(--jp);font-weight:700;color:var(--momiji);font-variant-numeric:tabular-nums}
+.tl p{margin:0;font-size:15px;font-weight:500}.tl p small{display:block;color:var(--muted);font-size:13.5px;font-weight:400}
+.stat{display:grid;gap:9px;align-content:start}
+.stat h3{font:700 19px var(--head)}
+.stat .row{display:grid;grid-template-columns:6.5em 1fr;gap:10px;font-size:15px}
+.stat .row .k{color:var(--muted)}
+.stat p{margin:4px 0 0;color:var(--muted);font-size:14px}
+
+/* vocab */
+.tabs{display:flex;flex-wrap:wrap;gap:8px}
+.tab{background:var(--paper);border:1px solid var(--rule);border-radius:999px;padding:6px 16px;cursor:pointer;font-size:14px;font-weight:500}
+.tab[aria-selected="true"]{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px}
+.vc{perspective:800px;height:118px;cursor:pointer;background:none;border:0;padding:0;text-align:center}
+.vc .i{position:relative;width:100%;height:100%;transition:transform .45s;transform-style:preserve-3d}
+.vc.flip .i{transform:rotateY(180deg)}
+.f{position:absolute;inset:0;backface-visibility:hidden;border:1px solid var(--rule);border-radius:4px;background:var(--paper);display:grid;place-content:center;gap:4px;padding:10px}
+.f.b{transform:rotateY(180deg);background:var(--leafbg);border-color:var(--momiji)}
+.f .w{font-family:var(--jp);font-weight:700;font-size:21px;line-height:1.25}
+.f .r{font-family:var(--jp);color:var(--momiji);font-size:14px}
+.f .t{font-size:14px;font-weight:500}
+.hint{color:var(--muted);font-size:13px;margin:0}
+
+.join{display:grid;gap:10px;border-left:4px solid var(--momiji)}
+.join p{margin:0;max-width:62ch}
+.join .jp{font-size:24px;font-weight:700}
+footer{color:var(--muted);font-size:13px;border-top:1px solid var(--rule);padding-top:16px}
+@media (prefers-reduced-motion:reduce){.vc .i{transition:none}.pop{animation:none}#fall{display:none}}
+</style>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs><symbol id="leaf" viewBox="0 0 100 100"><path d="M45 58.7 L12.5 79.9 L34.7 54.7 L2.1 46.4 L35.6 43.1 L17.4 14.8 L44.2 35.1 L50 2 L55.8 35.1 L82.6 14.8 L64.4 43.1 L97.9 46.4 L65.3 54.7 L87.5 79.9 L55 58.7 L50 58 Z"/><path d="M50 58 L50 96" stroke="currentColor" stroke-width="3" fill="none"/></symbol></defs></svg>
+<canvas id="fall" aria-hidden="true"></canvas>
+
+<div class="wrap">
+  <header class="hero">
+    <div class="copy">
+      <div class="brand">Ma Kagami <span>разговорный клуб японского · ноябрь 2026</span></div>
+      <h1><span class="jp">冒険の<em>書</em></span><span class="ru">Три осенние главы японского</span></h1>
+      <p class="lead">Ноябрь в Японии называют 霜月, «месяц инея», и это время 紅葉: клёны краснеют с севера на юг, а в Киото пик приходится как раз на конец месяца. У нас три вечера и три главы: вечер видеоигр, прогулка по храму с садом и чаем и квест «выжить в поездке». После каждой главы ставишь штамп в 冒険の書, а за три штампа получаешь бесплатное индивидуальное занятие.</p>
+      <div class="chips"><span class="chip m">15 · 18 · 25 ноября</span><span class="chip">вечером</span><span class="chip">60 минут</span><span class="chip">онлайн</span><span class="chip">4–6 человек</span><span class="chip">N4</span></div>
+    </div>
+    <div class="season">
+      <div class="moon"><svg viewBox="0 0 300 300" role="img" aria-label="Круглое окно 悟りの窓, за ним красные клёны">
+<defs><clipPath id="mc"><circle cx="150" cy="150" r="138"/></clipPath></defs>
+<g clip-path="url(#mc)"><rect width="300" height="300" fill="#f3c9a0"/><rect y="170" width="300" height="130" fill="#e7a36e"/>
+<path d="M0 220 Q80 190 150 214 T300 206 V300 H0Z" fill="#9c5a3c"/>
+<use href="#leaf" x="-20" y="-10" width="120" height="120" fill="#c4361d" color="#c4361d" transform="rotate(10 40.0 50.0)"/><use href="#leaf" x="70" y="-30" width="100" height="100" fill="#d4471f" color="#d4471f" transform="rotate(-20 120.0 20.0)"/><use href="#leaf" x="170" y="-20" width="120" height="120" fill="#b52d18" color="#b52d18" transform="rotate(25 230.0 40.0)"/><use href="#leaf" x="230" y="40" width="90" height="90" fill="#e0602a" color="#e0602a" transform="rotate(-10 275.0 85.0)"/><use href="#leaf" x="-10" y="80" width="90" height="90" fill="#e0602a" color="#e0602a" transform="rotate(35 35.0 125.0)"/><use href="#leaf" x="110" y="40" width="60" height="60" fill="#e8a033" color="#e8a033" transform="rotate(0 140.0 70.0)"/><use href="#leaf" x="200" y="120" width="50" height="50" fill="#c4361d" color="#c4361d" transform="rotate(-30 225.0 145.0)"/><use href="#leaf" x="40" y="150" width="40" height="40" fill="#d9781f" color="#d9781f" transform="rotate(15 60.0 170.0)"/>
+<path d="M0 300 V250 H300 V300Z" fill="#5a3324"/></g>
+<circle cx="150" cy="150" r="138" fill="none" stroke="var(--ink)" stroke-width="10"/>
+</svg></div>
+      <span class="jp">紅葉狩り</span>
+      <small>момидзи-гари, прогулка ради осенних клёнов</small>
+    </div>
+  </header>
+
+  <section aria-labelledby="map">
+    <h2 id="map"><span class="jp">三つの章</span>Программа</h2>
+    <div class="path">
+      <article class="card ch">
+        <div class="win"><svg viewBox="0 0 200 200" role="img" aria-label="Вечер у окна: игровая приставка на котацу и клён за окном">
+<rect width="200" height="200" fill="#f2b06a"/><rect y="0" width="200" height="90" fill="#e9875a"/>
+<circle cx="150" cy="70" r="22" fill="#ffe2a8"/>
+<path d="M20 200 V60 Q30 40 40 60 V200Z" fill="#5a3a2c"/>
+<use href="#leaf" x="-10" y="10" width="60" height="60" fill="#b8321c" color="#b8321c" transform="rotate(10 20.0 40.0)"/><use href="#leaf" x="30" y="0" width="50" height="50" fill="#d4471f" color="#d4471f" transform="rotate(-20 55.0 25.0)"/><use href="#leaf" x="0" y="50" width="44" height="44" fill="#c13a1c" color="#c13a1c" transform="rotate(30 22.0 72.0)"/><use href="#leaf" x="40" y="40" width="36" height="36" fill="#e0602a" color="#e0602a" transform="rotate(-5 58.0 58.0)"/>
+<rect x="0" y="128" width="200" height="72" fill="#7a4b33"/><rect x="30" y="120" width="140" height="14" rx="2" fill="#a8432f"/>
+<rect x="40" y="134" width="120" height="66" fill="#c45a3c"/>
+<rect x="74" y="104" width="52" height="18" rx="9" fill="#2b2b33"/><circle cx="86" cy="113" r="4" fill="#6b6b78"/><circle cx="114" cy="110" r="2.5" fill="#e45c4a"/><circle cx="119" cy="115" r="2.5" fill="#4aa0e4"/>
+<rect x="140" y="108" width="14" height="14" rx="2" fill="#f4ede2"/><path d="M144 104 q2 -6 0 -10" stroke="#f4ede2" stroke-width="1.5" fill="none" opacity=".7"/>
+</svg></div>
+        <div class="ep"><span class="n">第1話</span><span class="d">вс, 15 ноября</span><span class="sk">立冬のころ · начало зимы по старому календарю</span></div>
+        <h3>ゲームナイト</h3>
+        <div class="sub">Игры и гик-культура: осенний вечер у котацу</div>
+        <ul>
+          <li><svg class="leaf" width="12" height="12" viewBox="0 0 100 100" aria-hidden="true"><use href="#leaf"/></svg><span><b>人間コントローラー</b>: ведёте героя по подземелью только японскими командами, а он выполняет их буквально</span></li>
+          <li><svg class="leaf" width="12" height="12" viewBox="0 0 100 100" aria-hidden="true"><use href="#leaf"/></svg><span><b>ゲームメーカー</b>: придумываете свою игру и продаёте её на японском за минуту</span></li>
+          <li><svg class="leaf" width="12" height="12" viewBox="0 0 100 100" aria-hidden="true"><use href="#leaf"/></svg><span><b>ボス戦</b>: вся группа против 漢字の魔王, каждый удар это фраза</span></li>
+        </ul>
+        <div class="bars">
+          <div><span class="k">文法</span><span>〜たことがあります · 〜ながら · 飛べます · 〜たほうがいい · 〜てから</span></div>
+          <div><span class="k">持ち物</span><span>вспомни любимую игру или аниме</span></div>
+        </div>
+      </article>
+      <article class="card ch">
+        <div class="win"><svg viewBox="0 0 200 200" role="img" aria-label="Храм среди красных клёнов и сад камней">
+<rect width="200" height="200" fill="#dfe3d8"/><rect y="0" width="200" height="100" fill="#c9d3cf"/>
+<path d="M30 92 L100 62 L170 92 Z" fill="#3a2e2a"/><rect x="46" y="92" width="108" height="42" fill="#8e3a26"/><rect x="58" y="100" width="84" height="34" fill="#efe2c4"/><rect x="98" y="100" width="4" height="34" fill="#8e3a26"/>
+<use href="#leaf" x="-14" y="40" width="70" height="70" fill="#c4361d" color="#c4361d" transform="rotate(-10 21.0 75.0)"/><use href="#leaf" x="20" y="70" width="46" height="46" fill="#e0602a" color="#e0602a" transform="rotate(20 43.0 93.0)"/><use href="#leaf" x="140" y="30" width="70" height="70" fill="#b52d18" color="#b52d18" transform="rotate(15 175.0 65.0)"/><use href="#leaf" x="150" y="80" width="44" height="44" fill="#d9781f" color="#d9781f" transform="rotate(-25 172.0 102.0)"/><use href="#leaf" x="120" y="20" width="40" height="40" fill="#e8a033" color="#e8a033" transform="rotate(5 140.0 40.0)"/>
+<rect y="134" width="200" height="66" fill="#e8e3d6"/>
+<g stroke="#bdb5a3" stroke-width="1.6" fill="none"><path d="M0 146 H200"/><path d="M0 156 H200"/><path d="M0 166 H200"/><path d="M0 176 H200"/><path d="M0 186 H200"/></g>
+<ellipse cx="70" cy="168" rx="22" ry="11" fill="#6e6a62"/><ellipse cx="70" cy="168" rx="30" ry="16" fill="none" stroke="#bdb5a3" stroke-width="1.6"/>
+<ellipse cx="140" cy="176" rx="14" ry="7" fill="#7d786f"/>
+<use href="#leaf" x="110" y="150" width="16" height="16" fill="#c4361d" color="#c4361d" transform="rotate(40 118.0 158.0)"/><use href="#leaf" x="30" y="182" width="14" height="14" fill="#d9781f" color="#d9781f" transform="rotate(-30 37.0 189.0)"/>
+</svg></div>
+        <div class="ep"><span class="n">第2話</span><span class="d">ср, 18 ноября</span><span class="sk">紅葉の見ごろ · клёны в самом цвету</span></div>
+        <h3>お寺で一服</h3>
+        <div class="sub">Прогулка по храму: эстетика, сад и чай</div>
+        <ul>
+          <li><svg class="leaf" width="12" height="12" viewBox="0 0 100 100" aria-hidden="true"><use href="#leaf"/></svg><span><b>山門 → 僧堂</b>: спорим, какой храм красивее, 金閣寺 или 銀閣寺, и проживаем день монаха с ночью в 宿坊</span></li>
+          <li><svg class="leaf" width="12" height="12" viewBox="0 0 100 100" aria-hidden="true"><use href="#leaf"/></svg><span><b>禅堂 → 庭</b>: минута дзадзэна, потом каждый собирает свой сад камней и рассказывает, что в нём видит</span></li>
+          <li><svg class="leaf" width="12" height="12" viewBox="0 0 100 100" aria-hidden="true"><use href="#leaf"/></svg><span><b>茶室</b> в конце: чаепитие в парах со своей чашкой, お先に и 結構なお点前でした</span></li>
+        </ul>
+        <div class="bars">
+          <div><span class="k">文法</span><span>〜と思います · 〜より〜のほうが · 〜に見えます · 〜てみたい</span></div>
+          <div><span class="k">持ち物</span><span>чашка чая и что-нибудь сладкое</span></div>
+        </div>
+      </article>
+      <article class="card ch">
+        <div class="win"><svg viewBox="0 0 200 200" role="img" aria-label="Осенний вечер в городе: кобан с красным фонарём, аптека и чемодан">
+<rect width="200" height="200" fill="#2c2440"/><rect y="110" width="200" height="90" fill="#3b3150"/>
+<rect x="18" y="70" width="80" height="80" fill="#e6e2da"/><rect x="12" y="62" width="92" height="10" fill="#3a3f6a"/><rect x="30" y="92" width="26" height="58" fill="#3a3f6a"/><rect x="64" y="90" width="26" height="22" fill="#a8d4ef"/>
+<rect x="52" y="44" width="12" height="18" rx="3" fill="#ff4a3c"/><circle cx="58" cy="53" r="18" fill="#ff4a3c" opacity=".2"/>
+<text x="22" y="85" font-family="Shippori Mincho,serif" font-size="12" font-weight="700" fill="#2b201c">交番</text>
+<rect x="110" y="84" width="72" height="66" fill="#f0f4ee"/><rect x="106" y="76" width="80" height="10" fill="#3f8a52"/><rect x="140" y="92" width="12" height="30" fill="#3f8a52"/><rect x="131" y="101" width="30" height="12" fill="#3f8a52"/>
+<rect y="150" width="200" height="50" fill="#4a3e5e"/>
+<rect x="128" y="150" width="34" height="30" rx="4" fill="#d4471f"/><rect x="138" y="143" width="14" height="8" rx="2" fill="none" stroke="#2b201c" stroke-width="3"/><circle cx="134" cy="183" r="3" fill="#1d1828"/><circle cx="156" cy="183" r="3" fill="#1d1828"/>
+<use href="#leaf" x="160" y="10" width="40" height="40" fill="#d4471f" color="#d4471f" transform="rotate(20 180.0 30.0)"/><use href="#leaf" x="4" y="4" width="30" height="30" fill="#e8a033" color="#e8a033" transform="rotate(-15 19.0 19.0)"/><use href="#leaf" x="90" y="30" width="22" height="22" fill="#c4361d" color="#c4361d" transform="rotate(40 101.0 41.0)"/><use href="#leaf" x="60" y="160" width="18" height="18" fill="#e0602a" color="#e0602a" transform="rotate(-20 69.0 169.0)"/><use href="#leaf" x="176" y="120" width="18" height="18" fill="#e8a033" color="#e8a033" transform="rotate(10 185.0 129.0)"/>
+</svg></div>
+        <div class="ep"><span><span class="n">第3話</span> · финал</span><span class="d">ср, 25 ноября</span><span class="sk">小雪のころ · первый снег по старому календарю</span></div>
+        <h3>SOSクエスト</h3>
+        <div class="sub">Японский, когда в поездке что-то пошло не так</div>
+        <ul>
+          <li><svg class="leaf" width="12" height="12" viewBox="0 0 100 100" aria-hidden="true"><use href="#leaf"/></svg><span><b>ジェスチャー診断</b>: показываешь симптом пантомимой, группа ставит диагноз по-японски</span></li>
+          <li><svg class="leaf" width="12" height="12" viewBox="0 0 100 100" aria-hidden="true"><use href="#leaf"/></svg><span><b>薬局 и 交番</b>: читаем коробку лекарства и ищем потерянную вещь на полке находок</span></li>
+          <li><svg class="leaf" width="12" height="12" viewBox="0 0 100 100" aria-hidden="true"><use href="#leaf"/></svg><span><b>ヘルプカード</b>: уносишь свою карточку на японском для поездки</span></li>
+        </ul>
+        <div class="bars">
+          <div><span class="k">文法</span><span>〜んです · 〜てしまいました · 〜たほうがいい · 〜ないでください · 〜たら</span></div>
+          <div><span class="k">持ち物</span><span>подумай, какие у тебя аллергии и лекарства</span></div>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <section aria-labelledby="save">
+    <h2 id="save"><span class="jp">冒険の書</span>Ритуал и награда</h2>
+    <p class="lead">В конце каждой главы ведущий спрашивает каждого: 「冒険の書にセーブしますか？」 Отвечаешь 「はい！」 и получаешь кленовый штамп на свою страницу, как печать 御朱印 в храмовой книжке. Попробуй прямо здесь.</p>
+    <div class="save">
+      <div class="card book" id="slots" aria-live="polite"></div>
+      <div class="card dlg">
+        <div class="who">ВЕДУЩИЙ СПРАШИВАЕТ</div>
+        <div class="say" id="say">冒険の書に セーブしますか？</div>
+        <div class="tr" id="sayTr">Сохранить книгу приключений?</div>
+        <div class="yn">
+          <button class="btn" type="button" id="yes">はい</button>
+          <button class="btn alt" type="button" id="no">いいえ</button>
+        </div>
+        <div class="prize">
+          <strong>Три штампа = бесплатное занятие, 60 минут</strong>
+          <p>Индивидуальное занятие со мной на твою тему: поездка, JLPT, игры и аниме без перевода, вежливый 敬語. Награду вручаю на финале 25 ноября. И в конце каждой главы есть маленький сюрприз.</p>
+        </div>
+        <button class="reset" type="button" id="reset">Очистить демо-штампы</button>
+      </div>
+    </div>
+  </section>
+
+  <section aria-labelledby="how">
+    <h2 id="how"><span class="jp">一時間</span>Как проходит глава</h2>
+    <div class="how">
+      <div class="card tl">
+        <div><span class="m">0–5</span><p>Вход<small>Каждая глава начинается с ритуала: имя катаканой, поклон у ворот храма или регистратура клиники.</small></p></div>
+        <div><span class="m">5–10</span><p>トーク<small>Разминка по кругу на тему главы, с образцом ответа на экране.</small></p></div>
+        <div><span class="m">10–23</span><p>Слова и грамматика<small>Слова ты получишь заранее в PDF, на встрече их только оживляем.</small></p></div>
+        <div><span class="m">23–53</span><p>Игры и диалоги, 日本語だけタイム<small>Полчаса только на японском. Перешёл на русский, говоришь すみません и продолжаешь.</small></p></div>
+        <div><span class="m">53–60</span><p>今日のまちがい и штамп<small>Три ошибки дня без имён, штамп в 冒険の書, домашка-голосовое на 30 секунд.</small></p></div>
+      </div>
+      <div class="card stat">
+        <h3>Кто, где, когда</h3>
+        <div class="row"><span class="k">Уровень</span><span>N4: уже говоришь о прошлом и планах</span></div>
+        <div class="row"><span class="k">Группа</span><span>4–6 человек, каждому 10+ минут речи</span></div>
+        <div class="row"><span class="k">Где</span><span>онлайн, Zoom</span></div>
+        <div class="row"><span class="k">Когда</span><span>вечером: вс 15, ср 18, ср 25 ноября, 60 минут</span></div>
+        <div class="row"><span class="k">Заранее</span><span>PDF со словами за пару дней до главы</span></div>
+        <p>Можно прийти и на одну главу: каждая самостоятельная. Награда за три штампа только для тех, кто пройдёт все три.</p>
+      </div>
+    </div>
+  </section>
+
+  <section aria-labelledby="vocab">
+    <h2 id="vocab"><span class="jp">ことば</span>Слова заранее</h2>
+    <div class="tabs" role="tablist" id="vtabs"></div>
+    <p class="hint">Нажми на карточку, чтобы увидеть чтение и перевод. Полный список придёт в PDF перед встречей.</p>
+    <div class="cards" id="cards"></div>
+  </section>
+
+  <section aria-labelledby="join">
+    <h2 id="join"><span class="jp">お申し込み</span>Как записаться</h2>
+    <div class="card join">
+      <span class="jp">いっしょに 紅葉狩りに 行きませんか？</span>
+      <p>Напиши в чат клуба или мне в личку в канале Ma Kagami: как тебя зовут и на какие главы идёшь. Мест в группе 4–6, поэтому лучше сразу на все три.</p>
+    </div>
+  </section>
+
+  <footer>Разговорный клуб Telegram-канала Ma Kagami · серия 冒険の書, ноябрь 2026. Штампы на этой странице демонстрационные и хранятся только в твоём браузере.</footer>
+</div>
+<script>
+const CH=[
+ {id:"1",ep:"第1話",name:"ゲームナイト",date:"15.11",w:[["冒険","ぼうけん","приключение"],["主人公","しゅじんこう","главный герой"],["仲間","なかま","товарищ, сопартиец"],["敵","てき","враг"],["宝箱","たからばこ","сундук с сокровищами"],["魔法","まほう","магия"],["勝つ / 負ける","かつ / まける","выиграть / проиграть"],["クリアする","クリアする","пройти уровень"],["セーブする","セーブする","сохраниться"],["進む","すすむ","идти вперёд"],["戻る","もどる","вернуться"],["発売","はつばい","выход игры, релиз"]]},
+ {id:"2",ep:"第2話",name:"お寺で一服",date:"18.11",w:[["お寺","おてら","буддийский храм"],["山門","さんもん","главные ворота храма"],["お坊さん","おぼうさん","монах"],["宿坊","しゅくぼう","ночлег в храме"],["座禅","ざぜん","медитация сидя"],["日本庭園","にほんていえん","японский сад"],["枯山水","かれさんすい","сад камней"],["わびさび","わびさび","красота простого и несовершенного"],["間","ま","пауза, пустота"],["金継ぎ","きんつぎ","починка трещин золотом"],["茶室","ちゃしつ","чайная комната"],["抹茶","まっちゃ","порошковый чай"]]},
+ {id:"3",ep:"第3話",name:"SOSクエスト",date:"25.11",w:[["頭が痛い","あたまがいたい","болит голова"],["熱がある","ねつがある","температура"],["病院","びょういん","больница, клиника"],["薬局","やっきょく","аптека"],["痛み止め","いたみどめ","обезболивающее"],["食後","しょくご","после еды"],["食間","しょっかん","между едой"],["交番","こうばん","полицейская будка"],["落とし物","おとしもの","потерянная вещь"],["地震","じしん","землетрясение"],["避難所","ひなんじょ","пункт эвакуации"],["助けて！","たすけて","помогите!"]]}
+];
+let cur=0;
+function renderCards(){
+ const t=document.getElementById("vtabs");t.innerHTML="";
+ CH.forEach((c,i)=>{const b=document.createElement("button");b.type="button";b.className="tab";b.setAttribute("role","tab");b.setAttribute("aria-selected",i===cur);b.textContent=c.ep+" "+c.name;b.onclick=()=>{cur=i;renderCards()};t.appendChild(b);});
+ const el=document.getElementById("cards");el.innerHTML="";
+ CH[cur].w.forEach(([w,r,ru])=>{const b=document.createElement("button");b.type="button";b.className="vc";b.setAttribute("aria-label",w+": "+r+", "+ru);
+  b.innerHTML=`<div class="i"><div class="f"><div class="w">${w}</div></div><div class="f b"><div class="r">${r}</div><div class="t">${ru}</div></div></div>`;
+  b.onclick=()=>b.classList.toggle("flip");el.appendChild(b);});
+}
+let st=[false,false,false];
+try{const s=JSON.parse(localStorage.getItem("boken-saves"));if(Array.isArray(s)&&s.length===3)st=s;}catch(e){}
+function store(){try{localStorage.setItem("boken-saves",JSON.stringify(st))}catch(e){}}
+const VERT=["ゲームナイト","お寺で一服","SOSクエスト"];
+function renderSlots(popIdx){
+ const el=document.getElementById("slots");el.innerHTML="";
+ CH.forEach((c,i)=>{const d=document.createElement("div");d.className="page"+(st[i]?" on":"");
+  d.innerHTML=`<span class="dt">${c.ep}</span><span class="v">${VERT[i]}</span><span class="stamp${i===popIdx?" pop":""}" aria-label="${st[i]?"штамп стоит":"пусто"}"><svg viewBox="0 0 100 100"><use href="#leaf"/></svg></span><span class="dt">${c.date}</span>`;
+  el.appendChild(d);});
+}
+let ac=null;
+function beep(notes){try{ac=ac||new (window.AudioContext||window.webkitAudioContext)();let t=ac.currentTime;notes.forEach(f=>{const o=ac.createOscillator(),g=ac.createGain();o.type="sine";o.frequency.value=f;g.gain.setValueAtTime(.06,t);g.gain.exponentialRampToValueAtTime(.001,t+.6);o.connect(g).connect(ac.destination);o.start(t);o.stop(t+.62);t+=.16;});}catch(e){}}
+function say(j,ru){document.getElementById("say").textContent=j;document.getElementById("sayTr").textContent=ru;}
+document.getElementById("yes").onclick=()=>{
+ const i=st.indexOf(false);
+ if(i===-1){say("冒険の書は もう いっぱいです！","Книга заполнена: три штампа, награда твоя.");beep([523,659,784,1047]);return;}
+ st[i]=true;store();renderSlots(i);beep([660,880,990]);
+ if(i===2)say("おめでとう！ 冒険の書、完成！","Три штампа: бесплатное занятие на 60 минут.");
+ else say("セーブしました。","Штамп за "+CH[i].ep+" стоит. Осталось "+(2-i)+".");
+};
+document.getElementById("no").onclick=()=>{beep([330,247]);say("え？ 冒険が きえますよ…","Без セーブ приключение пропадёт. Подумай ещё раз.");};
+document.getElementById("reset").onclick=()=>{st=[false,false,false];store();renderSlots();say("冒険の書に セーブしますか？","Сохранить книгу приключений?");};
+document.querySelectorAll("[data-go]").forEach(b=>b.onclick=()=>{beep([880]);document.getElementById(b.dataset.go).scrollIntoView({behavior:matchMedia("(prefers-reduced-motion: reduce)").matches?"auto":"smooth",block:"start"});});
+renderCards();renderSlots();
+(function(){if(matchMedia("(prefers-reduced-motion: reduce)").matches)return;const c=document.getElementById("fall"),x=c.getContext("2d");
+const P=new Path2D("M45 58.7 L12.5 79.9 L34.7 54.7 L2.1 46.4 L35.6 43.1 L17.4 14.8 L44.2 35.1 L50 2 L55.8 35.1 L82.6 14.8 L64.4 43.1 L97.9 46.4 L65.3 54.7 L87.5 79.9 L55 58.7 L50 58 Z");const cols=["#c4361d","#d4471f","#e0602a","#d9781f","#c98b10"];let W,H,L=[];
+function rs(){W=c.width=innerWidth;H=c.height=innerHeight;}rs();addEventListener("resize",rs);
+for(let i=0;i<16;i++)L.push({x:Math.random()*W,y:Math.random()*H,s:.12+Math.random()*.18,v:.3+Math.random()*.6,r:Math.random()*6,dr:(Math.random()-.5)*.02,ph:Math.random()*6,c:cols[i%5]});
+function f(){x.clearRect(0,0,W,H);L.forEach(l=>{l.y+=l.v;l.ph+=.01;l.x+=Math.sin(l.ph)*.5;l.r+=l.dr;if(l.y>H+20){l.y=-20;l.x=Math.random()*W;}
+x.save();x.globalAlpha=.35;x.translate(l.x,l.y);x.rotate(l.r);x.scale(l.s,l.s);x.translate(-50,-50);x.fillStyle=l.c;x.fill(P);x.restore();});requestAnimationFrame(f);}f();})();
+</script>
+
+</body></html>
