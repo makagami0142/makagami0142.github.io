@@ -1,0 +1,909 @@
+<!doctype html>
+<html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><style>body{margin:0}[hidden]{display:none!important}</style></head><body>
+<title>SOSクエスト</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Dela+Gothic+One&family=Golos+Text:wght@400;500;600;700&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap">
+<style>
+/* Layout: Japanese safety signage. A green 非常口-style sign heads the page over a yellow-black hazard band; sections are numbered quest stages (受付 → 診断 → 薬局 → 交番 → 地震 → 119 → カード → セーブ) because the hour really runs in that order */
+:root{
+  --bg:#eef2ef; --paper:#ffffff; --ink:#16201b; --muted:#56635c; --rule:#d2dad5; --soft:#e3eae5;
+  --exit:#00875a; --exit-ink:#ffffff; --exit-soft:#d6efe3;
+  --sos:#d42f27; --sos-soft:#fbe3e1;
+  --caution:#f2b705; --caution-ink:#1a1606; --hazard:#16201b;
+  --display:"Dela Gothic One","Zen Kaku Gothic New","Hiragino Sans",sans-serif;
+  --jp:"Zen Kaku Gothic New","Hiragino Sans","Yu Gothic",sans-serif;
+  --ru:"Golos Text",system-ui,-apple-system,"Segoe UI",sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0e1512; --paper:#16201c; --ink:#e6eee9; --muted:#9aa9a1; --rule:#2a3732; --soft:#1c2823;
+  --exit:#1fa874; --exit-ink:#ffffff; --exit-soft:#123326;
+  --sos:#ff6b5f; --sos-soft:#3a1b18;
+  --caution:#f5c431; --caution-ink:#1a1606; --hazard:#0b100e; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0e1512; --paper:#16201c; --ink:#e6eee9; --muted:#9aa9a1; --rule:#2a3732; --soft:#1c2823;
+  --exit:#1fa874; --exit-ink:#ffffff; --exit-soft:#123326;
+  --sos:#ff6b5f; --sos-soft:#3a1b18;
+  --caution:#f5c431; --caution-ink:#1a1606; --hazard:#0b100e; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font:16px/1.55 var(--ru)}
+h1,h2,h3,h4{margin:0;font-weight:400;text-wrap:balance}
+ruby rt{font-size:.5em;color:var(--muted);font-family:var(--jp);font-weight:400}
+html.nofuri rt{visibility:hidden}
+button,select,input{font:inherit;color:inherit}
+button{cursor:pointer}
+button:focus-visible,a:focus-visible,select:focus-visible,input:focus-visible{outline:3px solid var(--caution);outline-offset:2px}
+.wrap{max-width:1020px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.jp,.j{font-family:var(--jp)}
+.mut{color:var(--muted)}
+.panel{background:var(--paper);border:1px solid var(--rule);border-radius:6px}
+p{margin:0}
+
+/* header sign */
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--exit)}
+header{background:var(--exit);color:var(--exit-ink)}
+header rt{color:rgba(255,255,255,.75)}
+header .wrap{padding-block:26px 22px;display:grid;grid-template-columns:auto 1fr;gap:22px;align-items:center}
+.pict{width:118px;height:118px;border:4px solid var(--exit-ink);border-radius:10px;display:grid;place-items:center}
+.pict svg{width:92px;height:92px}
+.title .kana{font-family:var(--jp);font-weight:700;letter-spacing:.3em;font-size:14px;opacity:.85}
+.title h1{font-family:var(--display);font-size:clamp(44px,9vw,86px);line-height:1;letter-spacing:.02em}
+.title .lat{font-weight:600;letter-spacing:.22em;text-transform:uppercase;font-size:12px;margin-top:6px;opacity:.9}
+.title .meta{font-size:14px;margin-top:10px;opacity:.92}
+.ep{display:inline-flex;gap:8px;align-items:center;margin-top:10px;background:var(--exit-ink);color:var(--exit);border-radius:4px;padding:3px 10px;font:700 14px var(--jp)}
+.ep rt{color:var(--exit)}
+.hz{height:16px;background:repeating-linear-gradient(-45deg,var(--caution) 0 16px,var(--hazard) 16px 32px)}
+.dir{display:flex;justify-content:space-between;gap:12px;padding-block:10px;font-size:14px;color:var(--muted)}
+.dir b{font-family:var(--jp);color:var(--ink)}
+.dir a{color:inherit;text-decoration:none;text-align:right}
+@media (max-width:560px){header .wrap{grid-template-columns:1fr}.pict{width:84px;height:84px}.pict svg{width:64px;height:64px}}
+
+/* nav */
+nav.bar{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--paper);border-bottom:1px solid var(--rule)}
+nav.bar .wrap{display:flex;gap:4px;overflow-x:auto;padding-block:6px;align-items:center;scrollbar-width:thin}
+nav.bar a{flex:none;display:flex;flex-direction:column;align-items:center;text-decoration:none;color:var(--ink);font:700 14px/1.2 var(--jp);padding:4px 8px;border-radius:4px}
+nav.bar a span{font:500 11px var(--ru);color:var(--muted)}
+nav.bar a:hover{background:var(--soft)}
+nav.bar rt{display:none}
+.tools{margin-left:auto;display:flex;gap:6px;flex:none}
+.chip{border:1px solid var(--rule);background:var(--paper);border-radius:999px;padding:4px 12px;font:500 14px var(--jp)}
+.chip[aria-pressed="true"]{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.chip[aria-pressed="true"] rt{color:var(--paper)}
+.btn{border:2px solid var(--ink);background:var(--paper);border-radius:6px;padding:7px 14px;font-weight:600}
+.btn.primary{background:var(--exit);border-color:var(--exit);color:var(--exit-ink)}
+.btn.primary rt{color:var(--exit-ink)}
+.btn.red{background:var(--sos);border-color:var(--sos);color:#fff}
+.btn.red rt{color:#fff}
+.btn.sm{padding:3px 10px;font-size:13px;border-width:1px}
+.btn.big{font-size:20px;padding:12px 22px;font-family:var(--jp)}
+.btn:disabled{opacity:.5;cursor:default}
+
+/* sections */
+main section{padding-block:36px 6px;scroll-margin-top:70px}
+.sh{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap;margin-bottom:16px;border-bottom:3px solid var(--ink);padding-bottom:8px}
+.sh .no{font:400 14px var(--display);background:var(--ink);color:var(--paper);padding:2px 8px;border-radius:3px;align-self:center}
+.sh h2{font-family:var(--display);font-size:clamp(26px,5vw,36px);line-height:1.15}
+.sh p{color:var(--muted);flex:1 1 240px}
+.sh .t{font:600 13px var(--ru);color:var(--muted);font-variant-numeric:tabular-nums}
+.lbl{font:700 12px var(--ru);letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:0 0 6px}
+.note{color:var(--muted);font-size:14px}
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:14px}
+.grid2>*{min-width:0}
+
+/* host */
+.host{display:none}
+.host.on{display:block}
+.hp{padding:18px;border:3px dashed var(--sos);background:var(--sos-soft)}
+.hp h3{font:400 22px var(--display)}
+.hp .lbl{margin-top:16px}
+.hp ul{margin:0;padding-left:18px;display:grid;gap:6px}
+.rid{list-style:none;padding:0!important}
+.rid li{display:flex;gap:10px;align-items:center;justify-content:space-between;background:var(--paper);border-radius:4px;padding:6px 10px;flex-wrap:wrap}
+.rid li .j{flex:1 1 260px;min-width:0}
+.links{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:6px}
+.links div{display:flex;justify-content:space-between;gap:8px;align-items:center;background:var(--paper);border-radius:4px;padding:5px 8px;font-family:var(--jp);font-size:14px}
+.links b{font-weight:500;min-width:0;overflow-wrap:anywhere}
+
+/* uketsuke */
+.uk{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:14px}
+@media (max-width:760px){.uk{grid-template-columns:1fr}}
+.desk{padding:18px;display:grid;gap:14px}
+.desk .top{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.ask{font:700 22px var(--jp)}
+.chart{border:2px solid var(--ink);border-radius:6px;overflow:hidden}
+.chart .ch{background:var(--ink);color:var(--paper);display:flex;justify-content:space-between;padding:6px 12px;font:600 13px var(--ru)}
+.chart .ch rt{color:var(--paper)}
+.chart .cb2{padding:14px;display:grid;gap:8px}
+.chart .sym{font:400 30px/1.3 var(--display)}
+.chart .say{font:700 19px/1.6 var(--jp)}
+.chart .tr{color:var(--muted);font-size:14px}
+.chart .rx{border-top:2px dashed var(--rule);padding-top:10px;font-family:var(--jp)}
+.chart .rx b{color:var(--exit);font-family:var(--ru);font-size:12px;letter-spacing:.08em;text-transform:uppercase;display:block}
+.pop{animation:pop .45s ease-out}
+@keyframes pop{0%{transform:scale(.96);opacity:.3}100%{transform:none;opacity:1}}
+.warm{padding:18px;display:grid;gap:10px;align-content:start}
+.warm .j{font-size:19px;font-weight:700}
+.tags{display:flex;flex-wrap:wrap;gap:6px}
+.tag{background:var(--soft);border-radius:4px;padding:2px 8px;font:500 14px var(--jp)}
+
+/* vocab */
+.vgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(310px,1fr));gap:14px}
+.vg{padding:14px 16px;min-width:0}
+.vg h3{font:400 20px var(--display);display:flex;gap:10px;align-items:baseline;flex-wrap:wrap;margin-bottom:8px}
+.vg h3 small{font:500 13px var(--ru);color:var(--muted)}
+.vl{list-style:none;margin:0;padding:0;display:grid}
+.vl li{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:2px 12px;padding:7px 0;border-top:1px solid var(--rule)}
+.vl .w{font:700 17px var(--jp)}
+.vl .m{font-size:14px;align-self:center}
+.vl .ex{grid-column:1/-1;font-family:var(--jp);font-size:14px;color:var(--ink);opacity:.85}
+.vl .exr{grid-column:1/-1;font-size:12px;color:var(--muted)}
+.filters{display:flex;gap:6px;flex-wrap:wrap;margin:22px 0 10px}
+.phr{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:8px}
+.phr li{background:var(--paper);border:1px solid var(--rule);border-radius:6px;padding:8px 12px;display:grid;gap:2px;min-width:0}
+.phr .pt{font:600 11px var(--jp);color:var(--exit)}
+.phr .pt rt{display:none}
+.phr .j{font-size:17px;font-weight:700}
+.phr .r{font-size:13px;color:var(--muted)}
+.phr[data-f="hosp"] li:not([data-t="hosp"]),.phr[data-f="drug"] li:not([data-t="drug"]),.phr[data-f="koban"] li:not([data-t="koban"]),.phr[data-f="sos"] li:not([data-t="sos"]),.phr[data-f="any"] li:not([data-t="any"]){display:none}
+
+/* grammar */
+.ggrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:14px}
+.gr{padding:14px 16px;min-width:0}
+.gh{display:flex;gap:10px;align-items:baseline;flex-wrap:wrap;margin-bottom:8px}
+.gh b{font-size:21px}
+.gh span:last-child{color:var(--muted);font-size:14px}
+.gn{font:400 15px var(--display);background:var(--caution);color:var(--caution-ink);border-radius:3px;padding:0 7px;align-self:center}
+.gr ul{list-style:none;margin:0 0 8px;padding:0;display:grid;gap:6px}
+.gr li .j{display:block;font-size:17px}
+.gr li .r{font-size:13px;color:var(--muted)}
+.gr.bonus li .j{display:inline}
+
+/* shindan */
+.sd{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:14px}
+@media (max-width:760px){.sd{grid-template-columns:1fr}}
+.sd .panel{padding:16px;display:grid;gap:10px;align-content:start}
+.steps{margin:0;padding-left:20px;display:grid;gap:6px}
+.dlg{display:grid;gap:6px;font-family:var(--jp)}
+.dlg p{display:flex;gap:8px}
+.dlg b{flex:none;width:26px;height:26px;border-radius:50%;display:grid;place-items:center;font:700 12px var(--ru);background:var(--soft)}
+
+/* meds */
+.meds{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:14px}
+.med{background:var(--paper);border:1px solid var(--rule);border-radius:8px;overflow:hidden;display:grid;align-content:start;min-width:0}
+.mtop{background:var(--m);color:#fff;padding:12px 14px 10px;display:grid;gap:2px;position:relative}
+.mtop::after{content:"";position:absolute;right:14px;top:12px;width:22px;height:22px;background:linear-gradient(#fff,#fff) center/22px 7px no-repeat,linear-gradient(#fff,#fff) center/7px 22px no-repeat;opacity:.9}
+.mtop rt{color:rgba(255,255,255,.85)}
+.brand{font:700 12px var(--jp);letter-spacing:.2em}
+.cat{font:400 28px/1.3 var(--display)}
+.mru{font-size:13px;opacity:.95}
+.mlabel{margin:12px 14px 0;border:1px solid var(--rule);border-radius:4px;padding:10px 12px;font-family:var(--jp)}
+.mlabel .lt{font:700 12px var(--jp);color:var(--muted)}
+.mlabel ul{list-style:none;margin:4px 0 8px;padding:0;font:700 18px/1.7 var(--jp)}
+.warn{font-size:13px;display:flex;gap:6px;align-items:flex-start}
+.cb{flex:none;background:var(--sos);color:#fff;font:700 11px var(--jp);padding:1px 5px;border-radius:2px;margin-top:3px}
+.cb rt{display:none}
+.mq{margin:10px 14px 14px;padding-left:20px;display:grid;gap:8px}
+.mq li .j{display:block;font-size:15px;margin-bottom:4px}
+.reveal[data-open="1"]{border-color:var(--exit);color:var(--exit);font-family:var(--jp);text-align:left}
+.rp{margin-top:16px;padding:16px;display:grid;gap:8px}
+
+/* koban */
+.kb{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);gap:14px}
+@media (max-width:820px){.kb{grid-template-columns:1fr}}
+.shelf{padding:14px;background:var(--soft);border-radius:8px;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;border:6px solid var(--ink);border-top-width:28px;position:relative}
+.shelf::before{content:"落とし物 · LOST & FOUND";position:absolute;top:-23px;left:10px;color:var(--paper);font:700 13px var(--jp);letter-spacing:.1em}
+@media (max-width:480px){.shelf{grid-template-columns:repeat(3,minmax(0,1fr))}}
+.item{position:relative;background:var(--paper);border:1px solid var(--rule);border-radius:6px;padding:6px;color:var(--ink);aspect-ratio:4/3;max-width:100%}
+.item:hover{border-color:var(--exit)}
+.item svg{width:100%;height:100%}
+.tagn{position:absolute;left:5px;top:4px;font:700 12px var(--ru);background:var(--caution);color:var(--caution-ink);border-radius:3px;padding:0 5px}
+.kside{display:grid;gap:14px;align-content:start}
+.kside .panel{padding:14px;display:grid;gap:8px}
+.form{display:grid;grid-template-columns:auto minmax(0,1fr);gap:6px 10px;align-items:center;font-size:14px}
+.form label{font:700 13px var(--jp)}
+.form select{border:1px solid var(--rule);background:var(--paper);border-radius:4px;padding:4px 6px;font-family:var(--jp);min-width:0;width:100%}
+.out{font:700 17px/1.7 var(--jp);background:var(--exit-soft);border-radius:4px;padding:10px 12px}
+
+/* jishin */
+.jz{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);gap:14px}
+@media (max-width:820px){.jz{grid-template-columns:1fr}}
+.alarm{border:4px solid var(--ink);border-radius:8px;overflow:hidden;background:var(--paper)}
+.alarm .ah{background:var(--hazard);color:var(--caution);display:flex;justify-content:space-between;gap:10px;padding:8px 14px;font:700 14px var(--jp);flex-wrap:wrap}
+.alarm .ah rt{color:var(--caution)}
+.alarm .ab{padding:18px;display:grid;gap:12px;justify-items:start}
+.sdo{display:flex;gap:12px;align-items:center}
+.sdo .n{font:400 46px/1 var(--display);background:var(--caution);color:var(--caution-ink);border-radius:6px;padding:6px 14px;font-variant-numeric:tabular-nums}
+.cmd{font:700 clamp(22px,4vw,30px)/1.5 var(--jp)}
+.cmd rt{font-size:.45em}
+.cmdr{color:var(--muted)}
+.alarm.live .ah{background:var(--sos);color:#fff}
+.alarm.live .ah rt{color:#fff}
+.shake{animation:shake .12s linear infinite}
+@keyframes shake{0%{transform:translate(0,0)}25%{transform:translate(-6px,2px) rotate(-.4deg)}50%{transform:translate(5px,-2px)}75%{transform:translate(-3px,3px) rotate(.4deg)}100%{transform:translate(0,0)}}
+@media (prefers-reduced-motion:reduce){.shake{animation:none}.pop{animation:none}}
+.shl{list-style:none;margin:0;padding:0;display:grid;gap:6px;font-size:14px}
+.shl li{display:grid;grid-template-columns:52px minmax(0,1fr);gap:8px;align-items:center}
+.shl b{font:400 18px var(--display);text-align:center;background:var(--soft);border-radius:4px}
+.call{margin-top:16px;display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);gap:14px}
+@media (max-width:820px){.call{grid-template-columns:1fr}}
+.call .panel{padding:16px;display:grid;gap:10px;align-content:start}
+.disp{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+.disp li{display:grid;grid-template-columns:44px minmax(0,1fr);gap:10px}
+.disp .who{font:400 14px var(--display);background:var(--sos);color:#fff;border-radius:4px;display:grid;place-items:center;height:28px}
+.disp .j{display:block;font-weight:700}
+.disp .r,.disp .hint{display:block;font-size:13px;color:var(--muted)}
+.scen{background:var(--sos-soft);border-radius:6px;padding:12px;display:grid;gap:6px;font-family:var(--jp)}
+.scen .s1{font-size:18px;font-weight:700}
+
+/* help card */
+.hc{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.1fr);gap:14px}
+@media (max-width:820px){.hc{grid-template-columns:1fr}}
+.hform{padding:16px;display:grid;gap:12px;align-content:start}
+.hform label,.hform .ol{font:700 13px var(--jp);display:block;margin-bottom:4px}
+.hform input{width:100%;border:1px solid var(--rule);background:var(--paper);border-radius:4px;padding:7px 9px;font-family:var(--jp)}
+.hform .row{display:flex;flex-wrap:wrap;gap:6px}
+.card{background:#fffdf6;color:#16201b;border-radius:10px;border:3px solid #16201b;overflow:hidden;align-self:start;box-shadow:0 6px 0 rgba(0,0,0,.12)}
+.card rt{color:#5c655f}
+.card .chd{background:#d42f27;color:#fff;display:flex;gap:10px;align-items:center;padding:10px 14px}
+.card .chd rt{color:#fff}
+.card .chd .x{width:34px;height:34px;background:linear-gradient(#fff,#fff) center/34px 10px no-repeat,linear-gradient(#fff,#fff) center/10px 34px no-repeat;flex:none}
+.card .chd h3{font:400 24px var(--display)}
+.card .chd small{display:block;font:500 12px var(--ru)}
+.card .cbd{padding:12px 16px;display:grid;gap:8px;font-family:var(--jp)}
+.card .plea{font-weight:700;font-size:15px;border-bottom:2px dashed #c9cfca;padding-bottom:8px}
+.card dl{display:grid;grid-template-columns:auto minmax(0,1fr);gap:4px 12px;margin:0;font-size:15px}
+.card dt{font-weight:700;color:#5c655f;font-size:13px;align-self:center}
+.card dd{margin:0;font-weight:700;overflow-wrap:anywhere}
+.card .cft{font:500 11px var(--ru);color:#5c655f;border-top:1px solid #c9cfca;padding-top:6px}
+
+/* talk, facts */
+.qs{margin:0;padding-left:24px;display:grid;gap:8px;font-family:var(--jp);font-size:18px}
+.qs li{padding:4px 8px;border-radius:4px}
+.qs li.pick{background:var(--caution);color:var(--caution-ink)}
+.qs li.pick rt{color:var(--caution-ink)}
+.facts{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px}
+.fact{padding:14px;min-width:0}
+.fact h3{font:400 18px var(--display);margin-bottom:6px;color:var(--exit)}
+.fact p{font-size:14px}
+
+/* timer */
+.timer{background:var(--hazard);color:#f1f4f2;border-radius:8px;padding:22px;display:grid;gap:12px;justify-items:center;text-align:center}
+.timer rt{color:#b9c4be}
+.timer h3{font:400 26px var(--display);color:var(--caution)}
+.timer .rule{color:#b9c4be;max-width:56ch}
+.clock{font:400 clamp(60px,14vw,120px)/1 var(--display);font-variant-numeric:tabular-nums;color:#f1f4f2}
+.clock.end{color:var(--sos)}
+.presets,.ctrl{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
+.timer .btn{background:transparent;border-color:#f1f4f2;color:#f1f4f2}
+.timer .btn[aria-pressed="true"]{background:#f1f4f2;color:#16201b}
+.timer .btn[aria-pressed="true"] rt{color:#16201b}
+.timer .btn.primary{background:var(--caution);border-color:var(--caution);color:var(--caution-ink)}
+#miniClock{font-variant-numeric:tabular-nums;background:var(--caution);color:var(--caution-ink);border-color:var(--caution)}
+
+/* final */
+.fin{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);gap:14px}
+@media (max-width:820px){.fin{grid-template-columns:1fr}}
+.book{background:#1b2a6b;color:#f4efd8;border-radius:8px;padding:18px;display:grid;gap:12px;border:4px double #e8c96a}
+.book rt{color:#d8cfa5}
+.book h3{font:400 26px var(--display);color:#e8c96a}
+.slots{display:grid;gap:8px}
+.slot{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:12px;align-items:center;border:2px solid #e8c96a;border-radius:4px;padding:8px 12px;font-family:var(--jp)}
+.slot .ep2{font:400 15px var(--display);color:#e8c96a}
+.slot .st{font:700 12px var(--ru);letter-spacing:.1em;padding:2px 8px;border-radius:3px;border:1px dashed #e8c96a}
+.slot.done .st{background:#e8c96a;color:#1b2a6b;border-style:solid}
+.book .q{font:700 20px var(--jp)}
+.book .btn{background:#e8c96a;border-color:#e8c96a;color:#1b2a6b}
+.book .btn rt{color:#1b2a6b}
+.book .btn.ghost{background:transparent;color:#f4efd8}
+.book .clear{font:400 22px var(--display);color:#e8c96a;text-align:center}
+.kuji{padding:18px;display:grid;gap:12px;justify-items:center;align-content:start}
+.kbox{width:90px;height:120px;border-radius:8px 8px 4px 4px;background:var(--sos);color:#fff;display:grid;place-items:center;font:400 18px var(--display);writing-mode:vertical-rl;letter-spacing:.2em}
+.kbox.shake2{animation:k .25s ease-in-out 4}
+@keyframes k{0%,100%{transform:rotate(0)}25%{transform:rotate(-12deg)}75%{transform:rotate(12deg)}}
+@media (prefers-reduced-motion:reduce){.kbox.shake2{animation:none}}
+.slip{width:100%;border:2px solid var(--ink);border-radius:4px;padding:14px;display:grid;gap:8px;font-family:var(--jp);background:var(--paper)}
+.slip .big{font:400 48px/1 var(--display);color:var(--sos);text-align:center}
+.slip ul{margin:0;padding-left:18px;display:grid;gap:4px}
+.gift{background:var(--exit-soft);border-radius:4px;padding:10px 12px;font-family:var(--ru);font-size:14px}
+.cert{display:grid;grid-template-columns:minmax(0,.8fr) minmax(0,1.2fr);gap:14px;margin-top:14px}
+@media (max-width:820px){.cert{grid-template-columns:1fr}}
+.ci{padding:16px;display:grid;gap:8px;align-content:start}
+.ci input{width:100%;border:1px solid var(--rule);background:var(--paper);border-radius:6px;padding:8px 10px;font-family:var(--jp);font-size:18px}
+.paper{background:#fbf7ea;color:#1b2a6b;border:6px double #1b2a6b;border-radius:4px;padding:22px 24px;display:grid;gap:10px;text-align:center;font-family:var(--jp)}
+.paper rt{color:#5a6390}
+.paper h3{font:400 34px var(--display);letter-spacing:.3em}
+.paper .who{font:700 30px var(--jp);border-bottom:2px solid #1b2a6b;justify-self:center;padding:0 24px 2px;overflow-wrap:anywhere}
+.paper .who small{font-size:16px;margin-left:8px}
+.paper .body{font-size:16px;line-height:1.9}
+.paper .route{font:700 16px var(--jp);background:#1b2a6b;color:#fbf7ea;border-radius:3px;padding:6px 10px}
+.paper .route rt{color:#d8cfa5}
+.paper .sl{font:700 13px var(--jp);letter-spacing:.2em;margin-top:4px}
+.paper .skills{list-style:none;margin:0;padding:0;display:grid;gap:5px;text-align:left;font-size:15px}
+.paper .skills li{display:grid;grid-template-columns:auto minmax(0,1fr);gap:10px;align-items:baseline;border-bottom:1px dotted #9aa0c0;padding-bottom:4px}
+.paper .sk{font:700 11px var(--jp);background:#e8c96a;color:#1b2a6b;border-radius:2px;padding:1px 6px;white-space:nowrap}
+.paper .ru{font:500 12px var(--ru);color:#5a6390}
+.paper .foot{display:flex;justify-content:space-between;align-items:center;text-align:left;font-size:14px}
+.hanko{width:58px;height:58px;border:3px solid #c8372d;color:#c8372d;border-radius:50%;display:grid;place-items:center;font:700 15px/1.05 var(--jp);transform:rotate(-8deg);text-align:center}
+.hanko rt{display:none}
+footer{padding-block:40px 30px;text-align:center;color:var(--muted);font-size:14px}
+
+/* overlays */
+.ovl{position:fixed;inset:0;z-index:30;background:rgba(10,14,12,.82);display:grid;place-items:center;padding:max(16px,env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-right,0px)) max(16px,env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px));overflow:auto}
+[hidden]{display:none!important}
+.sc{background:var(--paper);border-radius:10px;max-width:480px;width:100%;padding:18px;display:grid;gap:12px}
+.sc .warnb{background:var(--caution);color:var(--caution-ink);font:700 13px var(--ru);padding:6px 10px;border-radius:4px}
+.sc h3{font:400 28px var(--display)}
+.sc .pic{background:var(--soft);border-radius:6px;color:var(--ink);max-width:260px;justify-self:center;width:100%}
+.sc .pic svg{display:block;width:100%}
+.sc .j{font-size:18px;line-height:1.7}
+.sc .say2{background:var(--exit-soft);border-radius:4px;padding:10px;font:700 17px/1.7 var(--jp)}
+</style>
+
+<header>
+  <div class="wrap">
+    <div class="pict" aria-hidden="true"><svg viewBox="0 0 100 100"><rect x="38" y="6" width="24" height="88" rx="3" fill="#fff"/><rect x="6" y="38" width="88" height="24" rx="3" fill="#fff"/></svg></div>
+    <div class="title">
+      <div class="kana">たすけて！</div>
+      <h1>SOSクエスト</h1>
+      <div class="lat">Японский, который выручает в поездке</div>
+      <p class="meta">Разговорный клуб Ma Kagami · среда, 25 ноября · N4 · онлайн, 60 минут</p>
+      <div class="ep"><ruby>第<rt>だい</rt></ruby>3<ruby>話<rt>わ</rt></ruby> · финал <ruby>冒険<rt>ぼうけん</rt></ruby>の<ruby>書<rt>しょ</rt></ruby></div>
+    </div>
+  </div>
+</header>
+<div class="hz" aria-hidden="true"></div>
+<div class="wrap dir"><a href="https://claude.ai/artifact/QKBquY4WVevEKFdWmDtqnG" target="_blank" rel="noopener" style="text-align:left">← <ruby>第<rt>だい</rt></ruby>2<ruby>話<rt>わ</rt></ruby> · 18.11 <b>お<ruby>寺<rt>てら</rt></ruby>で<ruby>一服<rt>いっぷく</rt></ruby></b></a><a href="#final">а дальше → <b><ruby>個人<rt>こじん</rt></ruby>レッスン</b></a></div>
+
+<nav class="bar" aria-label="Разделы">
+  <div class="wrap">
+    <a href="#uketsuke"><ruby>受付<rt>うけつけ</rt></ruby><span>вход</span></a>
+    <a href="#words">ことば<span>слова</span></a>
+    <a href="#grammar"><ruby>文法<rt>ぶんぽう</rt></ruby><span>грамматика</span></a>
+    <a href="#shindan"><ruby>診察<rt>しんさつ</rt></ruby><span>врач</span></a>
+    <a href="#yakkyoku"><ruby>薬局<rt>やっきょく</rt></ruby><span>аптека</span></a>
+    <a href="#koban"><ruby>交番<rt>こうばん</rt></ruby><span>потеря</span></a>
+    <a href="#jishin"><ruby>地震<rt>じしん</rt></ruby><span>тревога</span></a>
+    <a href="#call">119<span>звонок</span></a>
+    <a href="#help">カード<span>моя карта</span></a>
+    <a href="#talk">トーク<span>вопросы</span></a>
+    <a href="#facts"><ruby>豆知識<rt>まめちしき</rt></ruby><span>факты</span></a>
+    <a href="#timer">タイマー<span>таймер</span></a>
+    <a href="#final">セーブ<span>финал</span></a>
+    <div class="tools">
+      <button class="chip" id="miniClock" hidden></button>
+      <button class="chip" id="snd" aria-pressed="true" title="Звук тревоги и колокольчика">おと</button>
+      <button class="chip" id="furi" aria-pressed="true" title="Показать или скрыть чтения над кандзи">ふりがな</button>
+    </div>
+  </div>
+</nav>
+
+<main><div class="wrap">
+
+<section id="host" class="host" aria-label="Для ведущего">
+  <div class="hp">
+    <h3>Для ведущего</h3>
+    <p class="note" style="margin-top:6px">Этот блок видно только по ссылке с <b>#host</b> в конце. Участникам ссылка без него. Не показывайте этот блок в демонстрации экрана: здесь ответы и тайные карточки.</p>
+    <p class="lbl">10–17 мин · «どこでしょう？» Где это говорят? Ответ все пишут в чат</p>
+    <ul class="rid"><li><span class="j"><ruby>保険証<rt>ほけんしょう</rt></ruby>はありますか？ こちらに<ruby>名前<rt>なまえ</rt></ruby>を<ruby>書<rt>か</rt></ruby>いてください。</span><button class="btn sm reveal" data-a="&lt;ruby&gt;病院&lt;rt&gt;びょういん&lt;/rt&gt;&lt;/ruby&gt;の&lt;ruby&gt;受付&lt;rt&gt;うけつけ&lt;/rt&gt;&lt;/ruby&gt;">Ответ</button></li><li><span class="j">1<ruby>日<rt>にち</rt></ruby>3<ruby>回<rt>かい</rt></ruby>、<ruby>食後<rt>しょくご</rt></ruby>に<ruby>飲<rt>の</rt></ruby>んでください。<ruby>眠<rt>ねむ</rt></ruby>くなるので、<ruby>運転<rt>うんてん</rt></ruby>はだめですよ。</span><button class="btn sm reveal" data-a="&lt;ruby&gt;薬局&lt;rt&gt;やっきょく&lt;/rt&gt;&lt;/ruby&gt;">Ответ</button></li><li><span class="j">いつ、どこでなくしましたか？ <ruby>何色<rt>なにいろ</rt></ruby>ですか？</span><button class="btn sm reveal" data-a="&lt;ruby&gt;交番&lt;rt&gt;こうばん&lt;/rt&gt;&lt;/ruby&gt;">Ответ</button></li><li><span class="j"><ruby>毛布<rt>もうふ</rt></ruby>と<ruby>水<rt>みず</rt></ruby>はあちらです。<ruby>名前<rt>なまえ</rt></ruby>をここに<ruby>書<rt>か</rt></ruby>いてください。</span><button class="btn sm reveal" data-a="&lt;ruby&gt;避難所&lt;rt&gt;ひなんじょ&lt;/rt&gt;&lt;/ruby&gt;">Ответ</button></li><li><span class="j"><ruby>口<rt>くち</rt></ruby>を<ruby>大<rt>おお</rt></ruby>きく<ruby>開<rt>あ</rt></ruby>けてください。……あ、ここですね。<ruby>痛<rt>いた</rt></ruby>いですか？</span><button class="btn sm reveal" data-a="&lt;ruby&gt;歯医者&lt;rt&gt;はいしゃ&lt;/rt&gt;&lt;/ruby&gt;">Ответ</button></li><li><span class="j"><ruby>火事<rt>かじ</rt></ruby>ですか、<ruby>救急<rt>きゅうきゅう</rt></ruby>ですか？</span><button class="btn sm reveal" data-a="119&lt;ruby&gt;番&lt;rt&gt;ばん&lt;/rt&gt;&lt;/ruby&gt;の&lt;ruby&gt;電話&lt;rt&gt;でんわ&lt;/rt&gt;&lt;/ruby&gt;">Ответ</button></li></ul>
+    <p class="lbl">22–30 мин · тайные карточки пациента для ролевой «врач и пациент» (ссылку пациенту в личку)</p>
+    <div class="links"><div><b><ruby>頭<rt>あたま</rt></ruby>が<ruby>痛<rt>いた</rt></ruby>い</b><button class="btn sm cp" data-url="https://claude.ai/artifact/RhXEqTL7p2KqnzMNKWopvm#sym-atama">Копировать ссылку</button></div><div><b>のどが<ruby>痛<rt>いた</rt></ruby>い</b><button class="btn sm cp" data-url="https://claude.ai/artifact/RhXEqTL7p2KqnzMNKWopvm#sym-nodo">Копировать ссылку</button></div><div><b>おなかが<ruby>痛<rt>いた</rt></ruby>い</b><button class="btn sm cp" data-url="https://claude.ai/artifact/RhXEqTL7p2KqnzMNKWopvm#sym-onaka">Копировать ссылку</button></div><div><b><ruby>歯<rt>は</rt></ruby>が<ruby>痛<rt>いた</rt></ruby>い</b><button class="btn sm cp" data-url="https://claude.ai/artifact/RhXEqTL7p2KqnzMNKWopvm#sym-ha">Копировать ссылку</button></div><div><b><ruby>熱<rt>ねつ</rt></ruby>がある</b><button class="btn sm cp" data-url="https://claude.ai/artifact/RhXEqTL7p2KqnzMNKWopvm#sym-netsu">Копировать ссылку</button></div><div><b>せきが<ruby>出<rt>で</rt></ruby>る</b><button class="btn sm cp" data-url="https://claude.ai/artifact/RhXEqTL7p2KqnzMNKWopvm#sym-seki">Копировать ссылку</button></div><div><b><ruby>鼻水<rt>はなみず</rt></ruby>が<ruby>出<rt>で</rt></ruby>る</b><button class="btn sm cp" data-url="https://claude.ai/artifact/RhXEqTL7p2KqnzMNKWopvm#sym-hana">Копировать ссылку</button></div><div><b><ruby>気分<rt>きぶん</rt></ruby>が<ruby>悪<rt>わる</rt></ruby>い</b><button class="btn sm cp" data-url="https://claude.ai/artifact/RhXEqTL7p2KqnzMNKWopvm#sym-kibun">Копировать ссылку</button></div><div><b><ruby>足<rt>あし</rt></ruby>をけがした</b><button class="btn sm cp" data-url="https://claude.ai/artifact/RhXEqTL7p2KqnzMNKWopvm#sym-ashi">Копировать ссылку</button></div><div><b><ruby>目<rt>め</rt></ruby>がかゆい</b><button class="btn sm cp" data-url="https://claude.ai/artifact/RhXEqTL7p2KqnzMNKWopvm#sym-me">Копировать ссылку</button></div><div><b><ruby>肩<rt>かた</rt></ruby>がこっている</b><button class="btn sm cp" data-url="https://claude.ai/artifact/RhXEqTL7p2KqnzMNKWopvm#sym-kata">Копировать ссылку</button></div><div><b><ruby>二日酔<rt>ふつかよ</rt></ruby>い</b><button class="btn sm cp" data-url="https://claude.ai/artifact/RhXEqTL7p2KqnzMNKWopvm#sym-yoi">Копировать ссылку</button></div></div>
+    <p class="lbl">37–45 мин · тайные карточки «потерпевшего» для 交番 (ссылку в личку, полицейский смотрит на полку)</p>
+    <div class="links"><div><b>1. <ruby>財布<rt>さいふ</rt></ruby> · <ruby>黒<rt>くろ</rt></ruby>・<ruby>長<rt>なが</rt></ruby>い・ねこ</b><button class="btn sm cp" data-url="https://claude.ai/artifact/RhXEqTL7p2KqnzMNKWopvm#lost-w1">Копировать ссылку</button></div><div><b>2. <ruby>財布<rt>さいふ</rt></ruby> · <ruby>黒<rt>くろ</rt></ruby>・<ruby>長<rt>なが</rt></ruby>い・なし</b><button class="btn sm cp" data-url="https://claude.ai/artifact/RhXEqTL7p2KqnzMNKWopvm#lost-w2">Копировать ссылку</button></div><div><b>3. <ruby>財布<rt>さいふ</rt></ruby> · <ruby>黒<rt>くろ</rt></ruby>・<ruby>小<rt>ちい</rt></ruby>さい・ねこ</b><button class="btn sm cp" data-url="https://claude.ai/artifact/RhXEqTL7p2KqnzMNKWopvm#lost-w3">Копировать ссылку</button></div><div><b>4. <ruby>財布<rt>さいふ</rt></ruby> · <ruby>赤<rt>あか</rt></ruby>・<ruby>小<rt>ちい</rt></ruby>さい</b><button class="btn sm cp" data-url="https://claude.ai/artifact/RhXEqTL7p2KqnzMNKWopvm#lost-w4">Копировать ссылку</button></div><div><b>5. <ruby>財布<rt>さいふ</rt></ruby> · <ruby>茶色<rt>ちゃいろ</rt></ruby>・<ruby>長<rt>なが</rt></ruby>い・くま</b><button class="btn sm cp" data-url="https://claude.ai/artifact/RhXEqTL7p2KqnzMNKWopvm#lost-w5">Копировать ссылку</button></div><div><b>6. かさ · ビニール・<ruby>長<rt>なが</rt></ruby>い</b><button class="btn sm cp" data-url="https://claude.ai/artifact/RhXEqTL7p2KqnzMNKWopvm#lost-u1">Копировать ссылку</button></div><div><b>7. かさ · <ruby>黒<rt>くろ</rt></ruby>・<ruby>長<rt>なが</rt></ruby>い</b><button class="btn sm cp" data-url="https://claude.ai/artifact/RhXEqTL7p2KqnzMNKWopvm#lost-u2">Копировать ссылку</button></div><div><b>8. かさ · <ruby>青<rt>あお</rt></ruby>・おりたたみ・<ruby>水玉<rt>みずたま</rt></ruby></b><button class="btn sm cp" data-url="https://claude.ai/artifact/RhXEqTL7p2KqnzMNKWopvm#lost-u3">Копировать ссылку</button></div><div><b>9. かさ · <ruby>黄色<rt>きいろ</rt></ruby>・<ruby>長<rt>なが</rt></ruby>い</b><button class="btn sm cp" data-url="https://claude.ai/artifact/RhXEqTL7p2KqnzMNKWopvm#lost-u4">Копировать ссылку</button></div><div><b>10. スマホ · スマホ・<ruby>黒<rt>くろ</rt></ruby>・ケースなし</b><button class="btn sm cp" data-url="https://claude.ai/artifact/RhXEqTL7p2KqnzMNKWopvm#lost-p1">Копировать ссылку</button></div><div><b>11. スマホ · スマホ・ピンクのケース・ねこ</b><button class="btn sm cp" data-url="https://claude.ai/artifact/RhXEqTL7p2KqnzMNKWopvm#lost-p2">Копировать ссылку</button></div><div><b>12. スマホ · スマホ・<ruby>青<rt>あお</rt></ruby>いケース・<ruby>星<rt>ほし</rt></ruby></b><button class="btn sm cp" data-url="https://claude.ai/artifact/RhXEqTL7p2KqnzMNKWopvm#lost-p3">Копировать ссылку</button></div></div>
+    <p class="lbl">Напоминания</p>
+    <ul>
+      <li>Вход: 「こんばんは。<ruby>受付<rt>うけつけ</rt></ruby>です。どうしましたか？」 Жмёте «Следующий пациент», гость читает свою жалобу, вы читаете «рецепт» с карточки и говорите 「お<ruby>大事<rt>だいじ</rt></ruby>に！」.</li>
+      <li>Врач и пациент: пары в общем зале, остальные слушают и потом пересказывают через 〜そうです. Пациент отвечает только на заданный вопрос, чтобы врач спрашивал больше.</li>
+      <li>Аптека: сначала все вместе читают коробки и отвечают на вопросы, потом одна пара играет <ruby>薬剤師<rt>やくざいし</rt></ruby> и клиента по диалогу.</li>
+      <li>Землетрясение: включите «Share sound», скажите, что звук учебный. Каждую команду участник A говорит B своими словами с причиной (〜から), B задаёт вопрос, A отвечает. Последней дайте команду 「<ruby>落<rt>お</rt></ruby>ち<ruby>着<rt>つ</rt></ruby>いてください」 (двойной клик по тексту команды).</li>
+      <li>119: вы оператор, участник звонит по карточке сценария. Оператор говорит быстро, участник просит 「ゆっくりお<ruby>願<rt>ねが</rt></ruby>いします」.</li>
+      <li>Финал: каждый делает скриншот своей ヘルプカード. Потом 「<ruby>冒険<rt>ぼうけん</rt></ruby>の<ruby>書<rt>しょ</rt></ruby>にセーブしますか？」 → 「はい！」, третий штамп, おみくじ с подарком.</li>
+    </ul>
+  </div>
+</section>
+
+<section id="uketsuke">
+  <div class="sh"><span class="no">STAGE 1</span><h2><ruby>受付<rt>うけつけ</rt></ruby>：どうしましたか？</h2><p>Вход. Каждый гость получает «жалобу дня» и рецепт</p><span class="t">0–10 мин</span></div>
+  <div class="uk">
+    <div class="panel desk">
+      <p class="ask">「どうしましたか？」</p>
+      <div class="top">
+        <button class="btn primary big" id="nextPt">Следующий пациент</button>
+        <button class="btn" id="ptReset">Сначала</button>
+        <span class="note" id="ptCnt"></span>
+      </div>
+      <div class="chart" id="chart" aria-live="polite"></div>
+    </div>
+    <div class="panel warm">
+      <p class="lbl">Разминка по кругу</p>
+      <p class="j"><ruby>旅行<rt>りょこう</rt></ruby>で、トラブルがありましたか？</p>
+      <p class="note">Образец: <ruby>去年<rt>きょねん</rt></ruby>、タイでスマホをなくしてしまいました。でも、ホテルの<ruby>人<rt>ひと</rt></ruby>が<ruby>見<rt>み</rt></ruby>つけてくれました。</p>
+      <div class="tags"><span class="tag">なくす</span><span class="tag"><ruby>忘<rt>わす</rt></ruby>れる</span><span class="tag">かぜをひく</span><span class="tag">おなかをこわす</span><span class="tag"><ruby>道<rt>みち</rt></ruby>に<ruby>迷<rt>まよ</rt></ruby>う</span><span class="tag"><ruby>電車<rt>でんしゃ</rt></ruby>に<ruby>遅<rt>おく</rt></ruby>れる</span><span class="tag"><ruby>盗<rt>ぬす</rt></ruby>まれる</span><span class="tag">けがをする</span></div>
+      <p class="note">Не было трудностей? Скажите: 「ありませんでした。ラッキーです！」 и выберите вопрос из «トーク».</p>
+    </div>
+  </div>
+</section>
+
+<section id="words">
+  <div class="sh"><span class="no">ことば</span><h2>SOSのことば</h2><p>Пять наборов слов и фразы на любой случай</p><span class="t">10–17 мин</span></div>
+  <div class="vgrid"><div class="vg panel"><h3><ruby>体<rt>からだ</rt></ruby>の<ruby>調子<rt>ちょうし</rt></ruby><small>Что болит и как</small></h3><ul class="vl"><li><span class="w"><ruby>頭<rt>あたま</rt></ruby>が<ruby>痛<rt>いた</rt></ruby>い</span><span class="m">болит голова</span><span class="ex"><ruby>朝<rt>あさ</rt></ruby>から<ruby>頭<rt>あたま</rt></ruby>が<ruby>痛<rt>いた</rt></ruby>いんです。</span><span class="exr">С утра болит голова.</span></li><li><span class="w">のど／おなか／<ruby>歯<rt>は</rt></ruby></span><span class="m">горло / живот / зуб</span><span class="ex">のどが<ruby>痛<rt>いた</rt></ruby>くて、<ruby>声<rt>こえ</rt></ruby>が<ruby>出<rt>で</rt></ruby>ません。</span><span class="exr">Болит горло, пропал голос.</span></li><li><span class="w"><ruby>熱<rt>ねつ</rt></ruby>がある</span><span class="m">температура</span><span class="ex"><ruby>熱<rt>ねつ</rt></ruby>が38<ruby>度<rt>ど</rt></ruby>あります。</span><span class="exr">Температура 38.</span></li><li><span class="w">せきが<ruby>出<rt>で</rt></ruby>る</span><span class="m">кашель</span><span class="ex">きのうから、せきが<ruby>出<rt>で</rt></ruby>ます。</span><span class="exr">Со вчера кашляю.</span></li><li><span class="w"><ruby>鼻水<rt>はなみず</rt></ruby>が<ruby>出<rt>で</rt></ruby>る</span><span class="m">насморк</span><span class="ex"><ruby>鼻水<rt>はなみず</rt></ruby>が<ruby>止<rt>と</rt></ruby>まりません。</span><span class="exr">Насморк не проходит.</span></li><li><span class="w"><ruby>気分<rt>きぶん</rt></ruby>が<ruby>悪<rt>わる</rt></ruby>い</span><span class="m">плохо, дурно</span><span class="ex">バスで<ruby>気分<rt>きぶん</rt></ruby>が<ruby>悪<rt>わる</rt></ruby>くなりました。</span><span class="exr">В автобусе стало дурно.</span></li><li><span class="w"><ruby>吐<rt>は</rt></ruby>き<ruby>気<rt>け</rt></ruby>がする</span><span class="m">тошнит</span><span class="ex"><ruby>少<rt>すこ</rt></ruby>し<ruby>吐<rt>は</rt></ruby>き<ruby>気<rt>け</rt></ruby>がします。</span><span class="exr">Немного тошнит.</span></li><li><span class="w"><ruby>寒気<rt>さむけ</rt></ruby>がする</span><span class="m">знобит</span><span class="ex"><ruby>寒気<rt>さむけ</rt></ruby>がして、<ruby>体<rt>からだ</rt></ruby>がだるいです。</span><span class="exr">Знобит, во всём теле слабость.</span></li><li><span class="w">かゆい</span><span class="m">чешется</span><span class="ex"><ruby>目<rt>め</rt></ruby>がかゆいです。</span><span class="exr">Глаза чешутся.</span></li><li><span class="w">けがをする</span><span class="m">пораниться</span><span class="ex"><ruby>足<rt>あし</rt></ruby>をけがしてしまいました。</span><span class="exr">Я повредил(а) ногу.</span></li><li><span class="w">ねんざ</span><span class="m">растяжение</span><span class="ex"><ruby>足首<rt>あしくび</rt></ruby>をねんざしたみたいです。</span><span class="exr">Кажется, растянул(а) лодыжку.</span></li><li><span class="w">やけど</span><span class="m">ожог</span><span class="ex"><ruby>手<rt>て</rt></ruby>にやけどをしました。</span><span class="exr">Обжёг(ла) руку.</span></li><li><span class="w"><ruby>肩<rt>かた</rt></ruby>がこる</span><span class="m">затекли плечи</span><span class="ex">パソコンで<ruby>肩<rt>かた</rt></ruby>がこりました。</span><span class="exr">От компьютера затекли плечи.</span></li></ul></div><div class="vg panel"><h3><ruby>病院<rt>びょういん</rt></ruby>で<small>В клинике</small></h3><ul class="vl"><li><span class="w"><ruby>病院<rt>びょういん</rt></ruby></span><span class="m">больница, клиника</span><span class="ex">この<ruby>近<rt>ちか</rt></ruby>くに<ruby>病院<rt>びょういん</rt></ruby>はありますか？</span><span class="exr">Здесь рядом есть клиника?</span></li><li><span class="w">お<ruby>医者<rt>いしゃ</rt></ruby>さん</span><span class="m">врач</span><span class="ex">お<ruby>医者<rt>いしゃ</rt></ruby>さんに<ruby>見<rt>み</rt></ruby>てもらいました。</span><span class="exr">Меня посмотрел врач.</span></li><li><span class="w"><ruby>受付<rt>うけつけ</rt></ruby></span><span class="m">регистратура</span><span class="ex">まず<ruby>受付<rt>うけつけ</rt></ruby>に<ruby>行<rt>い</rt></ruby>ってください。</span><span class="exr">Сначала подойдите в регистратуру.</span></li><li><span class="w"><ruby>保険証<rt>ほけんしょう</rt></ruby></span><span class="m">страховой полис</span><span class="ex"><ruby>保険証<rt>ほけんしょう</rt></ruby>はありますか？</span><span class="exr">У вас есть полис?</span></li><li><span class="w"><ruby>診察<rt>しんさつ</rt></ruby></span><span class="m">приём, осмотр</span><span class="ex"><ruby>診察<rt>しんさつ</rt></ruby>は<ruby>何時<rt>なんじ</rt></ruby>からですか？</span><span class="exr">Со скольки приём?</span></li><li><span class="w">アレルギー</span><span class="m">аллергия</span><span class="ex">わたしはそばアレルギーです。</span><span class="exr">У меня аллергия на гречку.</span></li><li><span class="w"><ruby>救急車<rt>きゅうきゅうしゃ</rt></ruby></span><span class="m">скорая помощь</span><span class="ex"><ruby>救急車<rt>きゅうきゅうしゃ</rt></ruby>を<ruby>呼<rt>よ</rt></ruby>んでください！</span><span class="exr">Вызовите скорую!</span></li><li><span class="w"><ruby>入院<rt>にゅういん</rt></ruby>する</span><span class="m">лечь в больницу</span><span class="ex"><ruby>三日<rt>みっか</rt></ruby>、<ruby>入院<rt>にゅういん</rt></ruby>しました。</span><span class="exr">Три дня пролежал(а) в больнице.</span></li><li><span class="w">お<ruby>大事<rt>だいじ</rt></ruby>に</span><span class="m">выздоравливайте</span><span class="ex"><ruby>無理<rt>むり</rt></ruby>しないでくださいね。お<ruby>大事<rt>だいじ</rt></ruby>に。</span><span class="exr">Не перенапрягайтесь. Выздоравливайте.</span></li></ul></div><div class="vg panel"><h3><ruby>薬局<rt>やっきょく</rt></ruby>と<ruby>薬<rt>くすり</rt></ruby><small>Аптека и упаковка</small></h3><ul class="vl"><li><span class="w"><ruby>薬局<rt>やっきょく</rt></ruby>／ドラッグストア</span><span class="m">аптека / аптека-магазин</span><span class="ex">ドラッグストアで<ruby>薬<rt>くすり</rt></ruby>を<ruby>買<rt>か</rt></ruby>いました。</span><span class="exr">Купил(а) лекарство в драгсторе.</span></li><li><span class="w">かぜ<ruby>薬<rt>ぐすり</rt></ruby></span><span class="m">от простуды</span><span class="ex">かぜ<ruby>薬<rt>ぐすり</rt></ruby>はどこですか？</span><span class="exr">Где лекарства от простуды?</span></li><li><span class="w"><ruby>痛<rt>いた</rt></ruby>み<ruby>止<rt>ど</rt></ruby>め</span><span class="m">обезболивающее</span><span class="ex"><ruby>頭<rt>あたま</rt></ruby>に<ruby>効<rt>き</rt></ruby>く<ruby>痛<rt>いた</rt></ruby>み<ruby>止<rt>ど</rt></ruby>めはありますか？</span><span class="exr">Есть обезболивающее от головы?</span></li><li><span class="w"><ruby>胃腸薬<rt>いちょうやく</rt></ruby></span><span class="m">для желудка</span><span class="ex"><ruby>食<rt>た</rt></ruby>べすぎたので、<ruby>胃腸薬<rt>いちょうやく</rt></ruby>をください。</span><span class="exr">Я переел(а), дайте что-нибудь для желудка.</span></li><li><span class="w"><ruby>目薬<rt>めぐすり</rt></ruby></span><span class="m">глазные капли</span><span class="ex"><ruby>目薬<rt>めぐすり</rt></ruby>を<ruby>一日<rt>いちにち</rt></ruby>4<ruby>回<rt>かい</rt></ruby>さします。</span><span class="exr">Капаю капли 4 раза в день.</span></li><li><span class="w"><ruby>湿布<rt>しっぷ</rt></ruby></span><span class="m">пластырь-компресс</span><span class="ex"><ruby>足<rt>あし</rt></ruby>に<ruby>湿布<rt>しっぷ</rt></ruby>をはりました。</span><span class="exr">Наклеил(а) компресс на ногу.</span></li><li><span class="w">ばんそうこう</span><span class="m">пластырь</span><span class="ex">ばんそうこうをもらえますか？</span><span class="exr">Можно пластырь?</span></li><li><span class="w"><ruby>酔<rt>よ</rt></ruby>い<ruby>止<rt>ど</rt></ruby>め</span><span class="m">от укачивания</span><span class="ex"><ruby>船<rt>ふね</rt></ruby>に<ruby>乗<rt>の</rt></ruby>る<ruby>前<rt>まえ</rt></ruby>に、<ruby>酔<rt>よ</rt></ruby>い<ruby>止<rt>ど</rt></ruby>めを<ruby>飲<rt>の</rt></ruby>みます。</span><span class="exr">Перед паромом пью таблетку от укачивания.</span></li><li><span class="w"><ruby>効<rt>き</rt></ruby>く</span><span class="m">помогать (о лекарстве)</span><span class="ex">この<ruby>薬<rt>くすり</rt></ruby>はよく<ruby>効<rt>き</rt></ruby>きます。</span><span class="exr">Это лекарство хорошо помогает.</span></li><li><span class="w"><ruby>眠<rt>ねむ</rt></ruby>くなる</span><span class="m">вызывает сонливость</span><span class="ex">この<ruby>薬<rt>くすり</rt></ruby>を<ruby>飲<rt>の</rt></ruby>むと、<ruby>眠<rt>ねむ</rt></ruby>くなりますか？</span><span class="exr">От него клонит в сон?</span></li></ul></div><div class="vg panel"><h3>ラベルの<ruby>漢字<rt>かんじ</rt></ruby><small>Что написано на коробке</small></h3><ul class="vl"><li><span class="w"><ruby>用法<rt>ようほう</rt></ruby>・<ruby>用量<rt>ようりょう</rt></ruby></span><span class="m">способ приёма и доза</span><span class="ex"><ruby>用法<rt>ようほう</rt></ruby>・<ruby>用量<rt>ようりょう</rt></ruby>をよく<ruby>読<rt>よ</rt></ruby>んでください。</span><span class="exr">Внимательно прочитайте, как принимать.</span></li><li><span class="w">1<ruby>日<rt>にち</rt></ruby>3<ruby>回<rt>かい</rt></ruby></span><span class="m">3 раза в день</span><span class="ex">1<ruby>日<rt>にち</rt></ruby>3<ruby>回<rt>かい</rt></ruby><ruby>飲<rt>の</rt></ruby>んでください。</span><span class="exr">Пейте 3 раза в день.</span></li><li><span class="w">1<ruby>回<rt>かい</rt></ruby>2<ruby>錠<rt>じょう</rt></ruby></span><span class="m">по 2 таблетки</span><span class="ex">1<ruby>回<rt>かい</rt></ruby>2<ruby>錠<rt>じょう</rt></ruby>です。</span><span class="exr">По 2 таблетки за раз.</span></li><li><span class="w"><ruby>食後<rt>しょくご</rt></ruby>／<ruby>食前<rt>しょくぜん</rt></ruby></span><span class="m">после еды / до еды</span><span class="ex"><ruby>食後<rt>しょくご</rt></ruby>30<ruby>分<rt>ぷん</rt></ruby>いないに<ruby>飲<rt>の</rt></ruby>みます。</span><span class="exr">Пить в течение 30 минут после еды.</span></li><li><span class="w"><ruby>食間<rt>しょっかん</rt></ruby></span><span class="m">МЕЖДУ едой (не «во время»!)</span><span class="ex"><ruby>食間<rt>しょっかん</rt></ruby>は、ごはんとごはんの<ruby>間<rt>あいだ</rt></ruby>です。</span><span class="exr">Сёккан это промежуток между приёмами пищи.</span></li><li><span class="w"><ruby>寝<rt>ね</rt></ruby>る<ruby>前<rt>まえ</rt></ruby></span><span class="m">перед сном</span><span class="ex"><ruby>寝<rt>ね</rt></ruby>る<ruby>前<rt>まえ</rt></ruby>に1<ruby>錠<rt>じょう</rt></ruby>。</span><span class="exr">1 таблетка перед сном.</span></li><li><span class="w">15<ruby>歳<rt>さい</rt></ruby><ruby>以上<rt>いじょう</rt></ruby></span><span class="m">с 15 лет</span><span class="ex">15<ruby>歳<rt>さい</rt></ruby><ruby>以上<rt>いじょう</rt></ruby>の<ruby>人<rt>ひと</rt></ruby>は2<ruby>錠<rt>じょう</rt></ruby>です。</span><span class="exr">С 15 лет по 2 таблетки.</span></li><li><span class="w">〜まで</span><span class="m">не больше чем</span><span class="ex">1<ruby>日<rt>にち</rt></ruby>2<ruby>回<rt>かい</rt></ruby>までです。</span><span class="exr">Не больше 2 раз в день.</span></li></ul></div><div class="vg panel"><h3><ruby>交番<rt>こうばん</rt></ruby>と<ruby>落<rt>お</rt></ruby>とし<ruby>物<rt>もの</rt></ruby><small>Кобан и потерянные вещи</small></h3><ul class="vl"><li><span class="w"><ruby>交番<rt>こうばん</rt></ruby></span><span class="m">полицейская будка</span><span class="ex"><ruby>交番<rt>こうばん</rt></ruby>はどこですか？</span><span class="exr">Где кобан?</span></li><li><span class="w">おまわりさん</span><span class="m">полицейский</span><span class="ex">おまわりさんに<ruby>聞<rt>き</rt></ruby>きました。</span><span class="exr">Спросил(а) у полицейского.</span></li><li><span class="w"><ruby>落<rt>お</rt></ruby>とし<ruby>物<rt>もの</rt></ruby></span><span class="m">потерянная вещь</span><span class="ex"><ruby>落<rt>お</rt></ruby>とし<ruby>物<rt>もの</rt></ruby>をしてしまいました。</span><span class="exr">Я кое-что потерял(а).</span></li><li><span class="w"><ruby>忘<rt>わす</rt></ruby>れ<ruby>物<rt>もの</rt></ruby></span><span class="m">забытая вещь</span><span class="ex"><ruby>電車<rt>でんしゃ</rt></ruby>に<ruby>忘<rt>わす</rt></ruby>れ<ruby>物<rt>もの</rt></ruby>をしました。</span><span class="exr">Забыл(а) вещь в поезде.</span></li><li><span class="w">なくす／<ruby>落<rt>お</rt></ruby>とす</span><span class="m">потерять / обронить</span><span class="ex"><ruby>財布<rt>さいふ</rt></ruby>をなくしてしまいました。</span><span class="exr">Я потерял(а) кошелёк.</span></li><li><span class="w"><ruby>盗<rt>ぬす</rt></ruby>まれる</span><span class="m">украли (у меня)</span><span class="ex">かばんを<ruby>盗<rt>ぬす</rt></ruby>まれました。</span><span class="exr">У меня украли сумку.</span></li><li><span class="w"><ruby>財布<rt>さいふ</rt></ruby>・かさ・かぎ</span><span class="m">кошелёк, зонт, ключ</span><span class="ex"><ruby>黒<rt>くろ</rt></ruby>い<ruby>財布<rt>さいふ</rt></ruby>と、かぎです。</span><span class="exr">Чёрный кошелёк и ключи.</span></li><li><span class="w"><ruby>中<rt>なか</rt></ruby>に〜が<ruby>入<rt>はい</rt></ruby>っている</span><span class="m">внутри лежит</span><span class="ex"><ruby>中<rt>なか</rt></ruby>にカードが<ruby>入<rt>はい</rt></ruby>っています。</span><span class="exr">Внутри карточка.</span></li><li><span class="w">〜がついている</span><span class="m">к ней прикреплён</span><span class="ex">ねこのキーホルダーがついています。</span><span class="exr">На нём брелок-кошка.</span></li><li><span class="w"><ruby>見<rt>み</rt></ruby>つかる</span><span class="m">найтись</span><span class="ex"><ruby>見<rt>み</rt></ruby>つかったら、<ruby>連絡<rt>れんらく</rt></ruby>します。</span><span class="exr">Если найдётся, позвоним.</span></li></ul></div><div class="vg panel"><h3><ruby>地震<rt>じしん</rt></ruby>と<ruby>緊急<rt>きんきゅう</rt></ruby><small>Землетрясение и экстренные случаи</small></h3><ul class="vl"><li><span class="w"><ruby>地震<rt>じしん</rt></ruby></span><span class="m">землетрясение</span><span class="ex"><ruby>夜<rt>よる</rt></ruby>、<ruby>小<rt>ちい</rt></ruby>さい<ruby>地震<rt>じしん</rt></ruby>がありました。</span><span class="exr">Ночью было небольшое землетрясение.</span></li><li><span class="w"><ruby>揺<rt>ゆ</rt></ruby>れる</span><span class="m">трясти, качаться</span><span class="ex">ビルが<ruby>揺<rt>ゆ</rt></ruby>れています！</span><span class="exr">Здание трясёт!</span></li><li><span class="w"><ruby>震度<rt>しんど</rt></ruby></span><span class="m">сила толчков (шкала 0–7)</span><span class="ex"><ruby>東京<rt>とうきょう</rt></ruby>は<ruby>震度<rt>しんど</rt></ruby>3でした。</span><span class="exr">В Токио было 3 балла.</span></li><li><span class="w"><ruby>津波<rt>つなみ</rt></ruby></span><span class="m">цунами</span><span class="ex"><ruby>津波<rt>つなみ</rt></ruby>の<ruby>心配<rt>しんぱい</rt></ruby>はありません。</span><span class="exr">Угрозы цунами нет.</span></li><li><span class="w"><ruby>避難所<rt>ひなんじょ</rt></ruby></span><span class="m">пункт эвакуации</span><span class="ex"><ruby>避難所<rt>ひなんじょ</rt></ruby>は<ruby>小学校<rt>しょうがっこう</rt></ruby>です。</span><span class="exr">Пункт эвакуации в начальной школе.</span></li><li><span class="w"><ruby>逃<rt>に</rt></ruby>げる</span><span class="m">убегать, спасаться</span><span class="ex"><ruby>高<rt>たか</rt></ruby>いところへ<ruby>逃<rt>に</rt></ruby>げてください！</span><span class="exr">Бегите на возвышенность!</span></li><li><span class="w"><ruby>非常口<rt>ひじょうぐち</rt></ruby></span><span class="m">запасный выход</span><span class="ex"><ruby>非常口<rt>ひじょうぐち</rt></ruby>は<ruby>右<rt>みぎ</rt></ruby>です。</span><span class="exr">Запасный выход справа.</span></li><li><span class="w"><ruby>火事<rt>かじ</rt></ruby></span><span class="m">пожар</span><span class="ex"><ruby>火事<rt>かじ</rt></ruby>だ！</span><span class="exr">Пожар!</span></li><li><span class="w"><ruby>危<rt>あぶ</rt></ruby>ない</span><span class="m">опасно</span><span class="ex"><ruby>危<rt>あぶ</rt></ruby>ない！ <ruby>離<rt>はな</rt></ruby>れて！</span><span class="exr">Опасно! Отойдите!</span></li><li><span class="w">110<ruby>番<rt>ばん</rt></ruby>／119<ruby>番<rt>ばん</rt></ruby></span><span class="m">полиция / пожарные и скорая</span><span class="ex">すぐ119<ruby>番<rt>ばん</rt></ruby>に<ruby>電話<rt>でんわ</rt></ruby>してください。</span><span class="exr">Сразу звоните 119.</span></li></ul></div></div>
+  <div class="filters" role="group" aria-label="Фильтр фраз"><button class="chip" data-f="all" aria-pressed="true">すべて</button><button class="chip" data-f="hosp" aria-pressed="false"><ruby>病院<rt>びょういん</rt></ruby></button><button class="chip" data-f="drug" aria-pressed="false"><ruby>薬局<rt>やっきょく</rt></ruby></button><button class="chip" data-f="koban" aria-pressed="false"><ruby>交番<rt>こうばん</rt></ruby></button><button class="chip" data-f="sos" aria-pressed="false"><ruby>緊急<rt>きんきゅう</rt></ruby></button><button class="chip" data-f="any" aria-pressed="false">いつでも</button></div><ul class="phr" id="phr" data-f="all"><li data-t="any"><span class="pt">いつでも</span><span class="j"><ruby>助<rt>たす</rt></ruby>けて！</span><span class="r">Помогите!</span></li><li data-t="any"><span class="pt">いつでも</span><span class="j">すみません、ちょっといいですか？</span><span class="r">Простите, можно вас на минутку?</span></li><li data-t="any"><span class="pt">いつでも</span><span class="j"><ruby>日本語<rt>にほんご</rt></ruby>が<ruby>少<rt>すこ</rt></ruby>しわかります。ゆっくり<ruby>話<rt>はな</rt></ruby>してください。</span><span class="r">Я немного понимаю по-японски. Говорите медленно, пожалуйста.</span></li><li data-t="any"><span class="pt">いつでも</span><span class="j">もう<ruby>一度<rt>いちど</rt></ruby>お<ruby>願<rt>ねが</rt></ruby>いします。</span><span class="r">Повторите, пожалуйста.</span></li><li data-t="any"><span class="pt">いつでも</span><span class="j">ここに<ruby>書<rt>か</rt></ruby>いてもらえますか？</span><span class="r">Можете написать вот здесь?</span></li><li data-t="any"><span class="pt">いつでも</span><span class="j"><ruby>英語<rt>えいご</rt></ruby>を<ruby>話<rt>はな</rt></ruby>せる<ruby>人<rt>ひと</rt></ruby>はいますか？</span><span class="r">Есть кто-нибудь, кто говорит по-английски?</span></li><li data-t="hosp"><span class="pt"><ruby>病院<rt>びょういん</rt></ruby></span><span class="j">どうしましたか？</span><span class="r">Что случилось? (спрашивает врач)</span></li><li data-t="hosp"><span class="pt"><ruby>病院<rt>びょういん</rt></ruby></span><span class="j">〜が<ruby>痛<rt>いた</rt></ruby>いんです。</span><span class="r">У меня болит 〜.</span></li><li data-t="hosp"><span class="pt"><ruby>病院<rt>びょういん</rt></ruby></span><span class="j">きのうの<ruby>夜<rt>よる</rt></ruby>から<ruby>熱<rt>ねつ</rt></ruby>があります。</span><span class="r">Со вчерашнего вечера температура.</span></li><li data-t="hosp"><span class="pt"><ruby>病院<rt>びょういん</rt></ruby></span><span class="j">わたしは〜アレルギーです。</span><span class="r">У меня аллергия на 〜.</span></li><li data-t="hosp"><span class="pt"><ruby>病院<rt>びょういん</rt></ruby></span><span class="j"><ruby>今<rt>いま</rt></ruby>、ほかの<ruby>薬<rt>くすり</rt></ruby>を<ruby>飲<rt>の</rt></ruby>んでいます。</span><span class="r">Сейчас я принимаю другое лекарство.</span></li><li data-t="drug"><span class="pt"><ruby>薬局<rt>やっきょく</rt></ruby></span><span class="j">〜に<ruby>効<rt>き</rt></ruby>く<ruby>薬<rt>くすり</rt></ruby>はありますか？</span><span class="r">Есть лекарство от 〜?</span></li><li data-t="drug"><span class="pt"><ruby>薬局<rt>やっきょく</rt></ruby></span><span class="j"><ruby>一日<rt>いちにち</rt></ruby>に<ruby>何回<rt>なんかい</rt></ruby><ruby>飲<rt>の</rt></ruby>みますか？</span><span class="r">Сколько раз в день пить?</span></li><li data-t="drug"><span class="pt"><ruby>薬局<rt>やっきょく</rt></ruby></span><span class="j">これを<ruby>飲<rt>の</rt></ruby>むと、<ruby>眠<rt>ねむ</rt></ruby>くなりますか？</span><span class="r">От этого клонит в сон?</span></li><li data-t="drug"><span class="pt"><ruby>薬局<rt>やっきょく</rt></ruby></span><span class="j"><ruby>子<rt>こ</rt></ruby>どもも<ruby>飲<rt>の</rt></ruby>めますか？</span><span class="r">Детям можно?</span></li><li data-t="koban"><span class="pt"><ruby>交番<rt>こうばん</rt></ruby></span><span class="j"><ruby>財布<rt>さいふ</rt></ruby>をなくしてしまいました。</span><span class="r">Я потерял(а) кошелёк.</span></li><li data-t="koban"><span class="pt"><ruby>交番<rt>こうばん</rt></ruby></span><span class="j"><ruby>電車<rt>でんしゃ</rt></ruby>の<ruby>中<rt>なか</rt></ruby>に<ruby>忘<rt>わす</rt></ruby>れてしまいました。</span><span class="r">Я забыл(а) это в поезде.</span></li><li data-t="koban"><span class="pt"><ruby>交番<rt>こうばん</rt></ruby></span><span class="j"><ruby>黒<rt>くろ</rt></ruby>くて、<ruby>長<rt>なが</rt></ruby>い<ruby>財布<rt>さいふ</rt></ruby>です。</span><span class="r">Это чёрный длинный кошелёк.</span></li><li data-t="koban"><span class="pt"><ruby>交番<rt>こうばん</rt></ruby></span><span class="j"><ruby>見<rt>み</rt></ruby>つかったら、ホテルに<ruby>連絡<rt>れんらく</rt></ruby>してください。</span><span class="r">Если найдётся, сообщите в отель.</span></li><li data-t="sos"><span class="pt"><ruby>緊急<rt>きんきゅう</rt></ruby></span><span class="j"><ruby>救急車<rt>きゅうきゅうしゃ</rt></ruby>をお<ruby>願<rt>ねが</rt></ruby>いします。</span><span class="r">Пришлите скорую, пожалуйста.</span></li><li data-t="sos"><span class="pt"><ruby>緊急<rt>きんきゅう</rt></ruby></span><span class="j"><ruby>住所<rt>じゅうしょ</rt></ruby>は、さくらホテルの305<ruby>号室<rt>ごうしつ</rt></ruby>です。</span><span class="r">Адрес: отель «Сакура», номер 305.</span></li><li data-t="sos"><span class="pt"><ruby>緊急<rt>きんきゅう</rt></ruby></span><span class="j"><ruby>避難所<rt>ひなんじょ</rt></ruby>はどこですか？</span><span class="r">Где пункт эвакуации?</span></li><li data-t="sos"><span class="pt"><ruby>緊急<rt>きんきゅう</rt></ruby></span><span class="j"><ruby>大丈夫<rt>だいじょうぶ</rt></ruby>ですか？ けがはありませんか？</span><span class="r">Вы в порядке? Не ранены?</span></li><li data-t="any"><span class="pt">いつでも</span><span class="j">お<ruby>大事<rt>だいじ</rt></ruby>に。</span><span class="r">Выздоравливайте. Берегите себя.</span></li></ul>
+</section>
+
+<section id="grammar">
+  <div class="sh"><span class="no"><ruby>文法<rt>ぶんぽう</rt></ruby></span><h2>Грамматика спасения</h2><p>Пять конструкций, которые звучат в больнице, аптеке и объявлениях</p><span class="t">17–22 мин</span></div>
+  <div class="ggrid"><div class="gr panel"><div class="gh"><span class="gn">1</span><b class="jp">〜んです</b><span>объяснить, что случилось</span></div><ul><li><span class="j">どうしたんですか？ ── おなかが<ruby>痛<rt>いた</rt></ruby>いんです。</span><span class="r">Что случилось? — Живот болит.</span></li><li><span class="j"><ruby>熱<rt>ねつ</rt></ruby>があるんです。だから、<ruby>今日<rt>きょう</rt></ruby>は<ruby>休<rt>やす</rt></ruby>みます。</span><span class="r">У меня температура. Поэтому сегодня отдыхаю.</span></li></ul><p class="note">Форма: обычная форма + んです. な-прил. и сущ.: 〜なんです (<ruby>大変<rt>たいへん</rt></ruby>なんです). Звучит живо и «объясняюще», без неё жалоба звучит как сухой факт.</p></div><div class="gr panel"><div class="gh"><span class="gn">2</span><b class="jp">〜てしまいました</b><span>вот незадача, так вышло</span></div><ul><li><span class="j"><ruby>財布<rt>さいふ</rt></ruby>をなくしてしまいました。</span><span class="r">Я (ох) потерял(а) кошелёк.</span></li><li><span class="j"><ruby>電車<rt>でんしゃ</rt></ruby>にかさを<ruby>忘<rt>わす</rt></ruby>れてしまいました。</span><span class="r">Забыл(а) зонт в поезде.</span></li></ul><p class="note">В разговоре сокращается: 〜ちゃった／〜じゃった (なくしちゃった、<ruby>飲<rt>の</rt></ruby>んじゃった).</p></div><div class="gr panel"><div class="gh"><span class="gn">3</span><b class="jp">〜たほうがいいです</b><span>совет: лучше сделать</span></div><ul><li><span class="j"><ruby>病院<rt>びょういん</rt></ruby>に<ruby>行<rt>い</rt></ruby>ったほうがいいですよ。</span><span class="r">Лучше сходить в клинику.</span></li><li><span class="j"><ruby>今日<rt>きょう</rt></ruby>は、お<ruby>酒<rt>さけ</rt></ruby>を<ruby>飲<rt>の</rt></ruby>まないほうがいいです。</span><span class="r">Сегодня лучше не пить алкоголь.</span></li></ul><p class="note">Совет «сделать»: た-форма + ほうがいい. Совет «не делать»: ない-форма + ほうがいい.</p></div><div class="gr panel"><div class="gh"><span class="gn">4</span><b class="jp">〜てください／〜ないでください</b><span>инструкция и запрет</span></div><ul><li><span class="j"><ruby>机<rt>つくえ</rt></ruby>の<ruby>下<rt>した</rt></ruby>に<ruby>入<rt>はい</rt></ruby>ってください！</span><span class="r">Залезьте под стол!</span></li><li><span class="j">エレベーターを<ruby>使<rt>つか</rt></ruby>わないでください。</span><span class="r">Не пользуйтесь лифтом.</span></li></ul><p class="note">Так звучат все объявления, указатели и надписи на лекарствах. Услышали 〜ないで, значит, нельзя.</p></div><div class="gr panel"><div class="gh"><span class="gn">5</span><b class="jp">〜たら</b><span>если / когда случится</span></div><ul><li><span class="j"><ruby>地震<rt>じしん</rt></ruby>が<ruby>起<rt>お</rt></ruby>きたら、まず<ruby>頭<rt>あたま</rt></ruby>を<ruby>守<rt>まも</rt></ruby>ります。</span><span class="r">Если начнётся землетрясение, сначала защищаю голову.</span></li><li><span class="j"><ruby>見<rt>み</rt></ruby>つかったら、<ruby>連絡<rt>れんらく</rt></ruby>してください。</span><span class="r">Если найдётся, сообщите.</span></li></ul><p class="note">た-форма + ら. Отлично подходит для любого плана «на всякий случай».</p></div><div class="gr panel bonus"><div class="gh"><span class="gn">+</span><b>Бонус для сильных</b></div><ul><li><b class="jp">〜かもしれません</b> <span class="mut">может быть</span><br><span class="j">かぜかもしれません。</span> <span class="r">Может, это простуда.</span></li><li><b class="jp">〜てもいいですか</b> <span class="mut">можно ли</span><br><span class="j">ここで<ruby>待<rt>ま</rt></ruby>ってもいいですか？</span> <span class="r">Можно подождать здесь?</span></li><li><b class="jp">〜ことができますか</b> <span class="mut">можно ли (возможность)</span><br><span class="j">カードで<ruby>払<rt>はら</rt></ruby>うことができますか？</span> <span class="r">Можно оплатить картой?</span></li></ul></div></div>
+</section>
+
+<section id="shindan">
+  <div class="sh"><span class="no">STAGE 2</span><h2><ruby>診察室<rt>しんさつしつ</rt></ruby>：お<ruby>医者<rt>いしゃ</rt></ruby>さんと<ruby>話<rt>はな</rt></ruby>そう</h2><p>Ролевая «врач и пациент»: пациент отвечает по своей карточке, врач расспрашивает и даёт совет</p><span class="t">22–30 мин</span></div>
+  <div class="sd">
+    <div class="panel">
+      <p class="lbl">Как играем (3 пары по 2,5 минуты)</p>
+      <ol class="steps">
+        <li>Пациент открывает тайную карточку (ведущий пришлёт ссылку или кнопка ниже). На ней симптом и подробности: с какого времени, температура, лекарства, аллергия.</li>
+        <li>Врач задаёт вопросы по списку справа. Пациент не говорит всё сразу, отвечает только на то, что спросили.</li>
+        <li>Врач ставит диагноз и даёт два совета: 「〜かもしれませんね。〜たほうがいいですよ。〜てください。」</li>
+        <li>Слушатель пересказывает группе: 「〜さんは、きのうから〜そうです。お<ruby>医者<rt>いしゃ</rt></ruby>さんは〜と<ruby>言<rt>い</rt></ruby>いました。」 Следующая пара: пациент становится врачом.</li>
+      </ol>
+      <button class="btn primary" id="symRand">ひみつのカード пациента</button>
+    </div>
+    <div class="panel">
+      <p class="lbl">Вопросы врача</p>
+      <div class="dlg"><p><b>医</b><span>どうしましたか？ <span class="mut" style="font-family:var(--ru);font-size:13px">Что случилось?</span></span></p><p><b>医</b><span>いつからですか？ <span class="mut" style="font-family:var(--ru);font-size:13px">С какого времени?</span></span></p><p><b>医</b><span><ruby>熱<rt>ねつ</rt></ruby>はありますか？ <span class="mut" style="font-family:var(--ru);font-size:13px">Есть температура?</span></span></p><p><b>医</b><span><ruby>何<rt>なに</rt></ruby>か<ruby>薬<rt>くすり</rt></ruby>を<ruby>飲<rt>の</rt></ruby>みましたか？ <span class="mut" style="font-family:var(--ru);font-size:13px">Принимали какое-нибудь лекарство?</span></span></p><p><b>医</b><span>アレルギーはありますか？ <span class="mut" style="font-family:var(--ru);font-size:13px">Есть аллергия?</span></span></p><p><b>医</b><span>ほかに、<ruby>何<rt>なに</rt></ruby>か<ruby>気<rt>き</rt></ruby>になることはありますか？ <span class="mut" style="font-family:var(--ru);font-size:13px">Что-нибудь ещё беспокоит?</span></span></p></div>
+      <p class="lbl" style="margin-top:6px">Пример конца приёма</p>
+      <div class="dlg">
+        <p><b>医</b><span>かぜかもしれませんね。<ruby>今日<rt>きょう</rt></ruby>は、お<ruby>風呂<rt>ふろ</rt></ruby>に<ruby>入<rt>はい</rt></ruby>らないほうがいいですよ。この<ruby>薬<rt>くすり</rt></ruby>を1<ruby>日<rt>にち</rt></ruby>3<ruby>回<rt>かい</rt></ruby><ruby>飲<rt>の</rt></ruby>んでください。</span></p>
+        <p><b>患</b><span>わかりました。ありがとうございます。</span></p>
+        <p><b>医</b><span>お<ruby>大事<rt>だいじ</rt></ruby>に。</span></p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="yakkyoku">
+  <div class="sh"><span class="no">STAGE 3</span><h2><ruby>薬局<rt>やっきょく</rt></ruby>：ラベルを<ruby>読<rt>よ</rt></ruby>もう</h2><p>Шесть коробок из японской аптеки. Прочитайте, как принимать, и ответьте на вопросы</p><span class="t">30–37 мин</span></div>
+  <div class="meds"><article class="med" style="--m:#2f7fd1"><div class="mtop"><span class="brand">マカガミ</span><b class="cat">かぜ<ruby>薬<rt>ぐすり</rt></ruby></b><span class="mru">от простуды</span></div>
+<div class="mlabel"><span class="lt"><ruby>用法<rt>ようほう</rt></ruby>・<ruby>用量<rt>ようりょう</rt></ruby></span><ul><li>15<ruby>歳<rt>さい</rt></ruby><ruby>以上<rt>いじょう</rt></ruby></li><li>1<ruby>回<rt>かい</rt></ruby>3<ruby>錠<rt>じょう</rt></ruby></li><li>1<ruby>日<rt>にち</rt></ruby>3<ruby>回<rt>かい</rt></ruby><ruby>食後<rt>しょくご</rt></ruby></li></ul><p class="warn"><span class="cb"><ruby>注意<rt>ちゅうい</rt></ruby></span><span><ruby>飲<rt>の</rt></ruby>んだあと、<ruby>眠<rt>ねむ</rt></ruby>くなることがあります。<ruby>車<rt>くるま</rt></ruby>の<ruby>運転<rt>うんてん</rt></ruby>をしないでください。</span></p></div>
+<ol class="mq"><li><span class="j"><ruby>一日<rt>いちにち</rt></ruby>に<ruby>全部<rt>ぜんぶ</rt></ruby>で<ruby>何錠<rt>なんじょう</rt></ruby><ruby>飲<rt>の</rt></ruby>みますか？</span><button class="btn sm reveal" data-a="9&lt;ruby&gt;錠&lt;rt&gt;じょう&lt;/rt&gt;&lt;/ruby&gt;（3&lt;ruby&gt;錠&lt;rt&gt;じょう&lt;/rt&gt;&lt;/ruby&gt;×3&lt;ruby&gt;回&lt;rt&gt;かい&lt;/rt&gt;&lt;/ruby&gt;）">Ответ</button></li><li><span class="j"><ruby>飲<rt>の</rt></ruby>んだあと、<ruby>車<rt>くるま</rt></ruby>を<ruby>運転<rt>うんてん</rt></ruby>してもいいですか？</span><button class="btn sm reveal" data-a="いいえ、だめです。&lt;ruby&gt;眠&lt;rt&gt;ねむ&lt;/rt&gt;&lt;/ruby&gt;くなるからです。">Ответ</button></li></ol></article><article class="med" style="--m:#d7322b"><div class="mtop"><span class="brand">イタミナイ</span><b class="cat"><ruby>痛<rt>いた</rt></ruby>み<ruby>止<rt>ど</rt></ruby>め</b><span class="mru">обезболивающее: голова, зубы</span></div>
+<div class="mlabel"><span class="lt"><ruby>用法<rt>ようほう</rt></ruby>・<ruby>用量<rt>ようりょう</rt></ruby></span><ul><li>15<ruby>歳<rt>さい</rt></ruby><ruby>以上<rt>いじょう</rt></ruby></li><li>1<ruby>回<rt>かい</rt></ruby>1<ruby>錠<rt>じょう</rt></ruby></li><li>1<ruby>日<rt>にち</rt></ruby>2<ruby>回<rt>かい</rt></ruby>まで</li></ul><p class="warn"><span class="cb"><ruby>注意<rt>ちゅうい</rt></ruby></span><span>おなかがすいている<ruby>時<rt>とき</rt></ruby>は、<ruby>飲<rt>の</rt></ruby>まないでください。</span></p></div>
+<ol class="mq"><li><span class="j"><ruby>一日<rt>いちにち</rt></ruby>に<ruby>何回<rt>なんかい</rt></ruby>まで<ruby>飲<rt>の</rt></ruby>めますか？</span><button class="btn sm reveal" data-a="2&lt;ruby&gt;回&lt;rt&gt;かい&lt;/rt&gt;&lt;/ruby&gt;までです。">Ответ</button></li><li><span class="j"><ruby>朝<rt>あさ</rt></ruby>ごはんの<ruby>前<rt>まえ</rt></ruby>に<ruby>飲<rt>の</rt></ruby>んでもいいですか？</span><button class="btn sm reveal" data-a="いいえ。おなかがすいている&lt;ruby&gt;時&lt;rt&gt;とき&lt;/rt&gt;&lt;/ruby&gt;はだめです。">Ответ</button></li></ol></article><article class="med" style="--m:#2b9a6a"><div class="mtop"><span class="brand">ハラスッキリ</span><b class="cat"><ruby>胃腸薬<rt>いちょうやく</rt></ruby></b><span class="mru">для желудка</span></div>
+<div class="mlabel"><span class="lt"><ruby>用法<rt>ようほう</rt></ruby>・<ruby>用量<rt>ようりょう</rt></ruby></span><ul><li>15<ruby>歳<rt>さい</rt></ruby><ruby>以上<rt>いじょう</rt></ruby></li><li>1<ruby>回<rt>かい</rt></ruby>1<ruby>包<rt>ほう</rt></ruby></li><li>1<ruby>日<rt>にち</rt></ruby>3<ruby>回<rt>かい</rt></ruby><ruby>食間<rt>しょっかん</rt></ruby></li></ul><p class="warn"><span class="cb"><ruby>注意<rt>ちゅうい</rt></ruby></span><span><ruby>食間<rt>しょっかん</rt></ruby>：<ruby>食事<rt>しょくじ</rt></ruby>のあと、2<ruby>時間<rt>じかん</rt></ruby>ぐらい。</span></p></div>
+<ol class="mq"><li><span class="j">「<ruby>食間<rt>しょっかん</rt></ruby>」は、ごはんを<ruby>食<rt>た</rt></ruby>べながら<ruby>飲<rt>の</rt></ruby>むことですか？</span><button class="btn sm reveal" data-a="いいえ！ ごはんとごはんの&lt;ruby&gt;間&lt;rt&gt;あいだ&lt;/rt&gt;&lt;/ruby&gt;です。&lt;ruby&gt;食&lt;rt&gt;た&lt;/rt&gt;&lt;/ruby&gt;べてから2&lt;ruby&gt;時間&lt;rt&gt;じかん&lt;/rt&gt;&lt;/ruby&gt;ぐらい。">Ответ</button></li><li><span class="j"><ruby>一日<rt>いちにち</rt></ruby>に<ruby>何包<rt>なんぽう</rt></ruby><ruby>飲<rt>の</rt></ruby>みますか？</span><button class="btn sm reveal" data-a="3&lt;ruby&gt;包&lt;rt&gt;ぽう&lt;/rt&gt;&lt;/ruby&gt;です。">Ответ</button></li></ol></article><article class="med" style="--m:#14a3b8"><div class="mtop"><span class="brand">メスッキリ</span><b class="cat"><ruby>目薬<rt>めぐすり</rt></ruby></b><span class="mru">глазные капли</span></div>
+<div class="mlabel"><span class="lt"><ruby>用法<rt>ようほう</rt></ruby>・<ruby>用量<rt>ようりょう</rt></ruby></span><ul><li>1<ruby>回<rt>かい</rt></ruby>1〜2<ruby>滴<rt>てき</rt></ruby></li><li>1<ruby>日<rt>にち</rt></ruby>5〜6<ruby>回<rt>かい</rt></ruby></li></ul><p class="warn"><span class="cb"><ruby>注意<rt>ちゅうい</rt></ruby></span><span>コンタクトレンズをしたまま、ささないでください。</span></p></div>
+<ol class="mq"><li><span class="j">コンタクトをしていても、さしてもいいですか？</span><button class="btn sm reveal" data-a="いいえ。コンタクトを&lt;ruby&gt;外&lt;rt&gt;はず&lt;/rt&gt;&lt;/ruby&gt;してからさします。">Ответ</button></li><li><span class="j">1<ruby>回<rt>かい</rt></ruby>に<ruby>何滴<rt>なんてき</rt></ruby>さしますか？</span><button class="btn sm reveal" data-a="1〜2&lt;ruby&gt;滴&lt;rt&gt;てき&lt;/rt&gt;&lt;/ruby&gt;です。">Ответ</button></li></ol></article><article class="med" style="--m:#7a5cc7"><div class="mtop"><span class="brand">ノリモノOK</span><b class="cat"><ruby>酔<rt>よ</rt></ruby>い<ruby>止<rt>ど</rt></ruby>め</b><span class="mru">от укачивания</span></div>
+<div class="mlabel"><span class="lt"><ruby>用法<rt>ようほう</rt></ruby>・<ruby>用量<rt>ようりょう</rt></ruby></span><ul><li>15<ruby>歳<rt>さい</rt></ruby><ruby>以上<rt>いじょう</rt></ruby> 1<ruby>回<rt>かい</rt></ruby>2<ruby>錠<rt>じょう</rt></ruby></li><li><ruby>乗<rt>の</rt></ruby>る30<ruby>分<rt>ぷん</rt></ruby><ruby>前<rt>まえ</rt></ruby></li></ul><p class="warn"><span class="cb"><ruby>注意<rt>ちゅうい</rt></ruby></span><span>1<ruby>日<rt>にち</rt></ruby>2<ruby>回<rt>かい</rt></ruby>まで。4<ruby>時間<rt>じかん</rt></ruby><ruby>以上<rt>いじょう</rt></ruby>あけてください。</span></p></div>
+<ol class="mq"><li><span class="j">いつ<ruby>飲<rt>の</rt></ruby>みますか？</span><button class="btn sm reveal" data-a="バスや&lt;ruby&gt;船&lt;rt&gt;ふね&lt;/rt&gt;&lt;/ruby&gt;に&lt;ruby&gt;乗&lt;rt&gt;の&lt;/rt&gt;&lt;/ruby&gt;る30&lt;ruby&gt;分&lt;rt&gt;ぷん&lt;/rt&gt;&lt;/ruby&gt;&lt;ruby&gt;前&lt;rt&gt;まえ&lt;/rt&gt;&lt;/ruby&gt;です。">Ответ</button></li><li><span class="j"><ruby>朝<rt>あさ</rt></ruby>8<ruby>時<rt>じ</rt></ruby>に<ruby>飲<rt>の</rt></ruby>みました。つぎは<ruby>何時<rt>なんじ</rt></ruby>から<ruby>飲<rt>の</rt></ruby>めますか？</span><button class="btn sm reveal" data-a="12&lt;ruby&gt;時&lt;rt&gt;じ&lt;/rt&gt;&lt;/ruby&gt;からです（4&lt;ruby&gt;時間&lt;rt&gt;じかん&lt;/rt&gt;&lt;/ruby&gt;あける）。">Ответ</button></li></ol></article><article class="med" style="--m:#e08a1e"><div class="mtop"><span class="brand">ピタッと</span><b class="cat"><ruby>湿布<rt>しっぷ</rt></ruby></b><span class="mru">компресс от ушиба и боли в мышцах</span></div>
+<div class="mlabel"><span class="lt"><ruby>用法<rt>ようほう</rt></ruby>・<ruby>用量<rt>ようりょう</rt></ruby></span><ul><li>1<ruby>日<rt>にち</rt></ruby>1〜2<ruby>回<rt>かい</rt></ruby></li><li><ruby>痛<rt>いた</rt></ruby>いところにはる</li></ul><p class="warn"><span class="cb"><ruby>注意<rt>ちゅうい</rt></ruby></span><span>けがをしたところや、<ruby>顔<rt>かお</rt></ruby>にははらないでください。</span></p></div>
+<ol class="mq"><li><span class="j">どこにはりますか？</span><button class="btn sm reveal" data-a="&lt;ruby&gt;痛&lt;rt&gt;いた&lt;/rt&gt;&lt;/ruby&gt;いところです。&lt;ruby&gt;足&lt;rt&gt;あし&lt;/rt&gt;&lt;/ruby&gt;や&lt;ruby&gt;肩&lt;rt&gt;かた&lt;/rt&gt;&lt;/ruby&gt;など。">Ответ</button></li><li><span class="j"><ruby>顔<rt>かお</rt></ruby>にはってもいいですか？</span><button class="btn sm reveal" data-a="いいえ、だめです。">Ответ</button></li></ol></article></div>
+  <div class="panel rp">
+    <p class="lbl">Ролевая: в аптеке (1 пара, 2 минуты)</p>
+    <div class="dlg">
+      <p><b>客</b><span>すみません、のどが<ruby>痛<rt>いた</rt></ruby>いんです。のどに<ruby>効<rt>き</rt></ruby>く<ruby>薬<rt>くすり</rt></ruby>はありますか？</span></p>
+      <p><b>薬</b><span>かぜですか？ <ruby>熱<rt>ねつ</rt></ruby>はありますか？</span></p>
+      <p><b>客</b><span><ruby>熱<rt>ねつ</rt></ruby>はありませんが、せきが<ruby>少<rt>すこ</rt></ruby>し<ruby>出<rt>で</rt></ruby>ます。</span></p>
+      <p><b>薬</b><span>じゃあ、こちらのかぜ<ruby>薬<rt>ぐすり</rt></ruby>がいいですよ。1<ruby>日<rt>にち</rt></ruby>3<ruby>回<rt>かい</rt></ruby>、<ruby>食後<rt>しょくご</rt></ruby>に<ruby>飲<rt>の</rt></ruby>んでください。</span></p>
+      <p><b>客</b><span><ruby>眠<rt>ねむ</rt></ruby>くなりますか？ あした、<ruby>車<rt>くるま</rt></ruby>を<ruby>運転<rt>うんてん</rt></ruby>するんです。</span></p>
+      <p><b>薬</b><span>ちょっと<ruby>眠<rt>ねむ</rt></ruby>くなるので、<ruby>運転<rt>うんてん</rt></ruby>の<ruby>前<rt>まえ</rt></ruby>は<ruby>飲<rt>の</rt></ruby>まないほうがいいです。</span></p>
+      <p><b>客</b><span>わかりました。じゃあ、これをください。</span></p>
+      <p><b>薬</b><span>お<ruby>大事<rt>だいじ</rt></ruby>に。</span></p>
+    </div>
+    <p class="note">Поменяйте жалобу на свою с карточки входа. Клиент обязательно задаёт один вопрос из фраз «<ruby>薬局<rt>やっきょく</rt></ruby>».</p>
+  </div>
+</section>
+
+<section id="koban">
+  <div class="sh"><span class="no">STAGE 4</span><h2><ruby>交番<rt>こうばん</rt></ruby>：<ruby>落<rt>お</rt></ruby>とし<ruby>物<rt>もの</rt></ruby>をさがせ</h2><p>Потерпевший описывает свою вещь, полицейский ищет её на полке находок</p><span class="t">37–45 мин</span></div>
+  <div class="kb">
+    <div>
+      <div class="shelf" id="shelf"><button class="item" data-id="w1" aria-label="Вещь 1"><span class="tagn">1</span><svg viewBox="0 0 160 120" aria-hidden="true"><rect x="20" y="30" width="120" height="64" rx="8" fill="#22252b" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/><path d="M20 56.879999999999995 H140" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round" opacity=".55"/><circle cx="126" cy="56.879999999999995" r="4" fill="#d9c27a" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/><circle cx="136" cy="34" r="5" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/><path d="M139 38 L146 52" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/><path d="M139 60 L140 48 L146 55 Z M157 60 L156 48 L150 55 Z" fill="#f2f2f2" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/><circle cx="148" cy="64" r="10" fill="#f2f2f2" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/><circle cx="144.5" cy="63" r="1.6" fill="#1b1f1d"/><circle cx="151.5" cy="63" r="1.6" fill="#1b1f1d"/></svg></button><button class="item" data-id="w2" aria-label="Вещь 2"><span class="tagn">2</span><svg viewBox="0 0 160 120" aria-hidden="true"><rect x="20" y="30" width="120" height="64" rx="8" fill="#22252b" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/><path d="M20 56.879999999999995 H140" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round" opacity=".55"/><circle cx="126" cy="56.879999999999995" r="4" fill="#d9c27a" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/></svg></button><button class="item" data-id="w3" aria-label="Вещь 3"><span class="tagn">3</span><svg viewBox="0 0 160 120" aria-hidden="true"><rect x="42" y="38" width="76" height="56" rx="8" fill="#22252b" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/><path d="M42 61.519999999999996 H118" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round" opacity=".55"/><circle cx="104" cy="61.519999999999996" r="4" fill="#d9c27a" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/><circle cx="114" cy="42" r="5" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/><path d="M117 46 L124 60" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/><path d="M117 68 L118 56 L124 63 Z M135 68 L134 56 L128 63 Z" fill="#f2f2f2" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/><circle cx="126" cy="72" r="10" fill="#f2f2f2" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/><circle cx="122.5" cy="71" r="1.6" fill="#1b1f1d"/><circle cx="129.5" cy="71" r="1.6" fill="#1b1f1d"/></svg></button><button class="item" data-id="w4" aria-label="Вещь 4"><span class="tagn">4</span><svg viewBox="0 0 160 120" aria-hidden="true"><rect x="42" y="38" width="76" height="56" rx="8" fill="#c8372d" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/><path d="M42 61.519999999999996 H118" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round" opacity=".55"/><circle cx="104" cy="61.519999999999996" r="4" fill="#d9c27a" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/></svg></button><button class="item" data-id="w5" aria-label="Вещь 5"><span class="tagn">5</span><svg viewBox="0 0 160 120" aria-hidden="true"><rect x="20" y="30" width="120" height="64" rx="8" fill="#8a5a33" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/><path d="M20 56.879999999999995 H140" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round" opacity=".55"/><circle cx="126" cy="56.879999999999995" r="4" fill="#d9c27a" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/><circle cx="136" cy="34" r="5" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/><path d="M139 38 L146 52" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/><circle cx="140" cy="56" r="4.5" fill="#b07a45" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/><circle cx="156" cy="56" r="4.5" fill="#b07a45" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/><circle cx="148" cy="64" r="10" fill="#b07a45" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/><circle cx="144.5" cy="63" r="1.6" fill="#1b1f1d"/><circle cx="151.5" cy="63" r="1.6" fill="#1b1f1d"/></svg></button><button class="item" data-id="u1" aria-label="Вещь 6"><span class="tagn">6</span><svg viewBox="0 0 160 120" aria-hidden="true"><path d="M24 60 H148" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/><path d="M40 60 Q54 44 120 56 L132 60 L120 64 Q54 76 40 60 Z" fill="#dfeef3" fill-opacity=".55" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/><path d="M58 52 Q80 58 116 59" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round" opacity=".35"/><path d="M24 60 H18 Q4 60 4 74 Q4 86 16 86" fill="none" stroke="#2b2f2d" stroke-width="7" stroke-linecap="round"/><path d="M24 60 H18 Q4 60 4 74 Q4 86 16 86" fill="none" stroke="currentColor" stroke-width="1.2" opacity=".6"/></svg></button><button class="item" data-id="u2" aria-label="Вещь 7"><span class="tagn">7</span><svg viewBox="0 0 160 120" aria-hidden="true"><path d="M24 60 H148" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/><path d="M40 60 Q54 44 120 56 L132 60 L120 64 Q54 76 40 60 Z" fill="#22252b" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/><path d="M58 52 Q80 58 116 59" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round" opacity=".35"/><path d="M24 60 H18 Q4 60 4 74 Q4 86 16 86" fill="none" stroke="#9b6a3c" stroke-width="7" stroke-linecap="round"/><path d="M24 60 H18 Q4 60 4 74 Q4 86 16 86" fill="none" stroke="currentColor" stroke-width="1.2" opacity=".6"/></svg></button><button class="item" data-id="u3" aria-label="Вещь 8"><span class="tagn">8</span><svg viewBox="0 0 160 120" aria-hidden="true"><path d="M40 60 H128" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/><path d="M56 60 Q70 46 100 56 L112 60 L100 64 Q70 74 56 60 Z" fill="#2f7fd1" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/><path d="M74 52 Q96 58 96 59" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round" opacity=".35"/><circle cx="70" cy="58" r="2.6" fill="#ffffff"/><circle cx="82" cy="64" r="2.6" fill="#ffffff"/><circle cx="92" cy="56" r="2.6" fill="#ffffff"/><circle cx="102" cy="62" r="2.6" fill="#ffffff"/><rect x="26" y="54" width="16" height="12" rx="4" fill="#2b2f2d" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/></svg></button><button class="item" data-id="u4" aria-label="Вещь 9"><span class="tagn">9</span><svg viewBox="0 0 160 120" aria-hidden="true"><path d="M24 60 H148" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/><path d="M40 60 Q54 44 120 56 L132 60 L120 64 Q54 76 40 60 Z" fill="#f2b705" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/><path d="M58 52 Q80 58 116 59" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round" opacity=".35"/><path d="M24 60 H18 Q4 60 4 74 Q4 86 16 86" fill="none" stroke="#c8372d" stroke-width="7" stroke-linecap="round"/><path d="M24 60 H18 Q4 60 4 74 Q4 86 16 86" fill="none" stroke="currentColor" stroke-width="1.2" opacity=".6"/></svg></button><button class="item" data-id="p1" aria-label="Вещь 10"><span class="tagn">10</span><svg viewBox="0 0 160 120" aria-hidden="true"><rect x="56" y="10" width="48" height="100" rx="10" fill="#22252b" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/><rect x="62" y="17" width="18" height="24" rx="5" fill="#1b1f1d" stroke="none"/><circle cx="71" cy="24" r="4" fill="#59646b"/><circle cx="71" cy="34" r="4" fill="#59646b"/></svg></button><button class="item" data-id="p2" aria-label="Вещь 11"><span class="tagn">11</span><svg viewBox="0 0 160 120" aria-hidden="true"><rect x="56" y="10" width="48" height="100" rx="10" fill="#e86aa0" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/><rect x="62" y="17" width="18" height="24" rx="5" fill="#1b1f1d" stroke="none"/><circle cx="71" cy="24" r="4" fill="#59646b"/><circle cx="71" cy="34" r="4" fill="#59646b"/><path d="M70 68 L71 56 L77 63 Z M90 68 L89 56 L83 63 Z" fill="#ffffff" stroke="#1b1f1d" stroke-width="1.5"/><circle cx="80" cy="72" r="11" fill="#ffffff" stroke="#1b1f1d" stroke-width="1.5"/><circle cx="76" cy="71" r="1.6" fill="#1b1f1d"/><circle cx="84" cy="71" r="1.6" fill="#1b1f1d"/></svg></button><button class="item" data-id="p3" aria-label="Вещь 12"><span class="tagn">12</span><svg viewBox="0 0 160 120" aria-hidden="true"><rect x="56" y="10" width="48" height="100" rx="10" fill="#2f7fd1" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/><rect x="62" y="17" width="18" height="24" rx="5" fill="#1b1f1d" stroke="none"/><circle cx="71" cy="24" r="4" fill="#59646b"/><circle cx="71" cy="34" r="4" fill="#59646b"/><path d="M80 56 L84.7 66 L95.6 67 L87.4 74.4 L89.8 85 L80 79.6 L70.2 85 L72.6 74.4 L64.4 67 L75.3 66 Z" fill="#f2d24a" stroke="#1b1f1d" stroke-width="1.5"/></svg></button></div>
+      <p class="note" style="margin-top:8px">Пока полицейский спрашивает, остальные вслух предлагают номер и причину: 「3<ruby>番<rt>ばん</rt></ruby>だと<ruby>思<rt>おも</rt></ruby>います。<ruby>小<rt>ちい</rt></ruby>さいですから。」 Полицейский нажимает на вещь: 「これですか？」 Откроется то, что внутри, потерпевший проверяет по своей карточке.</p>
+    </div>
+    <div class="kside">
+      <div class="panel">
+        <p class="lbl">Вопросы полицейского</p>
+        <div class="dlg">
+          <p><b>警</b><span>どうしましたか？</span></p>
+          <p><b>警</b><span>いつ、どこでなくしましたか？</span></p>
+          <p><b>警</b><span><ruby>何色<rt>なにいろ</rt></ruby>ですか？ <ruby>大<rt>おお</rt></ruby>きさは？</span></p>
+          <p><b>警</b><span><ruby>何<rt>なに</rt></ruby>かついていますか？</span></p>
+          <p><b>警</b><span><ruby>中<rt>なか</rt></ruby>に<ruby>何<rt>なに</rt></ruby>が<ruby>入<rt>はい</rt></ruby>っていますか？</span></p>
+        </div>
+        <button class="btn primary" id="lostRand">ひみつのカード потерпевшего</button>
+      </div>
+      <div class="panel">
+        <p class="lbl"><ruby>遺失届<rt>いしつとどけ</rt></ruby> · соберите своё заявление</p>
+        <div class="form" id="rep"></div>
+        <p class="out" id="repOut" aria-live="polite"></p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="jishin">
+  <div class="sh"><span class="no">STAGE 5</span><h2><ruby>地震<rt>じしん</rt></ruby>だ！ <ruby>防災<rt>ぼうさい</rt></ruby>ドリル</h2><p>Учебная тревога: передайте команду соседу и объясните почему</p><span class="t">45–49 мин</span></div>
+  <div class="jz">
+    <div class="alarm" id="alarm">
+      <div class="ah"><span><ruby>地震<rt>じしん</rt></ruby> · <ruby>訓練<rt>くんれん</rt></ruby> (учебная тревога)</span><span id="cmdNo"></span></div>
+      <div class="ab">
+        <div class="sdo"><span class="n" id="sdN">–</span><span id="sdT" class="note">Нажмите «Тревога». Страница покажет силу толчков и первую команду.</span></div>
+        <p class="cmd" id="cmd"><ruby>机<rt>つくえ</rt></ruby>の<ruby>下<rt>した</rt></ruby>に<ruby>入<rt>はい</rt></ruby>ってください！</p>
+        <p class="cmdr" id="cmdR">Залезьте под стол!</p>
+        <p class="j" id="cmdWhy" style="font-size:17px"><span class="lbl" style="font-family:var(--ru)">Почему: </span><ruby>物<rt>もの</rt></ruby>が<ruby>落<rt>お</rt></ruby>ちてくるかもしれませんから。</p>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <button class="btn red big" id="alarmBtn">Тревога</button>
+          <button class="btn" id="cmdNext">Следующая команда</button>
+          <button class="btn" id="cmdRu" aria-pressed="true">Перевод и причина</button>
+        </div>
+      </div>
+    </div>
+    <div class="panel" style="padding:16px;display:grid;gap:10px;align-content:start">
+      <p class="lbl">Правила</p>
+      <ol class="steps">
+        <li>Ведущий жмёт «Тревога»: звук, экран трясётся, появляется команда.</li>
+        <li>Участник A говорит команду соседу B, как испуганному туристу, и добавляет причину: 「Bさん、<ruby>窓<rt>まど</rt></ruby>から<ruby>離<rt>はな</rt></ruby>れてください！ ガラスが<ruby>割<rt>わ</rt></ruby>れるかもしれませんから。」</li>
+        <li>B задаёт вопрос: 「それから、どうしますか？」「<ruby>避難所<rt>ひなんじょ</rt></ruby>はどこですか？」「<ruby>家族<rt>かぞく</rt></ruby>に<ruby>電話<rt>でんわ</rt></ruby>してもいいですか？」 A отвечает как может.</li>
+        <li>Следующая команда: B говорит её C. Со второго круга скройте перевод и причину.</li>
+      </ol>
+      <p class="lbl"><ruby>震度<rt>しんど</rt></ruby> · японская шкала</p>
+      <ul class="shl" id="shl"></ul>
+    </div>
+  </div>
+
+  <div class="call" id="call">
+    <div class="panel">
+      <div class="sh" style="margin:0;border:0;padding:0"><span class="no">STAGE 6</span><h2>119<ruby>番<rt>ばん</rt></ruby>に<ruby>電話<rt>でんわ</rt></ruby></h2><span class="t">49–53 мин</span></div>
+      <p class="note">Ведущий оператор, участник звонит по своей карточке. Номер 119: пожарные и скорая, 110: полиция.</p>
+      <ul class="disp"><li><span class="who">119</span><div><span class="j">はい、119<ruby>番<rt>ばん</rt></ruby>です。<ruby>火事<rt>かじ</rt></ruby>ですか、<ruby>救急<rt>きゅうきゅう</rt></ruby>ですか？</span><span class="r">Алло, 119. Пожар или скорая?</span><span class="hint">Вы: <span class="jp"><ruby>救急<rt>きゅうきゅう</rt></ruby>です。</span></span></div></li><li><span class="who">119</span><div><span class="j"><ruby>住所<rt>じゅうしょ</rt></ruby>を<ruby>教<rt>おし</rt></ruby>えてください。</span><span class="r">Скажите адрес.</span><span class="hint">Вы: <span class="jp">〜ホテルの〜<ruby>号室<rt>ごうしつ</rt></ruby>です。</span></span></div></li><li><span class="who">119</span><div><span class="j">どうしましたか？</span><span class="r">Что случилось?</span><span class="hint">Вы: <span class="jp"><ruby>友<rt>とも</rt></ruby>だちが<ruby>急<rt>きゅう</rt></ruby>に<ruby>倒<rt>たお</rt></ruby>れました。</span></span></div></li><li><span class="who">119</span><div><span class="j">その<ruby>人<rt>ひと</rt></ruby>は<ruby>何歳<rt>なんさい</rt></ruby>ぐらいですか？ <ruby>話<rt>はな</rt></ruby>すことができますか？</span><span class="r">Сколько лет человеку? Может говорить?</span><span class="hint">Вы: <span class="jp">30<ruby>歳<rt>さい</rt></ruby>ぐらいです。<ruby>話<rt>はな</rt></ruby>せません。</span></span></div></li><li><span class="who">119</span><div><span class="j">あなたのお<ruby>名前<rt>なまえ</rt></ruby>と<ruby>電話番号<rt>でんわばんごう</rt></ruby>をお<ruby>願<rt>ねが</rt></ruby>いします。</span><span class="r">Ваше имя и номер телефона.</span><span class="hint">Вы: <span class="jp">アンナです。<ruby>番号<rt>ばんごう</rt></ruby>は〜です。</span></span></div></li><li><span class="who">119</span><div><span class="j">すぐ<ruby>救急車<rt>きゅうきゅうしゃ</rt></ruby>が<ruby>行<rt>い</rt></ruby>きます。そのまま<ruby>待<rt>ま</rt></ruby>っていてください。</span><span class="r">Скорая сейчас приедет. Ждите на месте.</span><span class="hint">Вы: <span class="jp">はい、お<ruby>願<rt>ねが</rt></ruby>いします！</span></span></div></li></ul>
+    </div>
+    <div class="panel">
+      <p class="lbl">Карточка звонящего</p>
+      <div class="scen" id="scen"></div>
+      <button class="btn primary" id="scenBtn">Другая ситуация</button>
+      <p class="note">Если оператор говорит быстро: 「すみません、ゆっくりお<ruby>願<rt>ねが</rt></ruby>いします」. Если не знаете адрес: 「〜の<ruby>近<rt>ちか</rt></ruby>くです」.</p>
+    </div>
+  </div>
+</section>
+
+<section id="help">
+  <div class="sh"><span class="no">STAGE 7</span><h2>ヘルプカード</h2><p>Интервью в парах: сосед задаёт вопросы, вы отвечаете и заполняете свою карточку. Потом скриншот в телефон на поездку</p><span class="t">53–56 мин</span></div>
+  <div class="hc">
+    <div class="panel hform" id="hform"></div>
+    <div class="card" id="hcard"></div>
+  </div>
+  <p class="note" style="margin-top:8px">Вопросы для интервью: 「アレルギーはありますか？」「<ruby>今<rt>いま</rt></ruby>、<ruby>何<rt>なに</rt></ruby>か<ruby>薬<rt>くすり</rt></ruby>を<ruby>飲<rt>の</rt></ruby>んでいますか？」「<ruby>血液型<rt>けつえきがた</rt></ruby>は<ruby>何型<rt>なにがた</rt></ruby>ですか？」「どのホテルに<ruby>泊<rt>と</rt></ruby>まりますか？」 Всё, что вы вводите, остаётся только в этом браузере и никуда не отправляется.</p>
+</section>
+
+<section id="talk">
+  <div class="sh"><span class="no">トーク</span><h2>Вопросы для разговора</h2><p>Отвечаете на вопрос и выбираете вопрос для следующего</p></div>
+  <button class="btn primary" id="rand" style="margin-bottom:12px">Случайный вопрос</button>
+  <ol class="qs" id="qs"><li><ruby>旅行<rt>りょこう</rt></ruby>で、トラブルがありましたか？ どうしましたか？</li><li><ruby>何<rt>なに</rt></ruby>かをなくしたことがありますか？ <ruby>見<rt>み</rt></ruby>つかりましたか？</li><li>かぜをひいたとき、いつも<ruby>何<rt>なに</rt></ruby>をしますか？</li><li>ロシアでは、かぜのとき<ruby>何<rt>なに</rt></ruby>を<ruby>食<rt>た</rt></ruby>べたり<ruby>飲<rt>の</rt></ruby>んだりしますか？</li><li><ruby>病院<rt>びょういん</rt></ruby>と<ruby>歯医者<rt>はいしゃ</rt></ruby>、どちらがこわいですか？</li><li><ruby>地震<rt>じしん</rt></ruby>を<ruby>感<rt>かん</rt></ruby>じたことがありますか？</li><li><ruby>旅行<rt>りょこう</rt></ruby>のかばんに、いつも<ruby>何<rt>なに</rt></ruby>を<ruby>入<rt>い</rt></ruby>れますか？</li><li><ruby>日本<rt>にほん</rt></ruby>で、<ruby>一番<rt>いちばん</rt></ruby>こまりそうなことは<ruby>何<rt>なん</rt></ruby>ですか？</li></ol>
+</section>
+
+<section id="facts">
+  <div class="sh"><span class="no"><ruby>豆知識<rt>まめちしき</rt></ruby></span><h2>Полезно знать</h2><p>Факты для поездки в Японию</p></div>
+  <div class="facts"><div class="panel fact"><h3>110 と 119</h3><p>Полиция 110, пожарные и скорая 119. Скорая в Японии бесплатная. Первый вопрос оператора всегда один: 「<ruby>火事<rt>かじ</rt></ruby>ですか、<ruby>救急<rt>きゅうきゅう</rt></ruby>ですか？」</p></div><div class="panel fact"><h3>Japan Visitor Hotline</h3><p>050-3816-2787: круглосуточная линия Японской туристической организации JNTO на английском, китайском и корейском. Подскажут клинику и помогут при ЧП.</p></div><div class="panel fact"><h3><ruby>交番<rt>こうばん</rt></ruby></h3><p>Маленькие полицейские будки на каждом углу. Там не только ловят воров: подсказывают дорогу, принимают находки и одалживают мелочь на поезд.</p></div><div class="panel fact"><h3>4,49 млрд иен</h3><p>Столько наличных нашли и сдали в полицию Токио в 2024 году, это рекорд. Большая часть вернулась владельцам.</p></div><div class="panel fact"><h3>3 месяца и 10%</h3><p>Если хозяин не нашёлся за 3 месяца, находка достаётся нашедшему. А хозяин по закону благодарит нашедшего: 5–20% стоимости вещи.</p></div><div class="panel fact"><h3><ruby>食間<rt>しょっかん</rt></ruby></h3><p>Главная ловушка на упаковке: это не «во время еды», а «между едой», примерно через 2 часа после неё.</p></div><div class="panel fact"><h3>お<ruby>薬<rt>くすり</rt></ruby><ruby>手帳<rt>てちょう</rt></ruby></h3><p>Книжечка, куда аптека вклеивает каждое выписанное лекарство. Врач в любой клинике сразу видит, что вы принимаете.</p></div><div class="panel fact"><h3><ruby>緊急地震速報<rt>きんきゅうじしんそくほう</rt></ruby></h3><p>За несколько секунд до толчков все телефоны в районе сами включают громкий сигнал. Эту мелодию знает каждый японец.</p></div><div class="panel fact"><h3><ruby>震度<rt>しんど</rt></ruby></h3><p>Японская шкала силы толчков от 0 до 7, но 5 и 6 делятся на 弱 и 強, так что уровней 10. В японских новостях о землетрясении говорят именно 震度, а не магнитуду.</p></div><div class="panel fact"><h3><ruby>防災<rt>ぼうさい</rt></ruby>の<ruby>日<rt>ひ</rt></ruby></h3><p>1 сентября, годовщина Великого землетрясения Канто 1923 года. В школах учения, у детей стёганые капюшоны <ruby>防災<rt>ぼうさい</rt></ruby>ずきん.</p></div></div>
+</section>
+
+<section id="timer">
+  <div class="timer">
+    <h3><ruby>日本語<rt>にほんご</rt></ruby>だけタイム</h3>
+    <p class="rule">Только японский: от приёма у врача до звонка в 119. Перешли на русский? Скажите すみません и продолжайте.</p>
+    <div class="clock" id="clock" role="timer" aria-live="off">25:00</div>
+    <div class="presets" role="group" aria-label="Длительность">
+      <button class="btn" data-m="2" aria-pressed="false">2 <ruby>分<rt>ふん</rt></ruby></button>
+      <button class="btn" data-m="5" aria-pressed="false">5 <ruby>分<rt>ふん</rt></ruby></button>
+      <button class="btn" data-m="10" aria-pressed="false">10 <ruby>分<rt>ぷん</rt></ruby></button>
+      <button class="btn" data-m="25" aria-pressed="true">25 <ruby>分<rt>ふん</rt></ruby></button>
+    </div>
+    <div class="ctrl"><button class="btn primary" id="go">スタート</button><button class="btn" id="reset">Сброс</button></div>
+  </div>
+</section>
+
+<section id="final">
+  <div class="sh"><span class="no">SAVE</span><h2><ruby>冒険<rt>ぼうけん</rt></ruby>の<ruby>書<rt>しょ</rt></ruby> · おみくじ · <ruby>修了証<rt>しゅうりょうしょう</rt></ruby></h2><p>Третья セーブ, квест пройден, сертификат за ноябрь</p><span class="t">56–60 мин</span></div>
+  <div class="fin">
+    <div class="book">
+      <h3><ruby>冒険<rt>ぼうけん</rt></ruby>の<ruby>書<rt>しょ</rt></ruby></h3>
+      <div class="slots">
+        <div class="slot done"><span class="ep2"><ruby>第<rt>だい</rt></ruby>1<ruby>話<rt>わ</rt></ruby></span><span>15.11 · ゲームナイト</span><span class="st">SAVE</span></div>
+        <div class="slot done"><span class="ep2"><ruby>第<rt>だい</rt></ruby>2<ruby>話<rt>わ</rt></ruby></span><span>18.11 · お<ruby>寺<rt>てら</rt></ruby>で<ruby>一服<rt>いっぷく</rt></ruby></span><span class="st">SAVE</span></div>
+        <div class="slot" id="slot3"><span class="ep2"><ruby>第<rt>だい</rt></ruby>3<ruby>話<rt>わ</rt></ruby></span><span>25.11 · SOSクエスト</span><span class="st">…</span></div>
+      </div>
+      <p class="q" id="saveQ"><ruby>冒険<rt>ぼうけん</rt></ruby>の<ruby>書<rt>しょ</rt></ruby>にセーブしますか？</p>
+      <div style="display:flex;gap:8px;flex-wrap:wrap" id="saveBtns"><button class="btn" id="saveYes">はい！</button><button class="btn ghost" id="saveNo">いいえ</button></div>
+      <p class="clear" id="saveOut" aria-live="polite"></p>
+    </div>
+    <div class="panel kuji">
+      <div class="kbox" id="kbox" aria-hidden="true">おみくじ</div>
+      <button class="btn red" id="kujiBtn">おみくじを<ruby>引<rt>ひ</rt></ruby>く</button>
+      <div id="kujiOut" style="width:100%" aria-live="polite"></div>
+    </div>
+  </div>
+  <div class="cert">
+    <div class="panel ci">
+      <label for="certName" class="lbl" style="display:block">Ваше имя катаканой</label>
+      <input id="certName" placeholder="アンナ" maxlength="20">
+      <p class="note">Впишите имя и сделайте скриншот сертификата: он ваш. Потом по кругу каждый читает вслух одну строку из «できるようになったこと» и говорит, какая встреча ноября была самой интересной и почему.</p>
+    </div>
+    <div class="paper">
+      <h3><ruby>修了証<rt>しゅうりょうしょう</rt></ruby></h3>
+      <div class="who"><span id="certWho">アンナ</span><small>さま</small></div>
+      <p class="body">あなたは、Ma Kagami <ruby>日本語<rt>にほんご</rt></ruby><ruby>会話<rt>かいわ</rt></ruby>クラブの11<ruby>月<rt>がつ</rt></ruby>の<ruby>冒険<rt>ぼうけん</rt></ruby>を、<ruby>全部<rt>ぜんぶ</rt></ruby>クリアしました。よくがんばりました。</p>
+      <div class="route">ゲームナイト → お<ruby>寺<rt>てら</rt></ruby>で<ruby>一服<rt>いっぷく</rt></ruby> → SOSクエスト</div>
+      <p class="sl">できるようになったこと</p>
+      <ul class="skills"><li><span class="sk">ゲームナイト</span><span>ゲームやキャラクターについて<ruby>話<rt>はな</rt></ruby>せる</span></li><li><span class="sk">お<ruby>寺<rt>てら</rt></ruby>で<ruby>一服<rt>いっぷく</rt></ruby></span><span>きれいなものについて<ruby>意見<rt>いけん</rt></ruby>が<ruby>言<rt>い</rt></ruby>える</span></li><li><span class="sk">SOSクエスト</span><span>こまった<ruby>時<rt>とき</rt></ruby>、<ruby>病院<rt>びょういん</rt></ruby>や<ruby>交番<rt>こうばん</rt></ruby>で<ruby>説明<rt>せつめい</rt></ruby>できる</span></li><li><span class="sk">SOSクエスト</span><span>アナウンスや<ruby>薬<rt>くすり</rt></ruby>のラベルがわかる</span></li></ul>
+      <p class="ru">Сертификат участника разговорного клуба Ma Kagami, ноябрь 2026 · уровень N4</p>
+      <div class="foot"><span>2026<ruby>年<rt>ねん</rt></ruby>11<ruby>月<rt>がつ</rt></ruby>25<ruby>日<rt>にち</rt></ruby><br>Ma Kagami</span><span class="hanko"><ruby>修<rt>しゅう</rt></ruby><br><ruby>了<rt>りょう</rt></ruby></span></div>
+    </div>
+  </div>
+</section>
+
+<footer>Разговорный клуб Ma Kagami · SOSクエスト · 25.11.2026 · <ruby>第<rt>だい</rt></ruby>3<ruby>話<rt>わ</rt></ruby> · お<ruby>大事<rt>だいじ</rt></ruby>に！</footer>
+</div></main>
+
+<div class="ovl" id="secret" hidden role="dialog" aria-label="Тайная карточка"><div class="sc" id="secretBody"></div></div>
+
+<script>
+(() => {
+  const $ = (s, r = document) => r.querySelector(s), $$ = (s, r = document) => [...r.querySelectorAll(s)];
+  const store = {
+    get(k) { try { return JSON.parse(localStorage.getItem('sos-' + k)); } catch { return null; } },
+    set(k, v) { try { localStorage.setItem('sos-' + k, JSON.stringify(v)); } catch {} }
+  };
+  const D = {"sym": [{"id": "atama", "n": "<ruby>頭<rt>あたま<\/rt><\/ruby>が<ruby>痛<rt>いた<\/rt><\/ruby>い", "say": "きのうから<ruby>頭<rt>あたま<\/rt><\/ruby>が<ruby>痛<rt>いた<\/rt><\/ruby>いんです。", "ru": "Со вчерашнего дня болит голова.", "adv": "<ruby>薬<rt>くすり<\/rt><\/ruby>を<ruby>飲<rt>の<\/rt><\/ruby>んで、<ruby>少<rt>すこ<\/rt><\/ruby>し<ruby>休<rt>やす<\/rt><\/ruby>んだほうがいいですよ。", "g": "держитесь за голову, морщитесь"}, {"id": "nodo", "n": "のどが<ruby>痛<rt>いた<\/rt><\/ruby>い", "say": "のどが<ruby>痛<rt>いた<\/rt><\/ruby>くて、<ruby>声<rt>こえ<\/rt><\/ruby>があまり<ruby>出<rt>で<\/rt><\/ruby>ないんです。", "ru": "Болит горло, почти пропал голос.", "adv": "<ruby>温<rt>あたた<\/rt><\/ruby>かいお<ruby>茶<rt>ちゃ<\/rt><\/ruby>を<ruby>飲<rt>の<\/rt><\/ruby>んだほうがいいですよ。", "g": "трогайте горло, говорите шёпотом без слов"}, {"id": "onaka", "n": "おなかが<ruby>痛<rt>いた<\/rt><\/ruby>い", "say": "<ruby>朝<rt>あさ<\/rt><\/ruby>ごはんのあとで、おなかが<ruby>痛<rt>いた<\/rt><\/ruby>くなったんです。", "ru": "После завтрака заболел живот.", "adv": "<ruby>今日<rt>きょう<\/rt><\/ruby>は、つめたいものを<ruby>食<rt>た<\/rt><\/ruby>べないほうがいいですよ。", "g": "держитесь за живот, сгибайтесь"}, {"id": "ha", "n": "<ruby>歯<rt>は<\/rt><\/ruby>が<ruby>痛<rt>いた<\/rt><\/ruby>い", "say": "あまいものを<ruby>食<rt>た<\/rt><\/ruby>べると、<ruby>歯<rt>は<\/rt><\/ruby>が<ruby>痛<rt>いた<\/rt><\/ruby>いんです。", "ru": "Когда ем сладкое, болит зуб.", "adv": "<ruby>早<rt>はや<\/rt><\/ruby>く<ruby>歯医者<rt>はいしゃ<\/rt><\/ruby>に<ruby>行<rt>い<\/rt><\/ruby>ったほうがいいですよ。", "g": "держитесь за щёку, «едите конфету» и вздрагиваете"}, {"id": "netsu", "n": "<ruby>熱<rt>ねつ<\/rt><\/ruby>がある", "say": "<ruby>熱<rt>ねつ<\/rt><\/ruby>が38<ruby>度<rt>ど<\/rt><\/ruby>あるんです。", "ru": "У меня температура 38.", "adv": "<ruby>病院<rt>びょういん<\/rt><\/ruby>に<ruby>行<rt>い<\/rt><\/ruby>って、たくさん<ruby>寝<rt>ね<\/rt><\/ruby>てください。", "g": "трогайте лоб, «ставьте градусник», дрожите"}, {"id": "seki", "n": "せきが<ruby>出<rt>で<\/rt><\/ruby>る", "say": "せきが<ruby>止<rt>と<\/rt><\/ruby>まらないんです。", "ru": "Не могу перестать кашлять.", "adv": "マスクをしたほうがいいですよ。", "g": "кашляйте (без слов!)"}, {"id": "hana", "n": "<ruby>鼻水<rt>はなみず<\/rt><\/ruby>が<ruby>出<rt>で<\/rt><\/ruby>る", "say": "<ruby>鼻水<rt>はなみず<\/rt><\/ruby>が<ruby>出<rt>で<\/rt><\/ruby>て、くしゃみも<ruby>出<rt>で<\/rt><\/ruby>るんです。", "ru": "Течёт из носа, и ещё чихаю.", "adv": "<ruby>花粉症<rt>かふんしょう<\/rt><\/ruby>かもしれませんね。", "g": "чихайте, «вытирайте нос салфеткой»"}, {"id": "kibun", "n": "<ruby>気分<rt>きぶん<\/rt><\/ruby>が<ruby>悪<rt>わる<\/rt><\/ruby>い", "say": "バスに<ruby>乗<rt>の<\/rt><\/ruby>って、<ruby>気分<rt>きぶん<\/rt><\/ruby>が<ruby>悪<rt>わる<\/rt><\/ruby>くなってしまいました。", "ru": "Поехал(а) на автобусе, и стало дурно.", "adv": "<ruby>次<rt>つぎ<\/rt><\/ruby>は<ruby>酔<rt>よ<\/rt><\/ruby>い<ruby>止<rt>ど<\/rt><\/ruby>めを<ruby>飲<rt>の<\/rt><\/ruby>んだほうがいいですよ。", "g": "«качайтесь в автобусе», бледнейте, прикрывайте рот"}, {"id": "ashi", "n": "<ruby>足<rt>あし<\/rt><\/ruby>をけがした", "say": "<ruby>階段<rt>かいだん<\/rt><\/ruby>で<ruby>転<rt>ころ<\/rt><\/ruby>んで、<ruby>足<rt>あし<\/rt><\/ruby>をけがしてしまいました。", "ru": "Упал(а) на лестнице и повредил(а) ногу.", "adv": "<ruby>湿布<rt>しっぷ<\/rt><\/ruby>をはって、あまり<ruby>歩<rt>ある<\/rt><\/ruby>かないでください。", "g": "хромайте, показывайте на лодыжку"}, {"id": "me", "n": "<ruby>目<rt>め<\/rt><\/ruby>がかゆい", "say": "<ruby>目<rt>め<\/rt><\/ruby>がかゆくて、<ruby>赤<rt>あか<\/rt><\/ruby>いんです。", "ru": "Глаза чешутся и красные.", "adv": "<ruby>目<rt>め<\/rt><\/ruby>をこすらないでください。<ruby>目薬<rt>めぐすり<\/rt><\/ruby>がいいですよ。", "g": "трите глаза, моргайте"}, {"id": "kata", "n": "<ruby>肩<rt>かた<\/rt><\/ruby>がこっている", "say": "パソコンの<ruby>仕事<rt>しごと<\/rt><\/ruby>で、<ruby>肩<rt>かた<\/rt><\/ruby>がとてもこっているんです。", "ru": "От работы за компьютером ужасно затекли плечи.", "adv": "おふろに<ruby>入<rt>はい<\/rt><\/ruby>って、ゆっくり<ruby>休<rt>やす<\/rt><\/ruby>んでください。", "g": "«печатайте», потом крутите плечами и стонете"}, {"id": "yoi", "n": "<ruby>二日酔<rt>ふつかよ<\/rt><\/ruby>い", "say": "きのう<ruby>居酒屋<rt>いざかや<\/rt><\/ruby>で<ruby>飲<rt>の<\/rt><\/ruby>みすぎてしまいました。", "ru": "Вчера перебрал(а) в идзакае.", "adv": "お<ruby>水<rt>みず<\/rt><\/ruby>をたくさん<ruby>飲<rt>の<\/rt><\/ruby>んでください。", "g": "держитесь за голову, «пьёте воду» стакан за стаканом"}, {"id": "kanji", "n": "<ruby>漢字<rt>かんじ<\/rt><\/ruby><ruby>病<rt>びょう<\/rt><\/ruby>", "say": "<ruby>漢字<rt>かんじ<\/rt><\/ruby>を<ruby>見<rt>み<\/rt><\/ruby>ると、<ruby>頭<rt>あたま<\/rt><\/ruby>が<ruby>痛<rt>いた<\/rt><\/ruby>くなるんです。", "ru": "Когда вижу кандзи, начинает болеть голова.", "adv": "<ruby>毎日<rt>まいにち<\/rt><\/ruby>、<ruby>五<rt>いつ<\/rt><\/ruby>つずつ<ruby>覚<rt>おぼ<\/rt><\/ruby>えたほうがいいですよ。", "g": ""}, {"id": "getsu", "n": "<ruby>月曜日<rt>げつようび<\/rt><\/ruby><ruby>病<rt>びょう<\/rt><\/ruby>", "say": "<ruby>月曜日<rt>げつようび<\/rt><\/ruby>の<ruby>朝<rt>あさ<\/rt><\/ruby>になると、<ruby>元気<rt>げんき<\/rt><\/ruby>がなくなるんです。", "ru": "Как наступает утро понедельника, пропадают силы.", "adv": "<ruby>金曜日<rt>きんようび<\/rt><\/ruby>まで、がんばってください！", "g": ""}], "lost": [{"id": "w1", "t": "wallet", "tw": "<ruby>財布<rt>さいふ<\/rt><\/ruby>", "lab": "<ruby>黒<rt>くろ<\/rt><\/ruby>・<ruby>長<rt>なが<\/rt><\/ruby>い・ねこ", "svg": "<svg viewBox=\"0 0 160 120\" aria-hidden=\"true\"><rect x=\"20\" y=\"30\" width=\"120\" height=\"64\" rx=\"8\" fill=\"#22252b\" stroke=\"currentColor\" stroke-width=\"2.5\" stroke-linejoin=\"round\" stroke-linecap=\"round\"/><path d=\"M20 56.879999999999995 H140\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.5\" stroke-linejoin=\"round\" stroke-linecap=\"round\" opacity=\".55\"/><circle cx=\"126\" cy=\"56.879999999999995\" r=\"4\" fill=\"#d9c27a\" stroke=\"currentColor\" stroke-width=\"2.5\" stroke-linejoin=\"round\" stroke-linecap=\"round\"/><circle cx=\"136\" cy=\"34\" r=\"5\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.5\" stroke-linejoin=\"round\" stroke-linecap=\"round\"/><path d=\"M139 38 L146 52\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.5\" stroke-linejoin=\"round\" stroke-linecap=\"round\"/><path d=\"M139 60 L140 48 L146 55 Z M157 60 L156 48 L150 55 Z\" fill=\"#f2f2f2\" stroke=\"currentColor\" stroke-width=\"2.5\" stroke-linejoin=\"round\" stroke-linecap=\"round\"/><circle cx=\"148\" cy=\"64\" r=\"10\" fill=\"#f2f2f2\" stroke=\"currentColor\" stroke-width=\"2.5\" stroke-linejoin=\"round\" stroke-linecap=\"round\"/><circle cx=\"144.5\" cy=\"63\" r=\"1.6\" fill=\"#1b1f1d\"/><circle cx=\"151.5\" cy=\"63\" r=\"1.6\" fill=\"#1b1f1d\"/><\/svg>", "desc": "<ruby>黒<rt>くろ<\/rt><\/ruby>くて、<ruby>長<rt>なが<\/rt><\/ruby>い<ruby>財布<rt>さいふ<\/rt><\/ruby>です。ねこのキーホルダーがついています。", "det": "<ruby>中<rt>なか<\/rt><\/ruby>に、カードと<ruby>犬<rt>いぬ<\/rt><\/ruby>の<ruby>写真<rt>しゃしん<\/rt><\/ruby>が<ruby>入<rt>はい<\/rt><\/ruby>っています。", "when": "きのうの<ruby>夜<rt>よる<\/rt><\/ruby>", "where": "<ruby>電車<rt>でんしゃ<\/rt><\/ruby>の<ruby>中<rt>なか<\/rt><\/ruby>"}, {"id": "w2", "t": "wallet", "tw": "<ruby>財布<rt>さいふ<\/rt><\/ruby>", "lab": "<ruby>黒<rt>くろ<\/rt><\/ruby>・<ruby>長<rt>なが<\/rt><\/ruby>い・なし", "svg": "<svg viewBox=\"0 0 160 120\" aria-hidden=\"true\"><rect x=\"20\" y=\"30\" width=\"120\" height=\"64\" rx=\"8\" fill=\"#22252b\" stroke=\"currentColor\" stroke-width=\"2.5\" stroke-linejoin=\"round\" stroke-linecap=\"round\"/><path d=\"M20 56.879999999999995 H140\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.5\" stroke-linejoin=\"round\" stroke-linecap=\"round\" opacity=\".55\"/><circle cx=\"126\" cy=\"56.879999999999995\" r=\"4\" fill=\"#d9c27a\" stroke=\"currentColor\" stroke-width=\"2.5\" stroke-linejoin=\"round\" stroke-linecap=\"round\"/><\/svg>", "desc": "<ruby>黒<rt>くろ<\/rt><\/ruby>くて、<ruby>長<rt>なが<\/rt><\/ruby>い<ruby>財布<rt>さいふ<\/rt><\/ruby>です。キーホルダーはありません。", "det": "<ruby>中<rt>なか<\/rt><\/ruby>に、1<ruby>万円<rt>まんえん<\/rt><\/ruby>とレシートが<ruby>入<rt>はい<\/rt><\/ruby>っています。", "when": "けさ", "where": "コンビニ"}, {"id": "w3", "t": "wallet", "tw": "<ruby>財布<rt>さいふ<\/rt><\/ruby>", "lab": "<ruby>黒<rt>くろ<\/rt><\/ruby>・<ruby>小<rt>ちい<\/rt><\/ruby>さい・ねこ", "svg": "<svg viewBox=\"0 0 160 120\" aria-hidden=\"true\"><rect x=\"42\" y=\"38\" width=\"76\" height=\"56\" rx=\"8\" fill=\"#22252b\" stroke=\"currentColor\" stroke-width=\"2.5\" stroke-linejoin=\"round\" stroke-linecap=\"round\"/><path d=\"M42 61.519999999999996 H118\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.5\" stroke-linejoin=\"round\" stroke-linecap=\"round\" opacity=\".55\"/><circle cx=\"104\" cy=\"61.519999999999996\" r=\"4\" fill=\"#d9c27a\" stroke=\"currentColor\" stroke-width=\"2.5\" stroke-linejoin=\"round\" stroke-linecap=\"round\"/><circle cx=\"114\" cy=\"42\" r=\"5\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.5\" stroke-linejoin=\"round\" stroke-linecap=\"round\"/><path d=\"M117 46 L124 60\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.5\" stroke-linejoin=\"round\" stroke-linecap=\"round\"/><path d=\"M117 68 L118 56 L124 63 Z M135 68 L134 56 L128 63 Z\" fill=\"#f2f2f2\" stroke=\"currentColor\" stroke-width=\"2.5\" stroke-linejoin=\"round\" stroke-linecap=\"round\"/><circle cx=\"126\" cy=\"72\" r=\"10\" fill=\"#f2f2f2\" stroke=\"currentColor\" stroke-width=\"2.5\" stroke-linejoin=\"round\" stroke-linecap=\"round\"/><circle cx=\"122.5\" cy=\"71\" r=\"1.6\" fill=\"#1b1f1d\"/><circle cx=\"129.5\" cy=\"71\" r=\"1.6\" fill=\"#1b1f1d\"/><\/svg>", "desc": "<ruby>黒<rt>くろ<\/rt><\/ruby>くて、<ruby>小<rt>ちい<\/rt><\/ruby>さい<ruby>財布<rt>さいふ<\/rt><\/ruby>です。ねこのキーホルダーがついています。", "det": "<ruby>中<rt>なか<\/rt><\/ruby>に、コインと<ruby>電車<rt>でんしゃ<\/rt><\/ruby>の<ruby>切符<rt>きっぷ<\/rt><\/ruby>が<ruby>入<rt>はい<\/rt><\/ruby>っています。", "when": "1<ruby>時間<rt>じかん<\/rt><\/ruby><ruby>前<rt>まえ<\/rt><\/ruby>", "where": "<ruby>駅<rt>えき<\/rt><\/ruby>のトイレ"}, {"id": "w4", "t": "wallet", "tw": "<ruby>財布<rt>さいふ<\/rt><\/ruby>", "lab": "<ruby>赤<rt>あか<\/rt><\/ruby>・<ruby>小<rt>ちい<\/rt><\/ruby>さい", "svg": "<svg viewBox=\"0 0 160 120\" aria-hidden=\"true\"><rect x=\"42\" y=\"38\" width=\"76\" height=\"56\" rx=\"8\" fill=\"#c8372d\" stroke=\"currentColor\" stroke-width=\"2.5\" stroke-linejoin=\"round\" stroke-linecap=\"round\"/><path d=\"M42 61.519999999999996 H118\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.5\" stroke-linejoin=\"round\" stroke-linecap=\"round\" opacity=\".55\"/><circle cx=\"104\" cy=\"61.519999999999996\" r=\"4\" fill=\"#d9c27a\" stroke=\"currentColor\" stroke-width=\"2.5\" stroke-linejoin=\"round\" stroke-linecap=\"round\"/><\/svg>", "desc": "<ruby>赤<rt>あか<\/rt><\/ruby>くて、<ruby>小<rt>ちい<\/rt><\/ruby>さい<ruby>財布<rt>さいふ<\/rt><\/ruby>です。", "det": "<ruby>中<rt>なか<\/rt><\/ruby>に、カードとお<ruby>守<rt>まも<\/rt><\/ruby>りが<ruby>入<rt>はい<\/rt><\/ruby>っています。", "when": "おととい", "where": "レストラン"}, {"id": "w5", "t": "wallet", "tw": "<ruby>財布<rt>さいふ<\/rt><\/ruby>", "lab": "<ruby>茶色<rt>ちゃいろ<\/rt><\/ruby>・<ruby>長<rt>なが<\/rt><\/ruby>い・くま", "svg": "<svg viewBox=\"0 0 160 120\" aria-hidden=\"true\"><rect x=\"20\" y=\"30\" width=\"120\" height=\"64\" rx=\"8\" fill=\"#8a5a33\" stroke=\"currentColor\" stroke-width=\"2.5\" stroke-linejoin=\"round\" stroke-linecap=\"round\"/><path d=\"M20 56.879999999999995 H140\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.5\" stroke-linejoin=\"round\" stroke-linecap=\"round\" opacity=\".55\"/><circle cx=\"126\" cy=\"56.879999999999995\" r=\"4\" fill=\"#d9c27a\" stroke=\"currentColor\" stroke-width=\"2.5\" stroke-linejoin=\"round\" stroke-linecap=\"round\"/><circle cx=\"136\" cy=\"34\" r=\"5\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.5\" stroke-linejoin=\"round\" stroke-linecap=\"round\"/><path d=\"M139 38 L146 52\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.5\" stroke-linejoin=\"round\" stroke-linecap=\"round\"/><circle cx=\"140\" cy=\"56\" r=\"4.5\" fill=\"#b07a45\" stroke=\"currentColor\" stroke-width=\"2.5\" stroke-linejoin=\"round\" stroke-linecap=\"round\"/><circle cx=\"156\" cy=\"56\" r=\"4.5\" fill=\"#b07a45\" stroke=\"currentColor\" stroke-width=\"2.5\" stroke-linejoin=\"round\" stroke-linecap=\"round\"/><circle cx=\"148\" cy=\"64\" r=\"10\" fill=\"#b07a45\" stroke=\"currentColor\" stroke-width=\"2.5\" stroke-linejoin=\"round\" stroke-linecap=\"round\"/><circle cx=\"144.5\" cy=\"63\" r=\"1.6\" fill=\"#1b1f1d\"/><circle cx=\"151.5\" cy=\"63\" r=\"1.6\" fill=\"#1b1f1d\"/><\/svg>", "desc": "<ruby>茶色<rt>ちゃいろ<\/rt><\/ruby>で、<ruby>長<rt>なが<\/rt><\/ruby>い<ruby>財布<rt>さいふ<\/rt><\/ruby>です。くまのキーホルダーがついています。", "det": "<ruby>中<rt>なか<\/rt><\/ruby>に、パスポートのコピーと<ruby>千円<rt>せんえん<\/rt><\/ruby>が<ruby>入<rt>はい<\/rt><\/ruby>っています。", "when": "きのうの<ruby>昼<rt>ひる<\/rt><\/ruby>", "where": "タクシー"}, {"id": "u1", "t": "umbrella", "tw": "かさ", "lab": "ビニール・<ruby>長<rt>なが<\/rt><\/ruby>い", "svg": "<svg viewBox=\"0 0 160 120\" aria-hidden=\"true\"><path d=\"M24 60 H148\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.5\" stroke-linejoin=\"round\" stroke-linecap=\"round\"/><path d=\"M40 60 Q54 44 120 56 L132 60 L120 64 Q54 76 40 60 Z\" fill=\"#dfeef3\" fill-opacity=\".55\" stroke=\"currentColor\" stroke-width=\"2.5\" stroke-linejoin=\"round\" stroke-linecap=\"round\"/><path d=\"M58 52 Q80 58 116 59\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.5\" stroke-linejoin=\"round\" stroke-linecap=\"round\" opacity=\".35\"/><path d=\"M24 60 H18 Q4 60 4 74 Q4 86 16 86\" fill=\"none\" stroke=\"#2b2f2d\" stroke-width=\"7\" stroke-linecap=\"round\"/><path d=\"M24 60 H18 Q4 60 4 74 Q4 86 16 86\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.2\" opacity=\".6\"/><\/svg>", "desc": "<ruby>白<rt>しろ<\/rt><\/ruby>いビニールの、<ruby>長<rt>なが<\/rt><\/ruby>いかさです。", "det": "<ruby>手<rt>て<\/rt><\/ruby>のところに、<ruby>名前<rt>なまえ<\/rt><\/ruby>のシールがあります：「アンナ」。", "when": "きのうの<ruby>夕方<rt>ゆうがた<\/rt><\/ruby>", "where": "コンビニ"}, {"id": "u2", "t": "umbrella", "tw": "かさ", "lab": "<ruby>黒<rt>くろ<\/rt><\/ruby>・<ruby>長<rt>なが<\/rt><\/ruby>い", "svg": "<svg viewBox=\"0 0 160 120\" aria-hidden=\"true\"><path d=\"M24 60 H148\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.5\" stroke-linejoin=\"round\" stroke-linecap=\"round\"/><path d=\"M40 60 Q54 44 120 56 L132 60 L120 64 Q54 76 40 60 Z\" fill=\"#22252b\" stroke=\"currentColor\" stroke-width=\"2.5\" stroke-linejoin=\"round\" stroke-linecap=\"round\"/><path d=\"M58 52 Q80 58 116 59\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.5\" stroke-linejoin=\"round\" stroke-linecap=\"round\" opacity=\".35\"/><path d=\"M24 60 H18 Q4 60 4 74 Q4 86 16 86\" fill=\"none\" stroke=\"#9b6a3c\" stroke-width=\"7\" stroke-linecap=\"round\"/><path d=\"M24 60 H18 Q4 60 4 74 Q4 86 16 86\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.2\" opacity=\".6\"/><\/svg>", "desc": "<ruby>黒<rt>くろ<\/rt><\/ruby>くて、<ruby>長<rt>なが<\/rt><\/ruby>いかさです。", "det": "<ruby>手<rt>て<\/rt><\/ruby>のところが、<ruby>木<rt>き<\/rt><\/ruby>です。", "when": "けさ", "where": "<ruby>電車<rt>でんしゃ<\/rt><\/ruby>の<ruby>中<rt>なか<\/rt><\/ruby>"}, {"id": "u3", "t": "umbrella", "tw": "かさ", "lab": "<ruby>青<rt>あお<\/rt><\/ruby>・おりたたみ・<ruby>水玉<rt>みずたま<\/rt><\/ruby>", "svg": "<svg viewBox=\"0 0 160 120\" aria-hidden=\"true\"><path d=\"M40 60 H128\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.5\" stroke-linejoin=\"round\" stroke-linecap=\"round\"/><path d=\"M56 60 Q70 46 100 56 L112 60 L100 64 Q70 74 56 60 Z\" fill=\"#2f7fd1\" stroke=\"currentColor\" stroke-width=\"2.5\" stroke-linejoin=\"round\" stroke-linecap=\"round\"/><path d=\"M74 52 Q96 58 96 59\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.5\" stroke-linejoin=\"round\" stroke-linecap=\"round\" opacity=\".35\"/><circle cx=\"70\" cy=\"58\" r=\"2.6\" fill=\"#ffffff\"/><circle cx=\"82\" cy=\"64\" r=\"2.6\" fill=\"#ffffff\"/><circle cx=\"92\" cy=\"56\" r=\"2.6\" fill=\"#ffffff\"/><circle cx=\"102\" cy=\"62\" r=\"2.6\" fill=\"#ffffff\"/><rect x=\"26\" y=\"54\" width=\"16\" height=\"12\" rx=\"4\" fill=\"#2b2f2d\" stroke=\"currentColor\" stroke-width=\"2.5\" stroke-linejoin=\"round\" stroke-linecap=\"round\"/><\/svg>", "desc": "<ruby>青<rt>あお<\/rt><\/ruby>くて、おりたたみのかさです。<ruby>白<rt>しろ<\/rt><\/ruby>い<ruby>水玉<rt>みずたま<\/rt><\/ruby>があります。", "det": "<ruby>黒<rt>くろ<\/rt><\/ruby>いケースに<ruby>入<rt>はい<\/rt><\/ruby>っています。", "when": "おととい", "where": "<ruby>公園<rt>こうえん<\/rt><\/ruby>のベンチ"}, {"id": "u4", "t": "umbrella", "tw": "かさ", "lab": "<ruby>黄色<rt>きいろ<\/rt><\/ruby>・<ruby>長<rt>なが<\/rt><\/ruby>い", "svg": "<svg viewBox=\"0 0 160 120\" aria-hidden=\"true\"><path d=\"M24 60 H148\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.5\" stroke-linejoin=\"round\" stroke-linecap=\"round\"/><path d=\"M40 60 Q54 44 120 56 L132 60 L120 64 Q54 76 40 60 Z\" fill=\"#f2b705\" stroke=\"currentColor\" stroke-width=\"2.5\" stroke-linejoin=\"round\" stroke-linecap=\"round\"/><path d=\"M58 52 Q80 58 116 59\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.5\" stroke-linejoin=\"round\" stroke-linecap=\"round\" opacity=\".35\"/><path d=\"M24 60 H18 Q4 60 4 74 Q4 86 16 86\" fill=\"none\" stroke=\"#c8372d\" stroke-width=\"7\" stroke-linecap=\"round\"/><path d=\"M24 60 H18 Q4 60 4 74 Q4 86 16 86\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.2\" opacity=\".6\"/><\/svg>", "desc": "<ruby>黄色<rt>きいろ<\/rt><\/ruby>くて、<ruby>長<rt>なが<\/rt><\/ruby>いかさです。", "det": "<ruby>子<rt>こ<\/rt><\/ruby>どものかさです。<ruby>手<rt>て<\/rt><\/ruby>のところが<ruby>赤<rt>あか<\/rt><\/ruby>いです。", "when": "1<ruby>時間<rt>じかん<\/rt><\/ruby><ruby>前<rt>まえ<\/rt><\/ruby>", "where": "バス"}, {"id": "p1", "t": "phone", "tw": "スマホ", "lab": "スマホ・<ruby>黒<rt>くろ<\/rt><\/ruby>・ケースなし", "svg": "<svg viewBox=\"0 0 160 120\" aria-hidden=\"true\"><rect x=\"56\" y=\"10\" width=\"48\" height=\"100\" rx=\"10\" fill=\"#22252b\" stroke=\"currentColor\" stroke-width=\"2.5\" stroke-linejoin=\"round\" stroke-linecap=\"round\"/><rect x=\"62\" y=\"17\" width=\"18\" height=\"24\" rx=\"5\" fill=\"#1b1f1d\" stroke=\"none\"/><circle cx=\"71\" cy=\"24\" r=\"4\" fill=\"#59646b\"/><circle cx=\"71\" cy=\"34\" r=\"4\" fill=\"#59646b\"/><\/svg>", "desc": "<ruby>黒<rt>くろ<\/rt><\/ruby>いスマホです。ケースはありません。", "det": "<ruby>待<rt>ま<\/rt><\/ruby>ち<ruby>受<rt>う<\/rt><\/ruby>けは<ruby>富士山<rt>ふじさん<\/rt><\/ruby>の<ruby>写真<rt>しゃしん<\/rt><\/ruby>です。", "when": "きのうの<ruby>夜<rt>よる<\/rt><\/ruby>", "where": "<ruby>居酒屋<rt>いざかや<\/rt><\/ruby>"}, {"id": "p2", "t": "phone", "tw": "スマホ", "lab": "スマホ・ピンクのケース・ねこ", "svg": "<svg viewBox=\"0 0 160 120\" aria-hidden=\"true\"><rect x=\"56\" y=\"10\" width=\"48\" height=\"100\" rx=\"10\" fill=\"#e86aa0\" stroke=\"currentColor\" stroke-width=\"2.5\" stroke-linejoin=\"round\" stroke-linecap=\"round\"/><rect x=\"62\" y=\"17\" width=\"18\" height=\"24\" rx=\"5\" fill=\"#1b1f1d\" stroke=\"none\"/><circle cx=\"71\" cy=\"24\" r=\"4\" fill=\"#59646b\"/><circle cx=\"71\" cy=\"34\" r=\"4\" fill=\"#59646b\"/><path d=\"M70 68 L71 56 L77 63 Z M90 68 L89 56 L83 63 Z\" fill=\"#ffffff\" stroke=\"#1b1f1d\" stroke-width=\"1.5\"/><circle cx=\"80\" cy=\"72\" r=\"11\" fill=\"#ffffff\" stroke=\"#1b1f1d\" stroke-width=\"1.5\"/><circle cx=\"76\" cy=\"71\" r=\"1.6\" fill=\"#1b1f1d\"/><circle cx=\"84\" cy=\"71\" r=\"1.6\" fill=\"#1b1f1d\"/><\/svg>", "desc": "<ruby>白<rt>しろ<\/rt><\/ruby>いスマホで、ピンクのケースです。ねこのシールがはってあります。", "det": "<ruby>待<rt>ま<\/rt><\/ruby>ち<ruby>受<rt>う<\/rt><\/ruby>けは<ruby>家族<rt>かぞく<\/rt><\/ruby>の<ruby>写真<rt>しゃしん<\/rt><\/ruby>です。", "when": "けさ", "where": "タクシー"}, {"id": "p3", "t": "phone", "tw": "スマホ", "lab": "スマホ・<ruby>青<rt>あお<\/rt><\/ruby>いケース・<ruby>星<rt>ほし<\/rt><\/ruby>", "svg": "<svg viewBox=\"0 0 160 120\" aria-hidden=\"true\"><rect x=\"56\" y=\"10\" width=\"48\" height=\"100\" rx=\"10\" fill=\"#2f7fd1\" stroke=\"currentColor\" stroke-width=\"2.5\" stroke-linejoin=\"round\" stroke-linecap=\"round\"/><rect x=\"62\" y=\"17\" width=\"18\" height=\"24\" rx=\"5\" fill=\"#1b1f1d\" stroke=\"none\"/><circle cx=\"71\" cy=\"24\" r=\"4\" fill=\"#59646b\"/><circle cx=\"71\" cy=\"34\" r=\"4\" fill=\"#59646b\"/><path d=\"M80 56 L84.7 66 L95.6 67 L87.4 74.4 L89.8 85 L80 79.6 L70.2 85 L72.6 74.4 L64.4 67 L75.3 66 Z\" fill=\"#f2d24a\" stroke=\"#1b1f1d\" stroke-width=\"1.5\"/><\/svg>", "desc": "<ruby>黒<rt>くろ<\/rt><\/ruby>いスマホで、<ruby>青<rt>あお<\/rt><\/ruby>いケースです。<ruby>星<rt>ほし<\/rt><\/ruby>のシールがはってあります。", "det": "<ruby>待<rt>ま<\/rt><\/ruby>ち<ruby>受<rt>う<\/rt><\/ruby>けは<ruby>猫<rt>ねこ<\/rt><\/ruby>の<ruby>写真<rt>しゃしん<\/rt><\/ruby>です。", "when": "1<ruby>時間<rt>じかん<\/rt><\/ruby><ruby>前<rt>まえ<\/rt><\/ruby>", "where": "<ruby>駅<rt>えき<\/rt><\/ruby>のベンチ"}], "rep": {"when": ["きのうの<ruby>夜<rt>よる<\/rt><\/ruby>", "けさ", "1<ruby>時間<rt>じかん<\/rt><\/ruby><ruby>前<rt>まえ<\/rt><\/ruby>", "おととい", "きのうの<ruby>昼<rt>ひる<\/rt><\/ruby>", "きのうの<ruby>夕方<rt>ゆうがた<\/rt><\/ruby>"], "where": ["<ruby>電車<rt>でんしゃ<\/rt><\/ruby>の<ruby>中<rt>なか<\/rt><\/ruby>", "<ruby>駅<rt>えき<\/rt><\/ruby>のトイレ", "コンビニ", "レストラン", "タクシー", "<ruby>公園<rt>こうえん<\/rt><\/ruby>のベンチ", "バス", "<ruby>居酒屋<rt>いざかや<\/rt><\/ruby>"], "what": ["<ruby>財布<rt>さいふ<\/rt><\/ruby>", "かさ", "スマホ", "かばん", "パスポート", "かぎ"], "color": [["<ruby>黒<rt>くろ<\/rt><\/ruby>くて", "#22252b"], ["<ruby>白<rt>しろ<\/rt><\/ruby>くて", "#ffffff"], ["<ruby>赤<rt>あか<\/rt><\/ruby>くて", "#c8372d"], ["<ruby>青<rt>あお<\/rt><\/ruby>くて", "#2f7fd1"], ["<ruby>黄色<rt>きいろ<\/rt><\/ruby>くて", "#f2b705"], ["<ruby>茶色<rt>ちゃいろ<\/rt><\/ruby>で", "#8a5a33"], ["ピンクで", "#e86aa0"]], "size": ["<ruby>長<rt>なが<\/rt><\/ruby>い", "<ruby>小<rt>ちい<\/rt><\/ruby>さい", "<ruby>大<rt>おお<\/rt><\/ruby>きい", "おりたたみの"], "extra": ["", "ねこのキーホルダーがついています。", "くまのキーホルダーがついています。", "<ruby>星<rt>ほし<\/rt><\/ruby>のシールがはってあります。", "<ruby>名前<rt>なまえ<\/rt><\/ruby>が<ruby>書<rt>か<\/rt><\/ruby>いてあります。", "<ruby>水玉<rt>みずたま<\/rt><\/ruby>があります。"]}, "quake": [["<ruby>机<rt>つくえ<\/rt><\/ruby>の<ruby>下<rt>した<\/rt><\/ruby>に<ruby>入<rt>はい<\/rt><\/ruby>ってください！", "Залезьте под стол!", "<ruby>物<rt>もの<\/rt><\/ruby>が<ruby>落<rt>お<\/rt><\/ruby>ちてくるかもしれませんから。"], ["<ruby>頭<rt>あたま<\/rt><\/ruby>を<ruby>守<rt>まも<\/rt><\/ruby>ってください！", "Защитите голову!", "<ruby>頭<rt>あたま<\/rt><\/ruby>のけがが<ruby>一番<rt>いちばん<\/rt><\/ruby><ruby>危<rt>あぶ<\/rt><\/ruby>ないですから。"], ["<ruby>窓<rt>まど<\/rt><\/ruby>から<ruby>離<rt>はな<\/rt><\/ruby>れてください！", "Отойдите от окна!", "ガラスが<ruby>割<rt>わ<\/rt><\/ruby>れるかもしれませんから。"], ["エレベーターを<ruby>使<rt>つか<\/rt><\/ruby>わないでください！", "Не пользуйтесь лифтом!", "<ruby>止<rt>と<\/rt><\/ruby>まって、<ruby>出<rt>で<\/rt><\/ruby>られなくなるかもしれませんから。"], ["<ruby>揺<rt>ゆ<\/rt><\/ruby>れている<ruby>時<rt>とき<\/rt><\/ruby>は、<ruby>外<rt>そと<\/rt><\/ruby>に<ruby>出<rt>で<\/rt><\/ruby>ないでください！", "Пока трясёт, не выходите на улицу!", "<ruby>上<rt>うえ<\/rt><\/ruby>から<ruby>物<rt>もの<\/rt><\/ruby>が<ruby>落<rt>お<\/rt><\/ruby>ちてきて、<ruby>危<rt>あぶ<\/rt><\/ruby>ないですから。"], ["<ruby>火<rt>ひ<\/rt><\/ruby>を<ruby>消<rt>け<\/rt><\/ruby>してください！", "Выключите огонь!", "<ruby>火事<rt>かじ<\/rt><\/ruby>になるかもしれませんから。"], ["ドアを<ruby>開<rt>あ<\/rt><\/ruby>けてください！", "Откройте дверь!", "ドアが<ruby>開<rt>あ<\/rt><\/ruby>かなくなるかもしれませんから。"], ["くつをはいてください！", "Наденьте обувь!", "<ruby>床<rt>ゆか<\/rt><\/ruby>にガラスがあるかもしれませんから。"], ["<ruby>高<rt>たか<\/rt><\/ruby>いところへ<ruby>逃<rt>に<\/rt><\/ruby>げてください！", "Бегите на возвышенность!", "<ruby>津波<rt>つなみ<\/rt><\/ruby>が<ruby>来<rt>く<\/rt><\/ruby>るかもしれませんから。"], ["<ruby>家族<rt>かぞく<\/rt><\/ruby>に<ruby>連絡<rt>れんらく<\/rt><\/ruby>してください！", "Свяжитесь с семьёй!", "<ruby>家族<rt>かぞく<\/rt><\/ruby>が<ruby>心配<rt>しんぱい<\/rt><\/ruby>していますから。"], ["<ruby>落<rt>お<\/rt><\/ruby>ち<ruby>着<rt>つ<\/rt><\/ruby>いてください。もう<ruby>大丈夫<rt>だいじょうぶ<\/rt><\/ruby>です。", "Успокойтесь. Уже всё в порядке.", "もう<ruby>揺<rt>ゆ<\/rt><\/ruby>れていませんから。"]], "doc": {"since": ["きのうから", "けさから", "<ruby>三日<rt>みっか<\/rt><\/ruby><ruby>前<rt>まえ<\/rt><\/ruby>から", "おとといの<ruby>夜<rt>よる<\/rt><\/ruby>から", "1<ruby>時間<rt>じかん<\/rt><\/ruby><ruby>前<rt>まえ<\/rt><\/ruby>から"], "netsu": ["<ruby>熱<rt>ねつ<\/rt><\/ruby>はありません", "<ruby>熱<rt>ねつ<\/rt><\/ruby>は37<ruby>度<rt>ど<\/rt><\/ruby>5<ruby>分<rt>ぶ<\/rt><\/ruby>です", "<ruby>熱<rt>ねつ<\/rt><\/ruby>が38<ruby>度<rt>ど<\/rt><\/ruby>あります"], "kusuri": ["まだ<ruby>何<rt>なに<\/rt><\/ruby>も<ruby>飲<rt>の<\/rt><\/ruby>んでいません", "かぜ<ruby>薬<rt>ぐすり<\/rt><\/ruby>を<ruby>飲<rt>の<\/rt><\/ruby>みました。でも、<ruby>効<rt>き<\/rt><\/ruby>きませんでした", "ロシアから<ruby>持<rt>も<\/rt><\/ruby>ってきた<ruby>薬<rt>くすり<\/rt><\/ruby>を<ruby>飲<rt>の<\/rt><\/ruby>みました"], "allergy": ["アレルギーはありません", "そばアレルギーです", "えびとかにのアレルギーです", "ペニシリンのアレルギーです"], "other": ["よく<ruby>眠<rt>ねむ<\/rt><\/ruby>れません", "ごはんが<ruby>食<rt>た<\/rt><\/ruby>べられません", "あした、<ruby>飛行機<rt>ひこうき<\/rt><\/ruby>に<ruby>乗<rt>の<\/rt><\/ruby>ります", "<ruby>来週<rt>らいしゅう<\/rt><\/ruby>、<ruby>富士山<rt>ふじさん<\/rt><\/ruby>に<ruby>登<rt>のぼ<\/rt><\/ruby>る<ruby>予定<rt>よてい<\/rt><\/ruby>です", "<ruby>特<rt>とく<\/rt><\/ruby>にありません"]}, "shindo": [["3", "Почувствуют почти все в доме. Посуда звякает. Японцы продолжают есть."], ["4", "Висящие лампы сильно качаются, может упасть ваза. Многие просыпаются."], ["5弱", "Падают вещи с полок, страшно. Пора под стол."], ["5強", "Трудно идти, падает посуда и книги, может опрокинуться мебель."], ["6弱", "Трудно стоять на ногах. Двери заклинивает. Срочно защищать голову."]], "scen": [["さくらホテル、305<ruby>号室<rt>ごうしつ<\/rt><\/ruby>", "<ruby>友<rt>とも<\/rt><\/ruby>だちが<ruby>急<rt>きゅう<\/rt><\/ruby>に<ruby>倒<rt>たお<\/rt><\/ruby>れました。<ruby>話<rt>はな<\/rt><\/ruby>せません。", "друг внезапно упал, не говорит", "30<ruby>歳<rt>さい<\/rt><\/ruby>ぐらい"], ["レストラン「うみ」、<ruby>駅<rt>えき<\/rt><\/ruby>の<ruby>前<rt>まえ<\/rt><\/ruby>", "<ruby>子<rt>こ<\/rt><\/ruby>どもがえびを<ruby>食<rt>た<\/rt><\/ruby>べて、<ruby>息<rt>いき<\/rt><\/ruby>が<ruby>苦<rt>くる<\/rt><\/ruby>しそうです。アレルギーかもしれません。", "ребёнок съел креветку, тяжело дышит", "7<ruby>歳<rt>さい<\/rt><\/ruby>"], ["<ruby>中央<rt>ちゅうおう<\/rt><\/ruby><ruby>公園<rt>こうえん<\/rt><\/ruby>の<ruby>入口<rt>いりぐち<\/rt><\/ruby>", "おばあさんが<ruby>転<rt>ころ<\/rt><\/ruby>んで、<ruby>足<rt>あし<\/rt><\/ruby>から<ruby>血<rt>ち<\/rt><\/ruby>が<ruby>出<rt>で<\/rt><\/ruby>ています。<ruby>立<rt>た<\/rt><\/ruby>てません。", "бабушка упала, кровь из ноги, не может встать", "80<ruby>歳<rt>さい<\/rt><\/ruby>ぐらい"], ["みどりアパート、2<ruby>階<rt>かい<\/rt><\/ruby>", "となりの<ruby>部屋<rt>へや<\/rt><\/ruby>から、けむりが<ruby>出<rt>で<\/rt><\/ruby>ています！", "из соседней квартиры идёт дым (это 火事!)", "—"], ["ホテル・ふじ、ロビー", "<ruby>夫<rt>おっと<\/rt><\/ruby>が<ruby>胸<rt>むね<\/rt><\/ruby>がとても<ruby>痛<rt>いた<\/rt><\/ruby>いと<ruby>言<rt>い<\/rt><\/ruby>っています。", "у мужа сильно болит грудь", "60<ruby>歳<rt>さい<\/rt><\/ruby>"]], "help": {"allergy": ["そば", "ピーナッツ", "えび・かに", "たまご", "<ruby>牛乳<rt>ぎゅうにゅう<\/rt><\/ruby>", "<ruby>小麦<rt>こむぎ<\/rt><\/ruby>", "ペニシリン（<ruby>薬<rt>くすり<\/rt><\/ruby>）"], "chronic": ["ぜんそく", "<ruby>糖尿病<rt>とうにょうびょう<\/rt><\/ruby>", "<ruby>心臓<rt>しんぞう<\/rt><\/ruby>の<ruby>病気<rt>びょうき<\/rt><\/ruby>", "<ruby>高血圧<rt>こうけつあつ<\/rt><\/ruby>", "てんかん"], "blood": ["A", "B", "O", "AB"], "lang": ["ロシア<ruby>語<rt>ご<\/rt><\/ruby>", "<ruby>英語<rt>えいご<\/rt><\/ruby>", "<ruby>日本語<rt>にほんご<\/rt><\/ruby>（<ruby>少<rt>すこ<\/rt><\/ruby>し）"]}, "kuji": ["<ruby>健康<rt>けんこう<\/rt><\/ruby>：かぜをひいても、すぐ<ruby>元気<rt>げんき<\/rt><\/ruby>になります。", "<ruby>旅行<rt>りょこう<\/rt><\/ruby>：<ruby>忘<rt>わす<\/rt><\/ruby>れ<ruby>物<rt>もの<\/rt><\/ruby>に<ruby>注意<rt>ちゅうい<\/rt><\/ruby>。でも、ちゃんと<ruby>見<rt>み<\/rt><\/ruby>つかります。", "<ruby>薬<rt>くすり<\/rt><\/ruby>：ラベルを<ruby>読<rt>よ<\/rt><\/ruby>むことができます。<ruby>食間<rt>しょっかん<\/rt><\/ruby>もわかります！", "<ruby>交番<rt>こうばん<\/rt><\/ruby>：おまわりさんがやさしいです。", "<ruby>地震<rt>じしん<\/rt><\/ruby>：あわてないで、<ruby>頭<rt>あたま<\/rt><\/ruby>を<ruby>守<rt>まも<\/rt><\/ruby>れます。", "<ruby>日本語<rt>にほんご<\/rt><\/ruby>：こまった<ruby>時<rt>とき<\/rt><\/ruby>、ちゃんと<ruby>言<rt>い<\/rt><\/ruby>えます。「<ruby>助<rt>たす<\/rt><\/ruby>けて！」"]};
+  const pick = a => a[Math.floor(Math.random() * a.length)];
+  const RM = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const esc = t => String(t).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]);
+
+  // furigana + sound
+  const furi = $('#furi');
+  const setFuri = on => { document.documentElement.classList.toggle('nofuri', !on); furi.setAttribute('aria-pressed', on); store.set('furi', on); };
+  setFuri(store.get('furi') !== false);
+  furi.onclick = () => setFuri(furi.getAttribute('aria-pressed') !== 'true');
+  const snd = $('#snd'); let soundOn = store.get('snd') !== false;
+  const setSnd = on => { soundOn = on; snd.setAttribute('aria-pressed', on); store.set('snd', on); };
+  setSnd(soundOn); snd.onclick = () => setSnd(!soundOn);
+  let actx = null;
+  const ac = () => (actx = actx || new (window.AudioContext || window.webkitAudioContext)());
+  function tone(fq, t0, dur, vol = .14, type = 'sine') {
+    const a = ac(), o = a.createOscillator(), g = a.createGain(), t = a.currentTime + t0;
+    o.type = type; o.frequency.value = fq;
+    g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(vol, t + .02); g.gain.exponentialRampToValueAtTime(.001, t + dur);
+    o.connect(g).connect(a.destination); o.start(t); o.stop(t + dur + .05);
+  }
+  function bell() { if (!soundOn) return; try { tone(880, 0, 1.1); tone(1318, .22, 1.2); } catch {} }
+  function saveJingle() { if (!soundOn) return; try { [523, 659, 784, 1046].forEach((f, i) => tone(f, i * .13, .5, .12, 'square')); } catch {} }
+  function alarm() { // generic drill siren, two alternating tones
+    if (!soundOn) return;
+    try { for (let i = 0; i < 6; i++) tone(i % 2 ? 740 : 988, i * .32, .3, .12, 'triangle'); } catch {}
+  }
+
+  // routing: host, secret cards
+  const host = $('#host'), sec = $('#secret'), secB = $('#secretBody');
+  const closeBtn = `<button class="btn primary" id="secretClose" style="justify-self:center">Закрыть карточку</button>`;
+  function route() {
+    const h = location.hash;
+    host.classList.toggle('on', h === '#host');
+    let m = h.match(/^#sym-([a-z]+)$/), s = m && D.sym.find(x => x.id === m[1]);
+    let n = h.match(/^#lost-([a-z0-9]+)$/), l = n && D.lost.find(x => x.id === n[1]);
+    sec.hidden = !(s || l);
+    if (s) { const F = D.doc, f = k => pick(F[k]);
+      secB.innerHTML = `<div class="warnb">Тайная карточка пациента. Не показывайте экран.</div><h3>${s.n}</h3>
+      <div class="say2">${s.say}</div><p class="note">${esc(s.ru)}</p>
+      <p class="lbl" style="margin:0">Ответы на вопросы врача</p>
+      <ul class="j" style="margin:0;padding-left:18px;display:grid;gap:4px"><li>いつから：${f('since')}</li><li>${f('netsu')}。</li><li>${f('kusuri')}。</li><li>${f('allergy')}。</li><li>ほかに：${f('other')}。</li></ul>
+      <p class="note">Не говорите всё сразу: отвечайте только на то, о чём спросил врач.</p>${closeBtn}`; }
+    if (l) secB.innerHTML = `<div class="warnb">Тайная карточка потерпевшего. Не показывайте экран.</div><h3>${l.tw}をなくしました</h3>
+      <div class="pic">${l.svg}</div><p class="j">${l.when}、${l.where}で${l.tw}をなくしてしまいました。${l.desc}</p>
+      <p class="note">Если спросят, что внутри или какие детали: <span class="jp">${l.det}</span></p>
+      <p class="note">Начните так: <span class="jp">すみません、${l.tw}をなくしてしまったんです。</span></p>${closeBtn}`;
+    if (s || l) $('#secretClose').onclick = () => { history.replaceState(null, '', location.pathname + location.search); route(); };
+  }
+  route(); addEventListener('hashchange', route);
+  sec.addEventListener('click', e => { if (e.target === sec && $('#secretClose')) $('#secretClose').click(); });
+
+  // reveal buttons
+  $$('.reveal').forEach(b => b.addEventListener('click', () => {
+    const open = b.dataset.open === '1'; b.dataset.open = open ? '0' : '1';
+    b.innerHTML = open ? 'Ответ' : b.dataset.a;
+  }));
+  // copy links
+  $$('.cp').forEach(b => b.addEventListener('click', () => {
+    const txt = b.dataset.url;
+    const done = () => { b.textContent = 'Скопировано'; setTimeout(() => b.textContent = 'Копировать ссылку', 1500); };
+    const fb = () => { const s = b.previousElementSibling; s.textContent = txt; getSelection().selectAllChildren(s); b.textContent = 'Выделено'; };
+    try { navigator.clipboard.writeText(txt).then(done, fb); } catch { fb(); }
+  }));
+
+  // uketsuke: patient deck, no repeats until the deck runs out
+  let P = store.get('pt') || { used: [], n: 0, cur: null };
+  function showPt(i, anim) {
+    const s = D.sym[i], c = $('#chart');
+    c.innerHTML = `<div class="ch"><span>カルテ · пациент ${P.n}</span><span>Ma Kagami クリニック</span></div>
+      <div class="cb2"><div class="lbl" style="margin:0">Ваша жалоба на сегодня</div><div class="sym">${s.n}</div>
+      <div class="say">「${s.say}」</div><div class="tr">${esc(s.ru)}</div>
+      <div class="rx"><b>Рецепт ведущего</b>それは<ruby>大変<rt>たいへん</rt></ruby>ですね。${s.adv} お<ruby>大事<rt>だいじ</rt></ruby>に！</div></div>`;
+    c.classList.remove('pop'); if (anim) { void c.offsetWidth; c.classList.add('pop'); }
+    $('#ptCnt').textContent = P.n ? `Пациентов: ${P.n}` : '';
+  }
+  function idlePt() {
+    $('#chart').innerHTML = `<div class="ch"><span>カルテ · как это работает</span><span>Ma Kagami クリニック</span></div>
+      <div class="cb2"><div class="say">「どうしましたか？」</div><div class="tr">Ведущий спрашивает и жмёт «Следующий пациент». Гость читает жалобу вслух, ведущий читает рецепт. Жалоба остаётся с вами до конца встречи: её можно использовать в аптеке.</div></div>`;
+    $('#ptCnt').textContent = '';
+  }
+  $('#nextPt').onclick = () => {
+    if (P.used.length >= D.sym.length) P.used = [];
+    let i; do { i = Math.floor(Math.random() * D.sym.length); } while (P.used.includes(i));
+    P.used.push(i); P.n++; P.cur = i; store.set('pt', P); showPt(i, true); bell();
+  };
+  $('#ptReset').onclick = () => { P = { used: [], n: 0, cur: null }; store.set('pt', P); idlePt(); };
+  if (P.cur != null && D.sym[P.cur]) showPt(P.cur); else idlePt();
+
+  // phrase filter
+  $$('.filters .chip').forEach(b => b.addEventListener('click', () => {
+    $$('.filters .chip').forEach(x => x.setAttribute('aria-pressed', x === b)); $('#phr').dataset.f = b.dataset.f;
+  }));
+
+  // pantomime + lost secret buttons
+  const pantoIds = D.sym.filter(s => s.g).map(s => s.id);
+  $('#symRand').onclick = () => { location.hash = 'sym-' + pick(pantoIds); };
+  $('#lostRand').onclick = () => { location.hash = 'lost-' + pick(D.lost).id; };
+
+  // shelf
+  $$('#shelf .item').forEach(b => b.addEventListener('click', () => {
+    const l = D.lost.find(x => x.id === b.dataset.id);
+    sec.hidden = false;
+    secB.innerHTML = `<h3>これですか？</h3><div class="pic">${l.svg}</div><p class="j">${l.desc}</p><div class="say2">${l.det}</div>
+      <p class="note">Потерпевший отвечает: 「はい、これです！ ありがとうございます！」 или 「いいえ、ちがいます」.</p>
+      <button class="btn primary" id="secretClose" style="justify-self:center">Вернуть на полку</button>`;
+    $('#secretClose').onclick = () => { sec.hidden = true; if (/^#(sym|lost)-/.test(location.hash)) { history.replaceState(null, '', location.pathname + location.search); } route(); };
+  }));
+
+  // lost report builder
+  const R = D.rep; let RS = Object.assign({ when: 0, where: 0, what: 0, color: 0, size: 0, extra: 0 }, store.get('rep') || {});
+  const strip = h => h.replace(/<rt>.*?<\/rt>/g, '').replace(/<[^>]+>/g, '');
+  const rlab = { when: 'いつ', where: 'どこで', what: '<ruby>何<rt>なに</rt></ruby>を', color: '<ruby>色<rt>いろ</rt></ruby>', size: '<ruby>形<rt>かたち</rt></ruby>', extra: 'ほかに' };
+  $('#rep').innerHTML = Object.keys(rlab).map(k => `<label for="r_${k}">${rlab[k]}</label><select id="r_${k}" data-k="${k}">${R[k].map((o, i) => `<option value="${i}">${strip(Array.isArray(o) ? o[0] : o) || '—'}</option>`).join('')}</select>`).join('');
+  function renderRep() {
+    $$('#rep select').forEach(s => s.value = RS[s.dataset.k]);
+    const w = R.what[RS.what];
+    $('#repOut').innerHTML = `すみません。${R.when[RS.when]}、${R.where[RS.where]}で${w}をなくしてしまいました。${R.color[RS.color][0]}、${R.size[RS.size]}${w}です。${R.extra[RS.extra]}`;
+    store.set('rep', RS);
+  }
+  $$('#rep select').forEach(s => s.onchange = () => { RS[s.dataset.k] = +s.value; renderRep(); });
+  renderRep();
+
+  // earthquake drill
+  $('#shl').innerHTML = D.shindo.map(([n, t]) => `<li><b>${n}</b><span>${esc(t)}</span></li>`).join('');
+  let Q = { used: [], i: 0, k: 0 };
+  const alarmEl = $('#alarm');
+  function showCmd(i) {
+    const c = D.quake[i];
+    $('#cmd').innerHTML = c[0]; $('#cmdR').textContent = c[1]; $('#cmdWhy').innerHTML = '<span class="lbl" style="font-family:var(--ru)">Почему: </span>' + c[2];
+    $('#cmdNo').textContent = `команда ${Q.k}`;
+  }
+  function nextCmd() {
+    if (Q.used.length >= D.quake.length - 1) Q.used = [];
+    let i; do { i = Math.floor(Math.random() * (D.quake.length - 1)); } while (Q.used.includes(i));
+    Q.used.push(i); Q.k++; showCmd(i);
+  }
+  $('#alarmBtn').onclick = () => {
+    const s = pick(D.shindo); $('#sdN').textContent = s[0]; $('#sdT').textContent = s[1];
+    alarm(); nextCmd(); alarmEl.classList.add('live');
+    if (!RM) { document.body.classList.add('shake'); setTimeout(() => document.body.classList.remove('shake'), 1800); }
+    setTimeout(() => alarmEl.classList.remove('live'), 2200);
+  };
+  $('#cmdNext').onclick = () => { nextCmd(); bell(); };
+  $('#cmdRu').onclick = e => { const on = e.currentTarget.getAttribute('aria-pressed') !== 'true'; e.currentTarget.setAttribute('aria-pressed', on); $('#cmdR').style.visibility = on ? 'visible' : 'hidden'; $('#cmdWhy').style.visibility = on ? 'visible' : 'hidden'; };
+  // last command is the "calm down" one, reachable by double-clicking next? keep a dedicated key: long press not needed
+  $('#cmd').ondblclick = () => { Q.k++; showCmd(D.quake.length - 1); };
+
+  // 119 scenario
+  let si = store.get('scen') ?? 0;
+  function showScen() { const s = D.scen[si]; $('#scen').innerHTML = `<span class="lbl" style="margin:0">Где вы</span><span class="s1">${s[0]}</span><span class="lbl" style="margin:0">Что случилось</span><span class="s1">${s[1]}</span><span class="note">${esc(s[2])} · возраст: ${s[3]}</span>`; store.set('scen', si); }
+  $('#scenBtn').onclick = () => { si = (si + 1 + Math.floor(Math.random() * (D.scen.length - 1))) % D.scen.length; showScen(); };
+  showScen();
+
+  // help card
+  const H = D.help;
+  let HC = Object.assign({ name: 'アンナ・イワノワ', hotel: 'さくらホテル 305号室', phone: '+7 900 123-45-67', meds: '', allergy: [], chronic: [], blood: '', lang: [0, 1, 2] }, store.get('help') || {});
+  const chips = (k, arr, multi) => `<div class="row" role="group">${arr.map((o, i) => `<button class="chip" data-k="${k}" data-i="${i}" data-m="${multi ? 1 : 0}">${o}</button>`).join('')}${multi ? `<button class="chip" data-k="${k}" data-i="-1" data-m="1">なし</button>` : ''}</div>`;
+  $('#hform').innerHTML = `
+    <div><label for="h_name"><ruby>名前<rt>なまえ</rt></ruby> (катаканой)</label><input id="h_name" maxlength="30"></div>
+    <div><span class="ol"><ruby>話<rt>はな</rt></ruby>せることば</span>${chips('lang', H.lang, true)}</div>
+    <div><span class="ol">アレルギー</span>${chips('allergy', H.allergy, true)}</div>
+    <div><span class="ol"><ruby>持病<rt>じびょう</rt></ruby> (хронические болезни)</span>${chips('chronic', H.chronic, true)}</div>
+    <div><label for="h_meds"><ruby>飲<rt>の</rt></ruby>んでいる<ruby>薬<rt>くすり</rt></ruby> (по-английски или катаканой)</label><input id="h_meds" maxlength="50" placeholder="インスリン"></div>
+    <div><span class="ol"><ruby>血液型<rt>けつえきがた</rt></ruby></span>${chips('blood', H.blood, false)}</div>
+    <div><label for="h_hotel">ホテル・<ruby>住所<rt>じゅうしょ</rt></ruby></label><input id="h_hotel" maxlength="50"></div>
+    <div><label for="h_phone"><ruby>緊急連絡先<rt>きんきゅうれんらくさき</rt></ruby> (телефон близкого)</label><input id="h_phone" maxlength="30"></div>`
+;
+  const list = (k, arr) => HC[k].length ? HC[k].map(i => arr[i]).join('、') : 'なし';
+  function renderHC() {
+    $$('#hform .chip').forEach(b => { const k = b.dataset.k, i = +b.dataset.i;
+      b.setAttribute('aria-pressed', b.dataset.m === '1' ? (i < 0 ? HC[k].length === 0 : HC[k].includes(i)) : HC[k] === i); });
+    $('#hcard').innerHTML = `<div class="chd"><span class="x" aria-hidden="true"></span><div><h3>ヘルプカード</h3><small>Help card · карточка помощи</small></div></div>
+      <div class="cbd"><p class="plea">わたしは<ruby>日本語<rt>にほんご</rt></ruby>が<ruby>少<rt>すこ</rt></ruby>しだけわかります。ゆっくり、やさしい<ruby>日本語<rt>にほんご</rt></ruby>で<ruby>話<rt>はな</rt></ruby>してください。</p>
+      <dl><dt><ruby>名前<rt>なまえ</rt></ruby></dt><dd>${esc(HC.name) || '—'}</dd>
+      <dt><ruby>国<rt>くに</rt></ruby></dt><dd>ロシア</dd>
+      <dt>ことば</dt><dd>${list('lang', H.lang)}</dd>
+      <dt>アレルギー</dt><dd>${list('allergy', H.allergy)}</dd>
+      <dt><ruby>持病<rt>じびょう</rt></ruby></dt><dd>${list('chronic', H.chronic)}</dd>
+      <dt><ruby>薬<rt>くすり</rt></ruby></dt><dd>${esc(HC.meds) || 'なし'}</dd>
+      <dt><ruby>血液型<rt>けつえきがた</rt></ruby></dt><dd>${HC.blood === '' ? '—' : H.blood[HC.blood] + '<ruby>型<rt>がた</rt></ruby>'}</dd>
+      <dt>ホテル</dt><dd>${esc(HC.hotel) || '—'}</dd>
+      <dt><ruby>連絡先<rt>れんらくさき</rt></ruby></dt><dd>${esc(HC.phone) || '—'}</dd></dl>
+      <p class="cft">110 полиция · 119 скорая и пожарные · Japan Visitor Hotline 050-3816-2787 (24/7, English)</p></div>`;
+    store.set('help', HC);
+  }
+  ['name', 'meds', 'hotel', 'phone'].forEach(k => { const el = $('#h_' + k); el.value = HC[k]; el.oninput = () => { HC[k] = el.value; renderHC(); }; });
+  $$('#hform .chip').forEach(b => b.onclick = () => {
+    const k = b.dataset.k, i = +b.dataset.i;
+    if (b.dataset.m === '1') HC[k] = i < 0 ? [] : HC[k].includes(i) ? HC[k].filter(x => x !== i) : [...HC[k], i].sort();
+    else HC[k] = HC[k] === i ? '' : i;
+    renderHC();
+  });
+  renderHC();
+
+  // talk
+  const qs = $$('#qs li'); let last = -1;
+  $('#rand').onclick = () => {
+    let i; do { i = Math.floor(Math.random() * qs.length); } while (i === last && qs.length > 1);
+    last = i; qs.forEach((q, j) => q.classList.toggle('pick', j === i));
+    qs[i].scrollIntoView({ block: 'center', behavior: RM ? 'auto' : 'smooth' });
+  };
+
+  // timer
+  const clock = $('#clock'), go = $('#go'), mini = $('#miniClock');
+  let total = 25 * 60, left = total, end = 0, tick = null;
+  const fmt = s => String(Math.floor(s / 60)).padStart(2, '0') + ':' + String(s % 60).padStart(2, '0');
+  function paint() {
+    clock.textContent = fmt(left); clock.classList.toggle('end', left === 0);
+    mini.hidden = !tick && (left === total || left === 0);
+    mini.textContent = (left === 0 ? 'おわり' : '日本語だけ ') + (left ? fmt(left) : '');
+  }
+  function stop() { clearInterval(tick); tick = null; go.textContent = left ? 'つづける' : 'スタート'; paint(); }
+  function start() {
+    if (!left) left = total;
+    end = Date.now() + left * 1000; go.textContent = 'ストップ';
+    tick = setInterval(() => { left = Math.max(0, Math.round((end - Date.now()) / 1000)); if (!left) { stop(); bell(); } paint(); }, 250);
+    paint();
+  }
+  go.onclick = () => tick ? stop() : start();
+  $('#reset').onclick = () => { clearInterval(tick); tick = null; left = total; go.textContent = 'スタート'; paint(); };
+  mini.onclick = () => $('#timer').scrollIntoView();
+  $$('.presets .btn').forEach(b => b.addEventListener('click', () => {
+    $$('.presets .btn').forEach(x => x.setAttribute('aria-pressed', x === b));
+    clearInterval(tick); tick = null; total = left = +b.dataset.m * 60; go.textContent = 'スタート'; paint();
+  }));
+  paint();
+
+  // save + omikuji
+  function saved(anim) {
+    $('#slot3').classList.add('done'); $('#slot3 .st').textContent = 'SAVE';
+    $('#saveQ').innerHTML = '<ruby>冒険<rt>ぼうけん</rt></ruby>の<ruby>書<rt>しょ</rt></ruby>にセーブしました。';
+    $('#saveBtns').hidden = true; $('#saveOut').innerHTML = 'QUEST CLEAR · <ruby>全部<rt>ぜんぶ</rt></ruby>クリア！';
+    if (anim) saveJingle();
+  }
+  $('#saveYes').onclick = () => { store.set('save', 1); saved(true); };
+  $('#saveNo').onclick = () => { $('#saveOut').innerHTML = 'えっ、ほんとうに？ もう<ruby>一度<rt>いちど</rt></ruby>どうぞ。'; };
+  if (store.get('save')) saved(false);
+  function showKuji() {
+    const lines = [...D.kuji].sort(() => Math.random() - .5).slice(0, 3);
+    $('#kujiOut').innerHTML = `<div class="slip"><div class="big">大吉</div><div style="text-align:center;font-size:13px">だいきち · великая удача</div>
+      <ul>${lines.map(l => `<li>${l}</li>`).join('')}</ul>
+      <div class="gift"><b class="jp">ラッキー：<ruby>個人<rt>こじん</rt></ruby>レッスン</b><br>Три セーブ в 冒険の書 = бесплатное занятие с ведущим, 60 минут, тема ваша. Например, японский под ваш маршрут поездки: аэропорт, отель, ресторан, ваша аптечка. Пропустили встречу? Первое занятие со скидкой. Напишите ведущему «セーブ» до 10 декабря.</div></div>`;
+  }
+  $('#kujiBtn').onclick = () => {
+    const b = $('#kbox'); b.classList.remove('shake2'); void b.offsetWidth; b.classList.add('shake2');
+    setTimeout(() => { showKuji(); bell(); store.set('kuji', 1); }, RM ? 0 : 1000);
+  };
+  if (store.get('kuji')) showKuji();
+  const cn = $('#certName');
+  const syncCert = () => { $('#certWho').textContent = cn.value.trim() || 'アンナ'; store.set('cert', cn.value); };
+  cn.value = store.get('cert') || ''; cn.oninput = syncCert; syncCert();
+})();
+</script>
+
+</body></html>
